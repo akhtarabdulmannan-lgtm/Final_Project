@@ -1,81 +1,133 @@
-export interface NavLink {
-  label: string;
-  href: string;
-  description?: string;
-  badge?: string;
-}
+import { NavItem } from '@/types';
 
-export const headerNavLinks = [
-  { label: "Services", href: "#services", hasMegaMenu: true },
-  { label: "Work", href: "/work", hasMegaMenu: false },
-  { label: "Company", href: "/company", hasMegaMenu: false },
+export const personalNav: NavItem[] = [
   {
-    label: "Resources",
-    href: "/resources/vendor-matrix",
-    hasDropdown: true,
-    dropdownItems: [
-      { label: "AI Vendor Matrix", href: "/resources/vendor-matrix", description: "Evaluate & compare enterprise AI platforms" },
-      { label: "Open Axiom", href: "/open-axiom", description: "Open-source agent skills, templates & tools" },
-      { label: "Engineering Blog", href: "/blog", description: "Technical blueprints, architecture & evals" },
-      { label: "Interactive Labs", href: "/demos/threat-monitor", description: "Live threat monitor, vector search & AI demos" },
-    ]
+    label: 'Send',
+    href: '/send',
+    children: [
+      { label: 'Send Money', href: '/send', description: 'Transfer money to 190+ countries' },
+      { label: 'Track Transfer', href: '/send/track', description: 'Check your transfer status' },
+      { label: 'Fees & Pricing', href: '/send/fees', description: 'Transparent fee calculator' },
+    ],
   },
-  { label: "Contact", href: "/contact", hasMegaMenu: false },
+  {
+    label: 'Convert',
+    href: '/converter',
+    children: [
+      { label: 'Currency Converter', href: '/converter', description: 'Real-time mid-market rates' },
+      { label: 'Live Rate Tables', href: '/rates', description: '100+ currencies at a glance' },
+      { label: 'Historical Rates', href: '/historical', description: 'Rates back to 1998' },
+      { label: 'Currency Tables', href: '/tables', description: 'Cross-rate matrix' },
+    ],
+  },
+  {
+    label: 'Charts',
+    href: '/charts',
+  },
+  {
+    label: 'Alerts',
+    href: '/alerts',
+  },
+  {
+    label: 'Tools',
+    href: '/tools',
+    children: [
+      { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
+      { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
+      { label: 'Mobile Apps', href: '/apps', description: 'iOS & Android apps' },
+    ],
+  },
 ];
 
-export const clientLogos = [
-  { name: "Strata Systems", symbol: "◈ STRATA SYSTEMS" },
-  { name: "Zenith Health AI", symbol: "✦ ZENITH HEALTH" },
-  { name: "Vortex Capital", symbol: "▲ VORTEX CAPITAL" },
-  { name: "Helix Cybersecurity", symbol: "⬡ HELIX DEFENSE" },
-  { name: "Nova Commerce", symbol: "◆ NOVA COMMERCE" },
-  { name: "Pulse Matrix", symbol: "◬ PULSE MATRIX" },
-  { name: "Synthetix Labs", symbol: "⦿ SYNTHETIX" },
-  { name: "Apex Protocol", symbol: "❖ APEX CLOUD" },
+export const businessNav: NavItem[] = [
+  {
+    label: 'Payments',
+    href: '/business/payments',
+    children: [
+      { label: 'Global Payments', href: '/business/payments', description: 'Send to 190+ countries' },
+      { label: 'Batch Payments', href: '/business/batch', description: 'Pay multiple recipients' },
+      { label: 'Scheduled Payments', href: '/business/scheduled', description: 'Automate recurring payments' },
+    ],
+  },
+  {
+    label: 'FX Risk',
+    href: '/business/fx-risk',
+    children: [
+      { label: 'Forward Contracts', href: '/business/fx-risk', description: 'Lock in rates for the future' },
+      { label: 'Limit Orders', href: '/business/fx-risk#limit-orders', description: 'Set target rates' },
+      { label: 'FX Options', href: '/business/fx-risk#options', description: 'Flexible hedging' },
+    ],
+  },
+  {
+    label: 'Team',
+    href: '/business/team',
+  },
+  {
+    label: 'Integrations',
+    href: '/business/integrations',
+  },
+  {
+    label: 'API',
+    href: '/api',
+    children: [
+      { label: 'API Overview', href: '/api', description: 'Currency data API' },
+      { label: 'Pricing', href: '/api/pricing', description: 'Plans from \\$599/yr' },
+      { label: 'Documentation', href: '/api/docs', description: 'Full API reference' },
+      { label: 'Partner Program', href: '/api/partners', description: 'ISV & referral programs' },
+    ],
+  },
 ];
 
 export const footerLinks = {
-  services: [
-    { label: "UI/UX Design", href: "/services/ui-ux-design" },
-    { label: "Website Design", href: "/services/website-design" },
-    { label: "Web Development", href: "/services/website-development" },
-    { label: "AI Development", href: "/services/ai-development" },
-    { label: "AI Agents", href: "/services/ai-agents" },
-    { label: "Healthcare Apps", href: "/services/healthcare-apps" },
+  product: [
+    { label: 'Currency Converter', href: '/converter' },
+    { label: 'Send Money', href: '/send' },
+    { label: 'Live Rates', href: '/rates' },
+    { label: 'Charts', href: '/charts' },
+    { label: 'Rate Alerts', href: '/alerts' },
+    { label: 'Historical Rates', href: '/historical' },
+    { label: 'IBAN Calculator', href: '/tools/iban' },
+    { label: 'Mobile Apps', href: '/apps' },
   ],
-  work: [
-    { label: "Strata Autonomous Resolution", href: "/work/strata-systems" },
-    { label: "Zenith Clinician Copilot", href: "/work/zenith-health" },
-    { label: "Vortex Signal Intelligence", href: "/work/vortex-capital" },
-    { label: "Helix Zero-Trust Defense", href: "/work/helix-cyber" },
-    { label: "Nova Headless Commerce", href: "/work/nova-commerce" },
-    { label: "Pulse Matrix Routing", href: "/work/pulse-matrix" },
-    { label: "Synthetix Media Studio", href: "/work/synthetix-labs" },
+  business: [
+    { label: 'Business Account', href: '/business' },
+    { label: 'Global Payments', href: '/business/payments' },
+    { label: 'Batch Payments', href: '/business/batch' },
+    { label: 'FX Risk Management', href: '/business/fx-risk' },
+    { label: 'Integrations', href: '/business/integrations' },
+    { label: 'Team Roles', href: '/business/team' },
   ],
-  resources: [
-    { label: "AI Vendor Matrix", href: "/resources/vendor-matrix" },
-    { label: "Open Axiom (Open Source)", href: "/open-axiom" },
-    { label: "Technical Blog & Evals", href: "/blog" },
-    { label: "Architecture Principles", href: "/company#principles" },
-    { label: "Case Study Archive", href: "/work" },
-  ],
-  demos: [
-    { label: "Threat Monitor (ATOM Red Team)", href: "/demos/threat-monitor" },
-    { label: "Buyer Intent IQ", href: "/demos/intent-iq" },
-    { label: "Infrastructure & Fiber Atlas", href: "/demos/infrastructure-atlas" },
-    { label: "Acoustic Voice Sentiment", href: "/demos/voice-sentiment" },
-    { label: "Vector Semantic Search", href: "/demos/vector-search" },
-    { label: "Multimodal Emotion AI", href: "/demos/emotion-ai" },
+  developers: [
+    { label: 'API Overview', href: '/api' },
+    { label: 'API Pricing', href: '/api/pricing' },
+    { label: 'Documentation', href: '/api/docs' },
+    { label: 'Partner Program', href: '/api/partners' },
   ],
   company: [
-    { label: "About Axiom Labs", href: "/company" },
-    { label: "Core Beliefs & Philosophy", href: "/company#beliefs" },
-    { label: "Engineering Careers", href: "/contact" },
-    { label: "Book Technical Consultation", href: "/contact" },
+    { label: 'About VectisX', href: '/about' },
+    { label: 'Careers', href: '/careers' },
+    { label: 'Press', href: '/press' },
+    { label: 'Security', href: '/security' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Help Center', href: '/help' },
   ],
   legal: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Security & SOC2 Statement", href: "#" },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Cookie Policy', href: '/cookies' },
+    { label: 'Licenses', href: '/licenses' },
+  ],
+  popularPairs: [
+    { label: 'USD to EUR', href: '/converter/usd-to-eur' },
+    { label: 'USD to GBP', href: '/converter/usd-to-gbp' },
+    { label: 'EUR to USD', href: '/converter/eur-to-usd' },
+    { label: 'GBP to USD', href: '/converter/gbp-to-usd' },
+    { label: 'USD to JPY', href: '/converter/usd-to-jpy' },
+    { label: 'USD to CAD', href: '/converter/usd-to-cad' },
+    { label: 'USD to AUD', href: '/converter/usd-to-aud' },
+    { label: 'EUR to GBP', href: '/converter/eur-to-gbp' },
+    { label: 'USD to INR', href: '/converter/usd-to-inr' },
+    { label: 'USD to MXN', href: '/converter/usd-to-mxn' },
   ],
 };

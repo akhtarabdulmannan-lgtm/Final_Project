@@ -1,20 +1,51 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://vectisoperations.tech";
-  const now = new Date();
+  const baseUrl = 'https://vectisx.com';
 
   const routes = [
-    { url: `${baseUrl}`, lastModified: now, changeFrequency: "weekly" as const, priority: 1.0 },
-    { url: `${baseUrl}/distributionlife`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.9 },
-    { url: `${baseUrl}/nano`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${baseUrl}/studio`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
-    { url: `${baseUrl}/clients`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${baseUrl}/journal`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 },
-    { url: `${baseUrl}/privacy`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.5 },
-    { url: `${baseUrl}/terms`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.5 },
+    '',
+    '/converter',
+    '/rates',
+    '/charts',
+    '/alerts',
+    '/send',
+    '/historical',
+    '/tables',
+    '/tools/iban',
+    '/tools/email-updates',
+    '/apps',
+    '/business',
+    '/business/payments',
+    '/business/scheduled',
+    '/business/batch',
+    '/business/fx-risk',
+    '/business/team',
+    '/business/integrations',
+    '/api-platform',
+    '/api-platform/pricing',
+    '/api-platform/docs',
+    '/api-platform/partners',
+    '/about',
+    '/careers',
+    '/press',
+    '/security',
+    '/help',
+    '/contact',
+    '/blog',
+    '/terms',
+    '/privacy',
+    '/cookies',
+    '/licenses',
+    '/referral',
+    '/partners',
+    '/sitemap-page',
   ];
 
-  return routes;
+  return routes.map(route => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily',
+    priority: route === '' ? 1.0 : 0.8,
+  }));
 }

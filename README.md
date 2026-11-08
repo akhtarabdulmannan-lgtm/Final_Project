@@ -1,87 +1,119 @@
-# Axiom Labs — Enterprise AI Architecture & Digital Engineering
+# VectisX — Global Currency Intelligence & International Money Transfers
 
-> **Axiom Labs** is an enterprise-grade digital flagship and autonomous systems studio platform. Built from scratch with Next.js 14 (App Router), Tailwind CSS, TypeScript, and native WebGL/Canvas shaders.
-
----
-
-## Key Features & Capabilities
-
-- **Light-Ray Conic Canvas Background**: GPU-accelerated ray-casting shader with zero client latency.
-- **Dedicated Portfolio Gallery (`/work`)**: Category filter tabs (`All`, `AI Apps`, `Websites`, `Enterprise`), interactive dossier cards with verified ROI stats.
-- **7 Detailed Case Study Dossiers (`/work/[slug]`)**:
-  - *Strata Systems*: Autonomous cloud incident resolution engine (84% MTTR reduction).
-  - *Zenith Health AI*: Clinician intelligence & real-time diagnostic copilot (78% charting reduction).
-  - *Vortex Capital*: High-frequency market sentiment & execution engine (<12ms latency).
-  - *Helix Cybersecurity*: Zero-trust edge security & automated pen-test defense (99.4% containment).
-  - *Nova Commerce*: Headless omnichannel e-commerce & recommendation mesh (41% conversion lift).
-  - *Pulse Matrix*: Global logistics route optimization & predictive dispatch (28% fuel savings).
-  - *Synthetix Labs*: Generative multimodal audio & media synthesis platform (92% turnaround compression).
-- **Company Narrative Hub (`/company`)**:
-  - Three founding pillars (Design-First Innovation, Engineering Excellence, Real-World Impact).
-  - Core Beliefs (01: Code as Deterministic Proof, 02: Human Sovereignty & Privacy, 03: Velocity Through Rigor).
-  - Interactive Showcase Reel player simulation.
-  - Expandable FAQ accordion.
-- **Technical Blog & Insights (`/blog` & `/blog/[slug]`)**:
-  - Production blueprints covering multi-agent orchestration, fine-tuning vs RAG, training economics, and synthetic evals.
-  - Category filters, reading times, author avatars, and key architectural takeaway callout boxes.
-- **Open-Source Catalog (`/open-axiom`)**:
-  - 9 open-source tools across Agent Skills, Templates, Apps, and Tools.
-  - One-click copyable terminal install commands (`npx create-axiom-template ...` / `pip install ...`).
-  - Star ratings, fork counters, license badges, and direct GitHub links.
-- **Interactive AI Vendor Matrix (`/resources/vendor-matrix`)**:
-  - Comparative matrix across OpenAI, Claude, AWS Bedrock, Google Vertex AI, Azure OpenAI, Cohere, and Sovereign vLLM.
-  - Interactive column sorting (Latency, Tool Calling Accuracy, Platform Name).
-  - Dynamic filter chips (Dedicated VPC, Self-Hosted / On-Prem, HIPAA Compliant, PQC Ready).
-  - Client-side dynamic CSV export download generator.
-- **6 Upgraded Service Pages (`/services/[slug]`)**:
-  - UI/UX Design, Website Design, Web Development, AI Development, AI Agents, Healthcare Apps.
-  - 6 "What You Get" deliverables per discipline.
-  - 4-phase "How We Work" structured delivery roadmaps with durations and tangible outputs.
-  - Dedicated service-specific inline consultation forms and Accordion FAQs.
-- **Interactive Labs & Demos**:
-  - `ATOM Threat Monitor` (`/demos/threat-monitor`): Live simulated threat telemetry, MITRE ATLAS 16-technique heatmap, and auto-scrolling terminal log stream.
-  - `Buyer Intent IQ` (`/demos/intent-iq`): Interactive sensitivity threshold slider (50 - 100) and AI outreach generator.
-  - `Infrastructure Atlas` (`/demos/infrastructure-atlas`): Geospatial data center map, subsea fiber route explorer, and live round-trip ping calculations.
-  - `Voice Sentiment Analyzer` (`/demos/voice-sentiment`): Real-time acoustic frequency spectrum, micro-tremor detector, and stress probability gauge.
-  - `Atom Vector Search` (`/demos/vector-search`): Instant semantic vector search with live sub-50ms stopwatch timer.
-  - `Multimodal Emotion AI` (`/demos/emotion-ai`): Real-time emotional radar visualizer for arbitrary user-entered text.
-- **Real Backend Contact Form (`/api/contact`)**:
-  - Native Next.js App Router API Route (`POST /api/contact`).
-  - Anti-spam honeypot verification (`botField`).
-  - Timestamp velocity protection (rejects automated bot submissions < 1000ms).
-  - Strict regex email validation and payload verification.
-- **Accessibility & Motion Compliance**:
-  - Full `@media (prefers-reduced-motion: reduce)` support across all CSS transitions and animations.
-  - WCAG 2.1 AA compliant contrast ratios and keyboard-accessible navigation drawers and accordions.
+> **VectisX** is an enterprise-grade global currency exchange, money transfer, and financial data platform inspired by **Xe.com**'s platform architecture, features, workflows, and visual structure—rebuilt from the ground up with 100% custom branding, bespoke styling, and high-performance engineering.
 
 ---
 
-## Tech Stack
+## 🌟 Platform Overview & Core Pillars
 
-- **Framework**: Next.js 14 (App Router, Server Components & Client Hydration)
-- **Styling**: Tailwind CSS 3.4
-- **Language**: TypeScript 5.6
-- **Icons**: Lucide React
-- **Runtime**: Node.js 18+ / 20+ / 24+
+VectisX is organized around four core consumer product pillars, alongside institutional business treasury infrastructure and high-throughput developer data APIs:
+
+### 1. 💱 Send Money (`/send`)
+- **3-Step Send Flow:**
+  1. *Enter Amount:* Guaranteed live send rates, flat fees starting at **$0**, and transparent recipient payout calculation.
+  2. *Choose Recipient:* Multi-corridor support across **190+ countries** with bank-account, mobile wallet, and cash pickup routing.
+  3. *Send & Track:* Real-time settlement status notifications via email and SMS.
+- **Corridor Matrix:** Dedicated corridors for India, Mexico, UK, Eurozone, Philippines, Canada, Australia, Pakistan, and more.
+- **Welcome Promotion:** Save **$100** using promo code `VXNEW100` on initial transfers of $3,000+.
+- **Fee Transparency:** Clear fee comparison table highlighting bank-beating savings up to 8x vs traditional retail banks.
+
+### 2. 🔄 Currency Converter (`/converter`, `/converter/[pair]`)
+- **Live Mid-Market Rates:** Instant conversion across **220+ global currencies**, precious metals (Gold, Silver), and selected digital currencies.
+- **Dynamic Currency Pair Landing Pages:** Programmatic routing (e.g. `/converter/usd-to-eur`, `/converter/gbp-to-usd`) with responsive interactive trend charts and 24h high/low statistics.
+- **Mid-Market Guarantee:** Real-time interbank rates without hidden retail markups.
+
+### 3. 📈 Interactive Currency Charts (`/charts`)
+- **Time Horizons:** 1D, 1W, 1M, 3M, 6M, 1Y, 5Y, and 10Y interactive historical trend visualizer.
+- **Data Visualizer:** Built on Recharts with custom SVG gradients, tooltips, and responsive layout.
+- **Export & Share:** Export historical CSV datasets directly for analysis.
+
+### 4. 🔔 Rate Alerts (`/alerts`)
+- **24/7 Automated Triggers:** Set custom threshold triggers (e.g. "Notify when USD/EUR rises above 0.8550").
+- **Multi-Channel Notification:** Instant email and mobile push notifications when interbank markets reach your target.
+- **100% Free:** No subscription fees or limits on custom rate triggers.
 
 ---
 
-## Getting Started
+## 💼 VectisX Business Account (`/business`)
+
+Designed for commercial enterprises, high-growth startups, and multinational treasuries:
+
+- **Institutional Multi-Currency Vault:** Hold, convert, and disburse in USD, EUR, GBP, AUD, CAD, and 18+ currencies with zero monthly account fees.
+- **Global Payments (`/business/payments`):** Settle overseas vendor invoices and subsidiary payments to 190+ countries in 145+ currencies.
+- **Batch & Payroll Disbursements (`/business/batch`):** Single CSV/Excel file upload to pay thousands of international contractors and remote employees in local currencies.
+- **Scheduled Payments (`/business/scheduled`):** Automated recurring payments for cross-border software retainers and supplier contracts.
+- **FX Risk Management (`/business/fx-risk`):**
+  - **Forward Contracts:** Lock in binding exchange rates for up to 24 months to protect profit margins against currency swings.
+  - **Limit Orders:** Set target exchange rates that execute automatically when market spikes occur.
+  - **FX Exposure Calculator:** Interactive EBITDA risk estimator.
+- **Role-Based Permissions (`/business/team`):** Segregation of duties across Administrator, Approver, Creator, and Auditor roles with dual-signoff enforcement.
+- **ERP Integrations (`/business/integrations`):** Native bidirectional sync for Microsoft Dynamics 365, Sage Intacct, Oracle NetSuite, and SAP.
+- **Scale:** Trusted by **17,000+ businesses** processing **$17B+** in annual volume.
+
+---
+
+## ⚡ Developer Platform: Currency Data API (`/api-platform`)
+
+- **Core Endpoint:** `GET /v1/convert_from` (accessible via `/api/rates`) returning normalized JSON payloads.
+- **Proprietary Rate Blender™:** Statistical anomaly detection aggregating 100+ liquidity providers with real-time spike rejection.
+- **Pricing Tiers (`/api-platform/pricing`):**
+  - *Core ($599/yr):* 10k requests/mo, daily EOD updates, 1 base currency.
+  - *Intermediate ($1,799/yr):* 50k requests/mo, hourly updates, 5 base currencies, historical records back to 1998.
+  - *Prime ($4,499/yr):* 200k requests/mo, 15-minute updates, unlimited bases, central bank feeds.
+  - *Enterprise (Custom):* Live minutely streaming feeds, 99.99% SLA, custom margins.
+- **Official SDKs:** Ready-to-use packages for Java, Node.js, PHP, and Python.
+- **Partner Program (`/api-platform/partners`):** Co-branded solutions, ISV revenue shares, and system integrator alliances.
+
+---
+
+## 🛠️ Specialized Financial Tools
+
+- **IBAN Calculator & Validator (`/tools/iban`):** Validate international bank account numbers, check digits, and country routing structures.
+- **Daily Market Analysis Newsletter (`/tools/email-updates`):** Curated daily macroeconomic briefings for 350,000+ subscribers.
+- **Cross-Rate Matrix Tables (`/tables`):** Multi-lateral cross-rate table comparing the top 10 global currencies.
+- **Historical Data Archives (`/historical`):** Daily closing prices and monthly averages dating back to 1998.
+- **Mobile Apps (`/apps`):** iOS (4.8★, 118k reviews) and Android (4.8★, 380k reviews).
+
+---
+
+## 🛡️ Trust, Security & Regulation (`/security`, `/licenses`)
+
+- **Corporate Parent:** Wholly owned subsidiary of Meridian Financial Corporation (NASDAQ: MRDN).
+- **FinCEN Registered:** Money Services Business (MSB Registration #310001849204).
+- **State-Licensed:** Licensed money transmitter across California, New York, Texas, Florida, Illinois, and nationwide.
+- **SOC 2 Type II:** Independently audited annual security and data confidentiality certification.
+- **Tier-1 Safeguarding:** Client funds are segregated in safeguarded accounts at JPMorgan Chase and Barclays.
+
+---
+
+## 💻 Tech Stack & Architecture
+
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript 5.6
+- **Styling:** Tailwind CSS 3.4 with custom design tokens
+- **Data Visualization:** Recharts 2.12
+- **Icons:** Lucide React
+- **SEO & Performance:** Full static pre-rendering (44 pre-rendered static routes), dynamic metadata generation, XML Sitemap (`/sitemap.xml`), and `robots.txt`.
+
+---
+
+## 🚀 Setup & Local Development
 
 ### 1. Prerequisites
-Ensure Node.js (v18.17.0 or higher) and npm are installed.
+- **Node.js** v18.17+ (v20+ recommended)
+- **npm** or **pnpm**
 
+### 2. Installation
 ```bash
-node -v
-npm -v
-```
+# Clone the repository
+git clone https://github.com/akhtarabdulmannan-lgtm/Final_Project.git
+cd Final_Project
 
-### 2. Install Dependencies
-```bash
+# Install dependencies
 npm install
 ```
 
-### 3. Start Development Server
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
@@ -90,70 +122,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### 4. Build for Production
 ```bash
 npm run build
-```
-Generates 42 static & dynamic pre-rendered routes with zero errors.
-
-### 5. Run Production Server
-```bash
-npm run start
-```
-Starts the production server on port 3000.
-
----
-
-## Project Structure
-
-```
-├── src/
-│   ├── app/
-│   │   ├── api/contact/route.ts        # Real contact backend API route (anti-spam)
-│   │   ├── blog/                       # Engineering blog index
-│   │   │   ├── page.tsx
-│   │   │   └── [slug]/page.tsx         # Dynamic article reader
-│   │   ├── company/page.tsx            # Company narrative, story, pillars & FAQ
-│   │   ├── contact/page.tsx            # Contact hub with global offices & FAQ
-│   │   ├── demos/                      # Interactive Demos & Labs
-│   │   │   ├── threat-monitor/page.tsx # ATOM Red Team Threat Monitor
-│   │   │   ├── intent-iq/page.tsx      # Buyer Intent IQ Simulator
-│   │   │   ├── infrastructure-atlas/   # Data Center & Fiber Map
-│   │   │   ├── voice-sentiment/        # Acoustic Voice & Tremor Analyzer
-│   │   │   ├── vector-search/          # Sub-50ms Vector Search
-│   │   │   └── emotion-ai/             # Multimodal Sentiment Visualizer
-│   │   ├── open-axiom/page.tsx         # Open-source catalog (skills, templates, tools)
-│   │   ├── resources/vendor-matrix/    # Enterprise AI Vendor Matrix with CSV export
-│   │   ├── services/[slug]/page.tsx    # 6 upgraded service pages (phases, deliverables, FAQs)
-│   │   ├── work/                       # Portfolio gallery with category filters
-│   │   │   ├── page.tsx
-│   │   │   └── [slug]/page.tsx         # 7 case study dossiers
-│   │   ├── globals.css                 # Shaders, glassmorphism, prefers-reduced-motion
-│   │   ├── layout.tsx                  # Global metadata, skip link, dark theme
-│   │   └── page.tsx                    # Landing page
-│   ├── components/
-│   │   ├── Navbar.tsx                  # Header with mega-menu, resources dropdown, mobile drawer
-│   │   ├── Hero.tsx                    # Light-ray hero with staggered text
-│   │   ├── LightRays.tsx               # Conic light ray shader backdrop
-│   │   ├── StatsSection.tsx            # Rolling-digit counters
-│   │   ├── RollingNumber.tsx           # Scroll-triggered counter primitive
-│   │   ├── ServicesGrid.tsx            # 6 service pillars
-│   │   ├── CaseStudies.tsx             # Featured client dossiers
-│   │   ├── LogoStrip.tsx               # Continuous marquee strip
-│   │   ├── ContactSection.tsx          # Validated contact form (connected to /api/contact)
-│   │   └── Footer.tsx                  # 5-column footer with dynamic live local clock
-│   └── data/
-│       ├── blog.ts                     # 4 technical blueprints & articles
-│       ├── caseStudies.ts              # Compatibility alias
-│       ├── clients.ts                  # 7 dummy client profiles & case studies
-│       ├── navigation.ts               # Nav links, dropdowns, footer columns
-│       ├── openSource.ts               # 9 open-source tools & templates
-│       ├── services.ts                 # 6 services with deliverables, phases & FAQs
-│       └── vendorMatrix.ts             # Comparison data for 7 AI platforms
-├── PROGRESS.md                         # Detailed phase-by-phase implementation log
-├── package.json
-├── tailwind.config.ts
-└── tsconfig.json
+npm start
 ```
 
 ---
 
-## License
-MIT License. 100% original code, copy, and architecture created for Axiom Labs.
+## 📄 License
+© 2026 VectisX Financial Inc. A subsidiary of Meridian Financial Corporation. All rights reserved.

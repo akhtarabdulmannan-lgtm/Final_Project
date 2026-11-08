@@ -1,115 +1,118 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import LightRays from "@/components/LightRays";
-import ContactSection from "@/components/ContactSection";
-import { ChevronDown, Clock, MapPin, Mail, ShieldCheck } from "lucide-react";
-
-const contactFaqs = [
-  {
-    q: "What is your typical project kickoff timeline?",
-    a: "Following an initial scoping call and technical requirements alignment, our sprint teams typically mobilize within 5 to 7 business days."
-  },
-  {
-    q: "Do you sign mutual NDAs before technical discussions?",
-    a: "Yes. We execute mutual non-disclosure agreements prior to reviewing any proprietary architectural specifications, database schemas, or training datasets."
-  },
-  {
-    q: "How do you handle team collaboration across time zones?",
-    a: "Our core engineering hubs are in San Francisco and London, providing continuous overlap across North American, European, and Asian business hours with direct Slack/Teams integration."
-  }
-];
+import { useState } from 'react';
+import { Mail, PhoneCall, MapPin, CheckCircle2, Clock, ShieldCheck } from 'lucide-react';
 
 export default function ContactPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [submitted, setSubmitted] = useState(false);
 
   return (
-    <>
-      <Navbar />
+    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+      <div className="container-vx">
+        <div className="max-w-3xl mb-12">
+          <span className="badge-brand">Global Assistance</span>
+          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
+            Get in Touch with VectisX
+          </h1>
+          <p className="text-surface-600 text-base mt-3 leading-relaxed">
+            Have questions about consumer transfers, business foreign exchange hedging, or API integration? Our global team is here to support you 24/7.
+          </p>
+        </div>
 
-      <main id="main-content" className="min-h-screen pt-24 relative overflow-hidden bg-[#030303] text-zinc-100">
-        <LightRays />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Contact Details */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="card p-6 bg-white space-y-3">
+              <div className="flex items-center gap-3 text-brand-600 font-bold text-sm">
+                <PhoneCall className="w-5 h-5" /> Phone Support
+              </div>
+              <p className="text-xs text-surface-500">Available 24 hours a day, 7 days a week.</p>
+              <div className="text-base font-bold font-mono text-surface-900">+1 (800) 555-8328</div>
+              <div className="text-xs text-surface-400">UK: +44 20 7946 0192 | International: +1 416 555 0199</div>
+            </div>
 
-        <ContactSection />
-
-        {/* Global Coordinates & FAQ Accordion Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Global Hubs */}
-            <div className="lg:col-span-5">
-              <span className="text-xs font-mono uppercase tracking-widest text-brand-primary font-semibold mb-3 block">
-                GLOBAL REACH
-              </span>
-              <h3 className="text-2xl font-bold text-white mb-6">
-                Distributed Engineering Studios
-              </h3>
-              <div className="space-y-4">
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-start gap-4">
-                  <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">San Francisco Hub</h4>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      Montgomery St, Financial District • Americas Engineering Lead
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-start gap-4">
-                  <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">London Hub</h4>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      Shoreditch High St, EC1 • EMEA Systems &amp; Compliance Studio
-                    </p>
-                  </div>
-                </div>
+            <div className="card p-6 bg-white space-y-3">
+              <div className="flex items-center gap-3 text-teal-600 font-bold text-sm">
+                <Mail className="w-5 h-5" /> Email Inquiries
+              </div>
+              <p className="text-xs text-surface-500">Average response time under 1 hour.</p>
+              <div className="text-xs space-y-1">
+                <div>Customer Support: <strong className="text-surface-900">support@vectisx.com</strong></div>
+                <div>Corporate FX Dealing: <strong className="text-surface-900">business@vectisx.com</strong></div>
+                <div>API & Integrations: <strong className="text-surface-900">api@vectisx.com</strong></div>
               </div>
             </div>
 
-            {/* Contact FAQs Accordion */}
-            <div className="lg:col-span-7">
-              <span className="text-xs font-mono uppercase tracking-widest text-brand-primary font-semibold mb-3 block">
-                ENGAGEMENT FAQ
-              </span>
-              <h3 className="text-2xl font-bold text-white mb-6">
-                Common Technical Inquiries
-              </h3>
-              <div className="space-y-3">
-                {contactFaqs.map((faq, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-2xl border border-white/[0.08] bg-white/[0.02] overflow-hidden"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                      className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
-                    >
-                      <span className="text-sm font-semibold text-white">
-                        {faq.q}
-                      </span>
-                      <ChevronDown
-                        className={`w-4 h-4 text-brand-primary shrink-0 transition-transform duration-200 ${
-                          openFaq === idx ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                    {openFaq === idx && (
-                      <div className="px-5 pb-5 text-xs text-zinc-400 leading-relaxed border-t border-white/[0.04] pt-3">
-                        {faq.a}
-                      </div>
-                    )}
-                  </div>
-                ))}
+            <div className="card p-6 bg-white space-y-3">
+              <div className="flex items-center gap-3 text-accent-600 font-bold text-sm">
+                <MapPin className="w-5 h-5" /> Global Headquarters
+              </div>
+              <p className="text-xs text-surface-700 leading-relaxed">
+                VectisX Financial Inc.<br />
+                120 Wall Street, 28th Floor<br />
+                New York, NY 10005, United States
+              </p>
+              <div className="text-[11px] text-surface-400 pt-2 border-t border-surface-100">
+                Additional offices in London, Toronto, Sydney, and Singapore.
               </div>
             </div>
           </div>
-        </div>
-      </main>
 
-      <Footer />
-    </>
+          {/* Contact Form */}
+          <div className="lg:col-span-7 card p-8 bg-white shadow-xl">
+            <h3 className="text-2xl font-bold font-heading text-surface-900 mb-2">Send Us a Direct Message</h3>
+            <p className="text-xs text-surface-500 mb-6">Fill in your information and our specialists will respond promptly.</p>
+
+            {submitted ? (
+              <div className="p-8 bg-emerald-50 text-emerald-800 rounded-2xl text-center space-y-3">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+                <h4 className="text-xl font-bold">Message Received</h4>
+                <p className="text-xs max-w-sm mx-auto">
+                  Thank you for reaching out. A ticket has been created and an assigned specialist will reply to your email shortly.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Full Name</label>
+                    <input type="text" required placeholder="Jane Doe" className="input-field text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Email Address</label>
+                    <input type="email" required placeholder="jane@example.com" className="input-field text-sm" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-surface-600 block mb-1">Topic / Inquiry Type</label>
+                  <select className="select-field text-sm font-semibold">
+                    <option>Personal Money Transfer Inquiry</option>
+                    <option>Corporate Treasury / FX Dealing Desk</option>
+                    <option>Developer API / Commercial Licensing</option>
+                    <option>Verification & KYC Questions</option>
+                    <option>Partnership / Media Inquiry</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-surface-600 block mb-1">Message</label>
+                  <textarea
+                    rows={4}
+                    required
+                    placeholder="Please describe how we can assist you..."
+                    className="input-field text-sm"
+                  />
+                </div>
+
+                <button type="submit" className="btn-primary w-full justify-center btn-lg">
+                  Submit Inquiry
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

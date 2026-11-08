@@ -1,168 +1,113 @@
-import React from "react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, ShieldCheck, HeartHandshake, Zap, Sparkles } from "lucide-react";
-import { siteMeta, principles } from "@/data/vectis";
+'use client';
 
-export const metadata: Metadata = {
-  title: "About Vectis Inc. — Software for Physical Operations",
-  description:
-    "Vectis Inc. builds focused software for operational businesses. Our engineering philosophy, four stubborn convictions, and dedication to physical commerce.",
-  alternates: {
-    canonical: "https://vectisoperations.tech/about",
-  },
-};
+import Link from 'next/link';
+import { Award, ShieldCheck, Globe2, Users, Building2, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function AboutPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    name: "About Vectis Inc.",
-    description: siteMeta.description,
-    mainEntity: {
-      "@type": "Organization",
-      name: siteMeta.name,
-      legalName: siteMeta.legalName,
-      url: "https://vectisoperations.tech",
-    },
-  };
+  const leadership = [
+    { name: 'Marcus Vance', role: 'Chief Executive Officer', bio: 'Former Managing Director of Global Forex Liquidity at Barclays with 24 years in international FX markets.' },
+    { name: 'Dr. Elena Rostova', role: 'Chief Technology Officer', bio: 'PhD in Distributed Systems from MIT; architected high-frequency algorithmic matching engines for global exchanges.' },
+    { name: 'Jonathan Pierce', role: 'Head of Global Compliance', bio: 'Former FinCEN regulatory advisor with two decades specializing in AML/BSA bank compliance.' },
+    { name: 'Aisha Al-Mansoor', role: 'VP of Institutional Treasury', bio: 'Spearheaded corporate cross-border payments for Fortune 500 multinationals across EMEA and APAC.' },
+  ];
+
+  const milestones = [
+    { year: '1993', event: 'VectisX founded as one of the internet’s earliest currency information websites.' },
+    { year: '2001', event: 'Launched the proprietary Rate Blender engine, aggregating interbank liquidity.' },
+    { year: '2010', event: 'Acquired by Meridian Financial Corporation (NASDAQ: MRDN) to expand global reach.' },
+    { year: '2018', event: 'Introduced zero-fee consumer remittances and the VectisX Multi-Currency Account.' },
+    { year: '2024', event: 'Surpassed $17B in annual transaction flow with 17,000+ active enterprise clients.' },
+  ];
 
   return (
-    <div className="w-full pt-32 pb-24">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      {/* Hero Narrative */}
-      <section className="mx-auto max-w-[1180px] px-5 md:px-8 mb-20">
-        <div className="max-w-3xl">
-          <span className="text-xs font-mono uppercase tracking-[0.2em] text-accent-amber block mb-6">
-            // About Vectis Inc.
-          </span>
-
-          <h1 className="text-4xl sm:text-6xl font-serif font-normal tracking-tight text-paper leading-[1.1]">
-            We build software for the businesses that keep the physical world moving.
+    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+      <div className="container-vx">
+        {/* Hero */}
+        <div className="max-w-3xl mb-16">
+          <span className="badge-brand">Our Legacy & Mission</span>
+          <h1 className="text-4xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
+            Thirty Years of Global Currency Intelligence
           </h1>
-
-          <p className="mt-8 text-lg sm:text-xl text-muted font-normal leading-relaxed">
-            Most technology companies build for people sitting in front of glass conference room whiteboards. We build for the people who manage loading docks, count cases in unheated warehouses, reconcile driver cash bags, and keep retail shelves stocked across cities.
+          <p className="text-surface-600 text-lg mt-4 leading-relaxed">
+            Founded in 1993, VectisX has spent over three decades democratizing foreign exchange. From displaying the world’s first digital currency conversion rates to orchestrating multi-billion dollar commercial payments, our commitment remains steadfast: absolute transparency, guaranteed mid-market rates, and institutional security.
           </p>
         </div>
-      </section>
 
-      {/* Origin Story Section */}
-      <section className="border-t border-white/[0.08] bg-ink-deep py-24">
-        <div className="mx-auto max-w-[1180px] px-5 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-            <div className="md:col-span-4">
-              <span className="text-[0.78rem] font-mono uppercase tracking-[0.18em] text-accent-amber">
-                // Where we began
-              </span>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-serif text-paper">
-                The Concrete Floor
-              </h2>
+        {/* Corporate Profile Card */}
+        <div className="card p-8 bg-brand-900 text-white rounded-3xl mb-16 shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="space-y-4">
+              <span className="text-xs font-bold text-teal-300 uppercase tracking-wider">A Meridian Financial Company</span>
+              <h3 className="text-2xl font-bold font-heading">Backed by Global Financial Infrastructure</h3>
+              <p className="text-xs text-surface-300 leading-relaxed">
+                VectisX operates as a wholly owned subsidiary of Meridian Financial Corporation (NASDAQ: MRDN), an international payments titan processing over $120B in consumer and enterprise transactions annually across 190+ jurisdictions.
+              </p>
             </div>
-
-            <div className="md:col-span-8 space-y-6 text-base sm:text-lg text-paper/80 font-normal leading-relaxed">
-              <p>
-                Vectis Inc. was formed out of a straightforward realization: the software running independent distribution businesses was fundamentally broken. Distributors were either trapped on fragile twenty-year-old DOS programs or coerced into massive cloud subscriptions that took fifteen clicks just to log a single broken bottle of soda.
-              </p>
-              <p>
-                When a distribution driver returns from an eight-hour route in heavy traffic, they do not have patience for web browsers that crash, spinning loading icons, or cloud authentication errors. They need a single, rock-solid desktop ledger that accepts keyboard entries as fast as their fingers can type.
-              </p>
-              <p>
-                That is why we started RouteCore. We sat in cashier booths, watched delivery trucks roll out at 6:00 AM, and built software specifically to withstand the frantic pace of the evening close.
-              </p>
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="text-2xl font-bold text-teal-400 font-mono">1993</div>
+                <div className="text-[11px] text-surface-300 mt-1">Established</div>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="text-2xl font-bold text-brand-400 font-mono">190+</div>
+                <div className="text-[11px] text-surface-300 mt-1">Countries</div>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="text-2xl font-bold text-accent-400 font-mono">220+</div>
+                <div className="text-[11px] text-surface-300 mt-1">Currencies</div>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="text-2xl font-bold text-teal-300 font-mono">SOC 2</div>
+                <div className="text-[11px] text-surface-300 mt-1">Type II Certified</div>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Four Stubborn Ideas */}
-      <section className="py-24 mx-auto max-w-[1180px] px-5 md:px-8">
+        {/* Timeline */}
+        <div className="card p-8 bg-white mb-16">
+          <h3 className="text-2xl font-bold font-heading text-surface-900 mb-8">Three Decades of Milestones</h3>
+          <div className="space-y-6">
+            {milestones.map((m, i) => (
+              <div key={i} className="flex items-start gap-4 pb-6 border-b border-surface-100 last:border-0 last:pb-0">
+                <div className="font-mono font-extrabold text-brand-600 text-lg w-16 flex-shrink-0">{m.year}</div>
+                <p className="text-sm text-surface-700 leading-relaxed">{m.event}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Leadership */}
         <div className="mb-16">
-          <span className="text-[0.78rem] font-mono uppercase tracking-[0.18em] text-accent-amber">
-            // Convictions
-          </span>
-          <h2 className="mt-3 text-3xl sm:text-5xl font-serif font-normal tracking-tight text-paper">
-            Four stubborn ideas.
-          </h2>
-          <p className="mt-3 text-base text-muted max-w-2xl">
-            These are the principles that dictate how we write every line of code at Vectis Inc.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          <div className="reveal rounded-xl border border-white/[0.08] bg-ink-card/40 p-8">
-            <span className="font-mono text-xs uppercase tracking-widest text-accent-amber block mb-3">
-              01 • Offline Resilience
-            </span>
-            <h3 className="text-xl font-medium text-paper mb-3">
-              Internet connections will fail. The software must not.
-            </h3>
-            <p className="text-sm text-muted leading-relaxed">
-              Warehouses have thick concrete walls and unpredictable utility grids. We build desktop-native software powered by local SQLite databases that run without an internet connection for days on end without losing a single transaction.
-            </p>
+          <div className="text-center max-w-xl mx-auto mb-10">
+            <h2 className="text-3xl font-heading font-bold text-surface-900">Executive Leadership</h2>
+            <p className="text-xs text-surface-500 mt-1">Seasoned finance veterans and distributed systems pioneers.</p>
           </div>
-
-          <div className="reveal rounded-xl border border-white/[0.08] bg-ink-card/40 p-8">
-            <span className="font-mono text-xs uppercase tracking-widest text-accent-amber block mb-3">
-              02 • Atomic Accountability
-            </span>
-            <h3 className="text-xl font-medium text-paper mb-3">
-              Every single rupee and carton must balance before the office locks.
-            </h3>
-            <p className="text-sm text-muted leading-relaxed">
-              We treat inventory and cash with forensic seriousness. Our ledgers are deterministic: stock loaded minus sales minus returns must equal physical vault balances. We don&apos;t hide accounting discrepancies behind fuzzy estimates.
-            </p>
-          </div>
-
-          <div className="reveal rounded-xl border border-white/[0.08] bg-ink-card/40 p-8">
-            <span className="font-mono text-xs uppercase tracking-widest text-accent-amber block mb-3">
-              03 • Ergonomic Speed
-            </span>
-            <h3 className="text-xl font-medium text-paper mb-3">
-              Keyboard velocity beats flashy design animations.
-            </h3>
-            <p className="text-sm text-muted leading-relaxed">
-              When an operator is entering three hundred invoices a night, every mouse click is lost time. We design interfaces optimized for rapid numeric keypads, instant tab-navigation, and sub-millisecond database commits.
-            </p>
-          </div>
-
-          <div className="reveal rounded-xl border border-white/[0.08] bg-ink-card/40 p-8">
-            <span className="font-mono text-xs uppercase tracking-widest text-accent-amber block mb-3">
-              04 • Direct Partnership
-            </span>
-            <h3 className="text-xl font-medium text-paper mb-3">
-              We stand next to the people using our tools.
-            </h3>
-            <p className="text-sm text-muted leading-relaxed">
-              We do not outsource our customer support to ticket queues. When a distributor has a question during an audit, they talk directly to the engineers who wrote the software. We iterate based on physical feedback, not marketing trends.
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {leadership.map(l => (
+              <div key={l.name} className="card p-6 bg-white space-y-2">
+                <div className="w-12 h-12 rounded-full bg-brand-100 text-brand-600 font-bold flex items-center justify-center text-lg mb-3">
+                  {l.name[0]}
+                </div>
+                <h4 className="font-bold text-surface-900 text-base">{l.name}</h4>
+                <div className="text-xs font-semibold text-brand-500">{l.role}</div>
+                <p className="text-xs text-surface-500 leading-relaxed pt-1">{l.bio}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
 
-      {/* Call to Action */}
-      <section className="py-16 border-t border-white/[0.08] bg-ink-deep">
-        <div className="mx-auto max-w-[1180px] px-5 md:px-8 text-center max-w-2xl">
-          <h2 className="text-2xl sm:text-3xl font-serif text-paper">
-            Want to see how our software works in real depots?
-          </h2>
-          <p className="mt-3 text-sm sm:text-base text-muted leading-relaxed">
-            Read case studies from independent distributors who run RouteCore every day.
-          </p>
-          <div className="mt-6 flex justify-center gap-4">
-            <Link
-              href="/clients"
-              className="inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3 text-xs font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-paper-muted"
-            >
-              Explore Client Stories
-            </Link>
+        {/* CTA */}
+        <div className="card p-8 bg-gradient-to-r from-brand-900 to-brand-950 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-2xl font-bold font-heading">Experience the VectisX difference</h3>
+            <p className="text-xs text-surface-300 mt-1">Start converting or sending money today with guaranteed mid-market rates.</p>
           </div>
+          <Link href="/register" className="btn-teal whitespace-nowrap">
+            Open Free Account <ArrowRight className="w-4 h-4 ml-1" />
+          </Link>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
