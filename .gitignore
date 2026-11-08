@@ -31,6 +31,7 @@ yarn-error.log*
 
 # Submission artifacts
 *.zip
+*_Report.pdf
 
 # TypeScript
 *.tsbuildinfo
