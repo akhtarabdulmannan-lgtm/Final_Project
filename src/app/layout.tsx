@@ -1,4 +1,9 @@
 import type { Metadata } from 'next';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/inter/800.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import './globals.css';
@@ -8,21 +13,21 @@ export const metadata: Metadata = {
     default: 'VectisX — Global Currency Intelligence | Live Exchange Rates & Money Transfers',
     template: '%s | VectisX',
   },
-  description: 'Get live exchange rates for 220+ currencies, send money to 190+ countries, set rate alerts, and access historical charts. Trusted by millions since 1993.',
+  description: 'Get live exchange rates for 220+ currencies, send money to 190+ countries, set rate alerts, and access historical charts. Powered by live REST APIs.',
   keywords: ['currency converter', 'exchange rates', 'money transfer', 'live rates', 'FX', 'currency data API'],
-  authors: [{ name: 'VectisX' }],
+  authors: [{ name: 'Abdul Mannan Akhtar' }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://vectisx.com',
+    url: 'https://vectisx.vercel.app',
     siteName: 'VectisX',
     title: 'VectisX — Global Currency Intelligence',
-    description: 'Live exchange rates, money transfers, rate alerts, and currency data for 220+ currencies.',
+    description: 'Live exchange rates, money transfers, rate alerts, and currency data powered by live financial APIs.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'VectisX — Global Currency Intelligence',
-    description: 'Live exchange rates, money transfers, and currency data for 220+ currencies.',
+    description: 'Live exchange rates, money transfers, and currency data.',
   },
   robots: {
     index: true,
