@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Bell, CheckCircle2, Trash2, AlertCircle, Loader2 } from 'lucide-react';
 import { currencies } from '@/data/currencies';
-import { getRate, formatRate } from '@/lib/rates';
+import { formatRate } from '@/lib/rates';
 import { getSupabaseClient } from '@/lib/supabase';
+import { useLiveRates } from '@/hooks/useLiveRates';
+import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
 import Accordion from '@/components/ui/Accordion';
 
 interface SavedAlert {
@@ -49,7 +51,8 @@ export default function AlertsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const currentRate = getRate(fromCode, toCode);
+  const { isLoading: ratesLoading, error: ratesError, source, lastUpdated, refresh, getLivePairRate } = useLiveRates(fromCode);
+  const currentRate = getLivePairRate(fromCode, toCode);
 
   const loadAlerts = useCallback(async () => {
     const supabase = getSupabaseClient();
@@ -176,6 +179,15 @@ export default function AlertsPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                <ApiStatusBanner
+                  isLoading={ratesLoading}
+                  error={ratesError}
+                  source={source}
+                  lastUpdated={lastUpdated}
+                  onRefresh={refresh}
+                  compact
+                />
+
                 {error && (
                   <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />

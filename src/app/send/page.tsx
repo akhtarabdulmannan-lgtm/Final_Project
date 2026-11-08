@@ -5,8 +5,9 @@ import { Send, CheckCircle2, ShieldCheck, Zap, Lock, Loader2, AlertCircle } from
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
 import Accordion from '@/components/ui/Accordion';
 import { currencies } from '@/data/currencies';
-import { getRate, formatRate, formatAmount } from '@/lib/rates';
+import { formatRate, formatAmount } from '@/lib/rates';
 import { getSupabaseClient } from '@/lib/supabase';
+import { useLiveRates } from '@/hooks/useLiveRates';
 
 interface TransferRecord {
   id: string;
@@ -63,7 +64,8 @@ export default function SendMoneyPage() {
   const [transferError, setTransferError] = useState<string | null>(null);
   const [completedRef, setCompletedRef] = useState<string | null>(null);
 
-  const rate = getRate('USD', recipientCurrency);
+  const { getLivePairRate } = useLiveRates('USD');
+  const rate = getLivePairRate('USD', recipientCurrency);
   const recipientGets = sendAmount * rate;
   const transferFee = sendAmount >= 5000 ? 0 : sendAmount >= 1000 ? 3.99 : 5.99;
   const promoDiscount = promoCode.trim().toUpperCase() === 'VXNEW100' && sendAmount >= 3000 ? 100 : 0;
@@ -436,7 +438,7 @@ export default function SendMoneyPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {corridors.map((c) => {
-              const liveRate = getRate('USD', c.currency);
+              const liveRate = getLivePairRate('USD', c.currency);
               return (
                 <div key={c.country} className="card p-5 bg-white space-y-3">
                   <div className="flex items-center justify-between">

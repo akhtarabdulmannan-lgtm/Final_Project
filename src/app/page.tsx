@@ -7,14 +7,17 @@ import {
 } from 'lucide-react';
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
 import { currencies, popularPairs } from '@/data/currencies';
-import { getRate, formatRate, formatAmount, get24hChange } from '@/lib/rates';
+import { formatRate, formatAmount, get24hChange } from '@/lib/rates';
+import { useLiveRates } from '@/hooks/useLiveRates';
 import { useCountUp } from '@/hooks';
 import { useState } from 'react';
 
 export default function HomePage() {
   const [baseCurrency, setBaseCurrency] = useState('USD');
   const [isInverse, setIsInverse] = useState(false);
+  const { isLoading, error, source, lastUpdated, refresh, getLivePairRate } = useLiveRates(baseCurrency);
 
   const { ref: statsRef, value: businessCount } = useCountUp(17000, 2000);
   const { value: volumeCount } = useCountUp(17, 2000);
@@ -75,7 +78,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {popularPairs.slice(0, 8).map(([from, to]) => {
-              const rate = getRate(from, to);
+              const rate = getLivePairRate(from, to);
               const change = get24hChange(from, to);
               const isPositive = change >= 0;
 
@@ -290,6 +293,16 @@ export default function HomePage() {
             </div>
           </div>
 
+          <div className="mb-4">
+            <ApiStatusBanner
+              isLoading={isLoading}
+              error={error}
+              source={source}
+              lastUpdated={lastUpdated}
+              onRefresh={refresh}
+            />
+          </div>
+
           <div className="overflow-x-auto rounded-2xl border border-surface-200 shadow-sm">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -303,7 +316,7 @@ export default function HomePage() {
               </thead>
               <tbody className="divide-y divide-surface-100 text-sm">
                 {previewCurrencies.map((c) => {
-                  const rawRate = getRate(baseCurrency, c.code);
+                  const rawRate = getLivePairRate(baseCurrency, c.code);
                   const displayRate = isInverse ? (1 / rawRate) : rawRate;
                   const change = get24hChange(baseCurrency, c.code);
                   const isPositive = change >= 0;

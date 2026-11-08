@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { ArrowLeftRight, TrendingUp, Bell, Send, ChevronDown, Search, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { currencies, getCurrency, searchCurrencies } from '@/data/currencies';
-import { getRate, formatRate, formatAmount, get24hChange } from '@/lib/rates';
+import { formatRate, formatAmount, get24hChange } from '@/lib/rates';
 import { getSupabaseClient } from '@/lib/supabase';
+import { useLiveRates } from '@/hooks/useLiveRates';
+import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
 import Link from 'next/link';
 
 type Tab = 'convert' | 'send' | 'charts' | 'alerts';
@@ -32,6 +34,9 @@ export default function CurrencyConverter({
   const [pickerOpen, setPickerOpen] = useState<'from' | 'to' | null>(null);
   const [pickerSearch, setPickerSearch] = useState('');
 
+  // Live REST API rates via async/await fetch
+  const { isLoading, error, source, lastUpdated, refresh, getLivePairRate } = useLiveRates(fromCode);
+
   // Quick alert state
   const [alertTarget, setAlertTarget] = useState('');
   const [alertEmail, setAlertEmail] = useState('');
@@ -39,9 +44,9 @@ export default function CurrencyConverter({
   const [alertSaved, setAlertSaved] = useState(false);
   const [alertError, setAlertError] = useState<string | null>(null);
 
-  const rate = getRate(fromCode, toCode);
+  const rate = getLivePairRate(fromCode, toCode);
   const result = amount * rate;
-  const inverseRate = 1 / rate;
+  const inverseRate = rate > 0 ? 1 / rate : 0;
   const change = get24hChange(fromCode, toCode);
   const fromCurrency = getCurrency(fromCode);
   const toCurrency = getCurrency(toCode);
@@ -73,7 +78,7 @@ export default function CurrencyConverter({
     setAlertSaving(true);
     try {
       const { data: userData } = await supabase.auth.getUser();
-      const { error } = await supabase.from('rate_alerts').insert({
+      const { error: insertError } = await supabase.from('rate_alerts').insert({
         user_id: userData.user?.id ?? null,
         email: alertEmail.trim().toLowerCase(),
         from_currency: fromCode,
@@ -81,8 +86,8 @@ export default function CurrencyConverter({
         direction: numericTarget >= rate ? 'above' : 'below',
         target_rate: numericTarget,
       });
-      if (error) {
-        setAlertError(error.message);
+      if (insertError) {
+        setAlertError(insertError.message);
         return;
       }
       setAlertSaved(true);
@@ -105,7 +110,7 @@ export default function CurrencyConverter({
     : currencies;
 
   return (
-    <div className={`bg-white rounded-3xl shadow-2xl shadow-brand-900/10 border border-surface-200 overflow-hidden ${compact ? '' : 'max-w-xl w-full'}`}>
+    <div className={`bg-white rounded-3xl shadow-2xl shadow-brand-900/10 border border-surface-200 overflow-hidden text-surface-900 ${compact ? '' : 'max-w-xl w-full'}`}>
       {/* Tabs */}
       <div className="flex border-b border-surface-100">
         {tabs.map((tab) => (
@@ -128,6 +133,15 @@ export default function CurrencyConverter({
       {activeTab === 'convert' && (
         <div className="p-5 sm:p-6">
           <div className="space-y-4">
+            <ApiStatusBanner
+              isLoading={isLoading}
+              error={error}
+              source={source}
+              lastUpdated={lastUpdated}
+              onRefresh={refresh}
+              compact
+            />
+
             {/* Amount input */}
             <div>
               <label className="text-xs font-medium text-surface-500 mb-1.5 block">Amount</label>
@@ -150,6 +164,7 @@ export default function CurrencyConverter({
               <div className="flex-1">
                 <label className="text-xs font-medium text-surface-500 mb-1.5 block">From</label>
                 <button
+                  type="button"
                   onClick={() => { setPickerOpen('from'); setPickerSearch(''); }}
                   className="input-field flex items-center gap-2 text-left"
                 >
@@ -161,6 +176,7 @@ export default function CurrencyConverter({
               </div>
 
               <button
+                type="button"
                 onClick={handleSwap}
                 className={`mb-0.5 w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center hover:bg-brand-100 transition-all duration-200 flex-shrink-0 ${
                   isSwapping ? 'animate-swap-rotate' : ''
@@ -173,6 +189,7 @@ export default function CurrencyConverter({
               <div className="flex-1">
                 <label className="text-xs font-medium text-surface-500 mb-1.5 block">To</label>
                 <button
+                  type="button"
                   onClick={() => { setPickerOpen('to'); setPickerSearch(''); }}
                   className="input-field flex items-center gap-2 text-left"
                 >
@@ -201,13 +218,13 @@ export default function CurrencyConverter({
                 <span className={`text-xs font-medium ${change >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
                   {change >= 0 ? '▲' : '▼'} {Math.abs(change).toFixed(2)}% (24h)
                 </span>
-                <span className="badge-teal text-[10px]">Mid-market rate</span>
+                <span className="badge-teal text-[10px]">Live Mid-Market Rate</span>
               </div>
             </div>
 
             {/* CTA */}
             <div className="flex gap-2">
-              <Link href={`/converter/${fromCode.toLowerCase()}-to-${toCode.toLowerCase()}`} className="btn-primary flex-1 justify-center">
+              <Link href="/charts" className="btn-primary flex-1 justify-center">
                 View Full Chart
               </Link>
               <Link href="/send" className="btn-secondary flex-1 justify-center">
@@ -237,6 +254,7 @@ export default function CurrencyConverter({
                   />
                 </div>
                 <button
+                  type="button"
                   onClick={() => { setPickerOpen('from'); setPickerSearch(''); }}
                   className="input-field w-28 flex items-center gap-1.5 justify-center"
                 >
@@ -267,6 +285,7 @@ export default function CurrencyConverter({
                   />
                 </div>
                 <button
+                  type="button"
                   onClick={() => { setPickerOpen('to'); setPickerSearch(''); }}
                   className="input-field w-28 flex items-center gap-1.5 justify-center"
                 >
@@ -304,7 +323,7 @@ export default function CurrencyConverter({
               {fromCode}/{toCode} Charts
             </h3>
             <p className="text-sm text-surface-500 mb-4">
-              Track exchange rate trends with interactive charts spanning 1 day to 10 years.
+              Track live and historical exchange rate trends spanning 1 week to 10 years.
             </p>
             <Link
               href={`/charts?from=${fromCode}&to=${toCode}`}
@@ -401,7 +420,7 @@ export default function CurrencyConverter({
                 <h3 className="font-heading font-bold text-surface-900">
                   Select {pickerOpen === 'from' ? 'source' : 'target'} currency
                 </h3>
-                <button onClick={() => setPickerOpen(null)} className="p-1 hover:bg-surface-100 rounded-lg">
+                <button type="button" onClick={() => setPickerOpen(null)} className="p-1 hover:bg-surface-100 rounded-lg">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -420,6 +439,7 @@ export default function CurrencyConverter({
             <div className="overflow-y-auto flex-1 p-2">
               {filteredCurrencies.map((c) => (
                 <button
+                  type="button"
                   key={c.code}
                   onClick={() => {
                     if (pickerOpen === 'from') setFromCode(c.code);
