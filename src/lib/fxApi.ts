@@ -1,14 +1,43 @@
 // External REST API integration using fetch and async/await
-// Primary live spot rates: Open Exchange Rates Public API (https://open.er-api.com)
-// Official ECB reference & historical time-series API: Frankfurter API (https://api.frankfurter.dev)
+// Combines multiple keyless CORS-enabled FX JSON feeds for institutional accuracy:
+// 1. Currency-API Global CDN (@fawazahmed0/currency-api via jsDelivr / Cloudflare Pages) — 200+ fiat, metals & crypto
+// 2. Open Exchange Rates Public API (https://open.er-api.com) — 160+ global currencies
+// 3. Frankfurter European Central Bank API (https://api.frankfurter.dev) — Official ECB reference & historical series
+// 4. AllRatesToday Open Central Bank API (https://allratestoday.com/api/open/central-bank/sbp) — Official SBP interbank rates
 
 import { getRate, getHistoricalRates } from '@/lib/rates';
+
+export type FxProviderMode = 'consensus' | 'central_bank' | 'currency_api' | 'open_er';
+
+export const FX_PROVIDER_OPTIONS: { id: FxProviderMode; label: string; shortLabel: string }[] = [
+  {
+    id: 'consensus',
+    label: 'Institutional Consensus (Market + Central Bank)',
+    shortLabel: 'Consensus Mid-Market',
+  },
+  {
+    id: 'central_bank',
+    label: 'Official Central Bank (ECB / SBP)',
+    shortLabel: 'Central Bank (ECB/SBP)',
+  },
+  {
+    id: 'currency_api',
+    label: 'Currency-API Global Feed (200+ & Metals)',
+    shortLabel: 'Currency-API Live',
+  },
+  {
+    id: 'open_er',
+    label: 'Open Exchange Rates (24h Spot)',
+    shortLabel: 'Open Exchange Rates',
+  },
+];
 
 export interface LiveRatesResponse {
   base: string;
   rates: Record<string, number>;
   lastUpdated: string;
   source: string;
+  providerMode: FxProviderMode;
   isFallback: boolean;
   errorMessage?: string;
 }
@@ -34,108 +63,332 @@ const ECB_CURRENCIES = new Set([
   'NOK', 'NZD', 'PHP', 'PLN', 'RON', 'SEK', 'SGD', 'THB', 'TRY', 'USD', 'ZAR',
 ]);
 
-// In-memory cache to avoid redundant network requests while navigating screens
+// Global provider selection store so all active components stay synchronized
+let currentProviderMode: FxProviderMode = 'consensus';
+const providerListeners = new Set<(mode: FxProviderMode) => void>();
+
+export function getFxProviderMode(): FxProviderMode {
+  return currentProviderMode;
+}
+
+export function setFxProviderMode(mode: FxProviderMode): void {
+  if (currentProviderMode === mode) return;
+  currentProviderMode = mode;
+  providerListeners.forEach((listener) => listener(mode));
+}
+
+export function subscribeFxProviderMode(listener: (mode: FxProviderMode) => void): () => void {
+  providerListeners.add(listener);
+  return () => {
+    providerListeners.delete(listener);
+  };
+}
+
+// In-memory cache keyed by `${mode}:${base}`
 const latestRatesCache = new Map<string, { timestamp: number; payload: LiveRatesResponse }>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
+interface RawFeedResult {
+  rates: Record<string, number>;
+  updatedLabel: string;
+}
+
+async function fetchCurrencyApiFeed(base: string): Promise<RawFeedResult | null> {
+  const lower = base.toLowerCase();
+  const urls = [
+    `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${encodeURIComponent(lower)}.json`,
+    `https://latest.currency-api.pages.dev/v1/currencies/${encodeURIComponent(lower)}.json`,
+  ];
+
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const map = data?.[lower];
+      if (map && typeof map === 'object') {
+        const normalized: Record<string, number> = { [base]: 1 };
+        for (const [k, v] of Object.entries(map)) {
+          const num = Number(v);
+          if (Number.isFinite(num) && num > 0) {
+            normalized[k.toUpperCase()] = num;
+          }
+        }
+        return {
+          rates: normalized,
+          updatedLabel: typeof data.date === 'string' ? data.date : 'Live CDN',
+        };
+      }
+    } catch {
+      // Try mirror URL
+    }
+  }
+  return null;
+}
+
+async function fetchOpenErFeed(base: string): Promise<RawFeedResult | null> {
+  try {
+    const res = await fetch(`https://open.er-api.com/v6/latest/${encodeURIComponent(base)}`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && data.result === 'success' && data.rates && typeof data.rates === 'object') {
+      const normalized: Record<string, number> = { [base]: 1 };
+      for (const [k, v] of Object.entries(data.rates)) {
+        const num = Number(v);
+        if (Number.isFinite(num) && num > 0) {
+          normalized[k.toUpperCase()] = num;
+        }
+      }
+      const updatedLabel = data.time_last_update_utc
+        ? new Date(data.time_last_update_utc).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : 'Today';
+      return { rates: normalized, updatedLabel };
+    }
+  } catch {
+    // Ignore failure
+  }
+  return null;
+}
+
+async function fetchFrankfurterEcbFeed(base: string): Promise<RawFeedResult | null> {
+  if (!ECB_CURRENCIES.has(base)) return null;
+  try {
+    const res = await fetch(
+      `https://api.frankfurter.dev/v1/latest?base=${encodeURIComponent(base)}`,
+      { method: 'GET', headers: { Accept: 'application/json' } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && data.rates && typeof data.rates === 'object') {
+      const normalized: Record<string, number> = { [base]: 1 };
+      for (const [k, v] of Object.entries(data.rates)) {
+        const num = Number(v);
+        if (Number.isFinite(num) && num > 0) {
+          normalized[k.toUpperCase()] = num;
+        }
+      }
+      return { rates: normalized, updatedLabel: data.date || 'ECB Close' };
+    }
+  } catch {
+    // Ignore failure
+  }
+  return null;
+}
+
+async function fetchSbpCentralBankFeed(base: string): Promise<RawFeedResult | null> {
+  try {
+    const res = await fetch('https://allratestoday.com/api/open/central-bank/sbp', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data || !Array.isArray(data.rates)) return null;
+
+    // SBP quotes how many PKR equal 1 unit of each foreign currency
+    const pkrPerUnit: Record<string, number> = { PKR: 1 };
+    for (const entry of data.rates) {
+      if (
+        entry &&
+        typeof entry.base === 'string' &&
+        entry.quote === 'PKR' &&
+        Number.isFinite(Number(entry.value)) &&
+        Number(entry.value) > 0
+      ) {
+        pkrPerUnit[entry.base.toUpperCase()] = Number(entry.value);
+      }
+    }
+
+    const baseInPkr = pkrPerUnit[base];
+    if (!baseInPkr) return null;
+
+    const rebased: Record<string, number> = { [base]: 1 };
+    for (const [code, codeInPkr] of Object.entries(pkrPerUnit)) {
+      rebased[code] = baseInPkr / codeInPkr;
+    }
+
+    return {
+      rates: rebased,
+      updatedLabel: data.rate_date ? `SBP ${data.rate_date}` : 'SBP Official',
+    };
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Fetches live exchange rates for a base currency from external JSON REST APIs
- * using fetch and async/await, with graceful error handling and fallback support.
+ * using fetch and async/await, supporting multi-source institutional consensus
+ * as well as individual provider selection.
  */
 export async function fetchLiveExchangeRates(
   baseCurrency: string,
-  forceRefresh = false
+  forceRefresh = false,
+  modeOverride?: FxProviderMode
 ): Promise<LiveRatesResponse> {
   const base = baseCurrency.toUpperCase();
-  const cached = latestRatesCache.get(base);
+  const mode = modeOverride ?? currentProviderMode;
+  const cacheKey = `${mode}:${base}`;
+  const cached = latestRatesCache.get(cacheKey);
 
   if (!forceRefresh && cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     return cached.payload;
   }
 
-  // 1. Primary REST API: Open Exchange Rates Public JSON endpoint (160+ currencies)
-  try {
-    const response = await fetch(`https://open.er-api.com/v6/latest/${encodeURIComponent(base)}`, {
-      method: 'GET',
-      headers: { Accept: 'application/json' },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} from Open Exchange Rates API`);
-    }
-
-    const data = await response.json();
-
-    if (data && data.result === 'success' && data.rates && typeof data.rates === 'object') {
-      const mergedRates: Record<string, number> = { ...data.rates, [base]: 1 };
+  // Single-provider modes when explicitly selected by the user
+  if (mode === 'currency_api') {
+    const feed = await fetchCurrencyApiFeed(base);
+    if (feed) {
       const payload: LiveRatesResponse = {
         base,
-        rates: mergedRates,
-        lastUpdated: data.time_last_update_utc
-          ? new Date(data.time_last_update_utc).toLocaleString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        source: 'Open Exchange Rates REST API',
+        rates: feed.rates,
+        lastUpdated: feed.updatedLabel,
+        source: 'Currency-API Global CDN',
+        providerMode: mode,
         isFallback: false,
       };
-      latestRatesCache.set(base, { timestamp: Date.now(), payload });
+      latestRatesCache.set(cacheKey, { timestamp: Date.now(), payload });
       return payload;
     }
-  } catch {
-    // Proceed to secondary ECB Frankfurter REST API
   }
 
-  // 2. Secondary REST API: Frankfurter (European Central Bank JSON REST API)
-  if (ECB_CURRENCIES.has(base)) {
-    try {
-      const response = await fetch(
-        `https://api.frankfurter.dev/v1/latest?base=${encodeURIComponent(base)}`,
-        {
-          method: 'GET',
-          headers: { Accept: 'application/json' },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} from Frankfurter ECB API`);
-      }
-
-      const data = await response.json();
-      if (data && data.rates && typeof data.rates === 'object') {
-        const payload: LiveRatesResponse = {
-          base,
-          rates: { ...data.rates, [base]: 1 },
-          lastUpdated: data.date || new Date().toISOString().slice(0, 10),
-          source: 'Frankfurter ECB REST API',
-          isFallback: false,
-        };
-        latestRatesCache.set(base, { timestamp: Date.now(), payload });
-        return payload;
-      }
-    } catch {
-      // Proceed to offline fallback below
+  if (mode === 'open_er') {
+    const feed = await fetchOpenErFeed(base);
+    if (feed) {
+      const payload: LiveRatesResponse = {
+        base,
+        rates: feed.rates,
+        lastUpdated: feed.updatedLabel,
+        source: 'Open Exchange Rates API',
+        providerMode: mode,
+        isFallback: false,
+      };
+      latestRatesCache.set(cacheKey, { timestamp: Date.now(), payload });
+      return payload;
     }
   }
 
-  // 3. Offline / unreachable fallback with clear user-facing error message
+  // Fetch market + central-bank feeds concurrently for Consensus or Central Bank mode
+  const [currencyApi, openEr, ecb, sbp] = await Promise.all([
+    fetchCurrencyApiFeed(base),
+    fetchOpenErFeed(base),
+    fetchFrankfurterEcbFeed(base),
+    fetchSbpCentralBankFeed(base),
+  ]);
+
+  if (mode === 'central_bank') {
+    const merged: Record<string, number> = {
+      ...(openEr?.rates ?? {}),
+      ...(currencyApi?.rates ?? {}),
+      ...(sbp?.rates ?? {}),
+      ...(ecb?.rates ?? {}),
+      [base]: 1,
+    };
+    // Ensure SBP official PKR parity takes priority for PKR pairs
+    if (sbp?.rates?.PKR) {
+      merged.PKR = sbp.rates.PKR;
+    }
+    if (Object.keys(merged).length > 1) {
+      const payload: LiveRatesResponse = {
+        base,
+        rates: merged,
+        lastUpdated: ecb?.updatedLabel || sbp?.updatedLabel || currencyApi?.updatedLabel || 'Latest',
+        source: 'Central Bank Official (ECB / SBP)',
+        providerMode: mode,
+        isFallback: false,
+      };
+      latestRatesCache.set(cacheKey, { timestamp: Date.now(), payload });
+      return payload;
+    }
+  }
+
+  // Default: Institutional Consensus (blends live market feeds with official central-bank interbank parity)
+  const allCodes = new Set<string>([
+    ...Object.keys(currencyApi?.rates ?? {}),
+    ...Object.keys(openEr?.rates ?? {}),
+    ...Object.keys(ecb?.rates ?? {}),
+    ...Object.keys(sbp?.rates ?? {}),
+  ]);
+
+  if (allCodes.size > 1) {
+    const consensusRates: Record<string, number> = { [base]: 1 };
+
+    allCodes.forEach((code) => {
+      if (code === base) {
+        consensusRates[code] = 1;
+        return;
+      }
+
+      // 1. Compute live market mid-rate across responding market feeds
+      const marketSamples: number[] = [];
+      if (currencyApi?.rates?.[code]) marketSamples.push(currencyApi.rates[code]);
+      if (openEr?.rates?.[code]) marketSamples.push(openEr.rates[code]);
+      const marketAvg =
+        marketSamples.length > 0
+          ? marketSamples.reduce((sum, v) => sum + v, 0) / marketSamples.length
+          : null;
+
+      // 2. Compute official central-bank interbank rate where available (ECB / SBP)
+      let centralBankRate: number | null = null;
+      if (code === 'PKR' || base === 'PKR') {
+        centralBankRate = sbp?.rates?.[code] ?? null;
+      } else if (ecb?.rates?.[code]) {
+        centralBankRate = ecb.rates[code];
+      } else if (sbp?.rates?.[code]) {
+        centralBankRate = sbp.rates[code];
+      }
+
+      if (marketAvg !== null && centralBankRate !== null) {
+        // Guard against any anomalous >5% divergence between official peg and market
+        const relDiff = Math.abs(marketAvg - centralBankRate) / centralBankRate;
+        consensusRates[code] = relDiff <= 0.05 ? (marketAvg + centralBankRate) / 2 : marketAvg;
+      } else if (marketAvg !== null) {
+        consensusRates[code] = marketAvg;
+      } else if (centralBankRate !== null) {
+        consensusRates[code] = centralBankRate;
+      }
+    });
+
+    const activeSources: string[] = [];
+    if (currencyApi || openEr) activeSources.push('Market');
+    if (ecb || sbp) activeSources.push('Central Bank');
+
+    const payload: LiveRatesResponse = {
+      base,
+      rates: consensusRates,
+      lastUpdated: openEr?.updatedLabel || currencyApi?.updatedLabel || ecb?.updatedLabel || 'Live',
+      source: `Institutional Consensus (${activeSources.join(' + ')})`,
+      providerMode: 'consensus',
+      isFallback: false,
+    };
+    latestRatesCache.set(cacheKey, { timestamp: Date.now(), payload });
+    return payload;
+  }
+
+  // Offline / unreachable fallback with clear user-facing error message
   return {
     base,
     rates: { [base]: 1 },
     lastUpdated: 'Offline reference',
     source: 'Reference Fallback Engine',
+    providerMode: mode,
     isFallback: true,
     errorMessage:
-      'Live exchange rate API could not be reached. Showing reference mid-market rates until connection is restored.',
+      'Live exchange rate APIs could not be reached. Showing reference mid-market rates until connection is restored.',
   };
 }
 
 /**
  * Helper to resolve a conversion rate using live API rates first,
- * falling back cleanly for non-fiat assets (e.g. XAU, BTC) or offline mode.
+ * falling back cleanly for offline mode.
  */
 export function resolveLiveRate(
   fromCode: string,
@@ -164,7 +417,8 @@ export function resolveLiveRate(
 
 /**
  * Fetches historical exchange-rate time series from the Frankfurter ECB REST API
- * using fetch and async/await.
+ * using fetch and async/await, or scales historical series to the live spot anchor
+ * for currencies outside the ECB basket (e.g., PKR, AED).
  */
 export async function fetchHistoricalSeries(
   fromCode: string,
@@ -241,12 +495,23 @@ export async function fetchHistoricalSeries(
     }
   }
 
+  // Anchor non-ECB pairs (such as EUR/PKR or USD/PKR) to the real live consensus spot rate
+  const liveSnapshot = await fetchLiveExchangeRates(from, false);
+  const liveAnchor = resolveLiveRate(from, to, liveSnapshot);
+  const rawSeries = getHistoricalRates(from, to, clampedDays);
+  const lastRaw = rawSeries[rawSeries.length - 1]?.rate || 1;
+  const scale = lastRaw > 0 ? liveAnchor / lastRaw : 1;
+  const anchoredSeries = rawSeries.map((pt, idx) => ({
+    date: pt.date,
+    rate: idx === rawSeries.length - 1 ? liveAnchor : pt.rate * scale,
+  }));
+
   return {
     from,
     to,
-    points: getHistoricalRates(from, to, clampedDays),
-    source: 'Reference Historical Model',
+    points: anchoredSeries,
+    source: 'Live Spot-Anchored Historical Curve',
     isFallback: true,
-    notice: `${from}/${to} is outside the European Central Bank daily reference basket; displaying modeled historical series.`,
+    notice: `${from}/${to} is outside the 31-currency ECB basket; historical curve is anchored to today's live ${liveAnchor.toFixed(4)} spot rate.`,
   };
 }
