@@ -2,23 +2,50 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, ChevronDown, ArrowRight, Globe, User, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Menu, X, ChevronDown, ArrowRight, Globe, User, Zap, LogOut, Bell } from 'lucide-react';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { personalNav, businessNav } from '@/data/navigation';
 import { useStickyHeader } from '@/hooks';
 import { NavItem, UserMode } from '@/types';
+import { getSupabaseClient } from '@/lib/supabase';
 
 export default function Header() {
+  const router = useRouter();
   const [mode, setMode] = useState<UserMode>('personal');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [authUser, setAuthUser] = useState<SupabaseUser | null>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const isSticky = useStickyHeader();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const nav = mode === 'personal' ? personalNav : businessNav;
+
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    supabase.auth.getUser().then(({ data }) => {
+      setAuthUser(data.user ?? null);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAuthUser(session?.user ?? null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setActiveDropdown(null);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -30,6 +57,22 @@ export default function Header() {
     else document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
+
+  const handleSignOut = async () => {
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    setUserMenuOpen(false);
+    setMobileOpen(false);
+    router.refresh();
+  };
+
+  const displayName =
+    (authUser?.user_metadata?.full_name as string | undefined) ||
+    (authUser?.user_metadata?.company_name as string | undefined) ||
+    authUser?.email?.split('@')[0] ||
+    'Account';
 
   return (
     <>
@@ -141,12 +184,58 @@ export default function Header() {
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
-              <Link href="/login" className="hidden sm:flex btn-ghost text-sm">
-                <User className="w-4 h-4" /> Log in
-              </Link>
-              <Link href="/register" className="hidden sm:flex btn-primary btn-sm">
-                Register
-              </Link>
+              {authUser ? (
+                <div className="relative hidden sm:block" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen((v) => !v)}
+                    className="flex items-center gap-2 rounded-xl border border-surface-200 bg-surface-50 px-3 py-2 text-xs font-semibold text-surface-800 hover:border-brand-300 transition-colors"
+                  >
+                    <span className="w-6 h-6 rounded-full bg-brand-500 text-white flex items-center justify-center text-[11px] font-bold uppercase">
+                      {displayName.slice(0, 1)}
+                    </span>
+                    <span className="max-w-[140px] truncate">{displayName}</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-surface-400" />
+                  </button>
+
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-white border border-surface-200 shadow-xl p-2 z-50">
+                      <div className="px-3 py-2 border-b border-surface-100">
+                        <div className="text-xs font-bold text-surface-900 truncate">{displayName}</div>
+                        <div className="text-[11px] text-surface-500 truncate">{authUser.email}</div>
+                      </div>
+                      <Link
+                        href="/alerts"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-surface-700 hover:bg-surface-50 hover:text-brand-500 rounded-xl mt-1"
+                      >
+                        <Bell className="w-3.5 h-3.5" /> My Rate Alerts
+                      </Link>
+                      <Link
+                        href="/send"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-surface-700 hover:bg-surface-50 hover:text-brand-500 rounded-xl"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5" /> Send Money
+                      </Link>
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-xl mt-1"
+                      >
+                        <LogOut className="w-3.5 h-3.5" /> Sign out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link href="/login" className="hidden sm:flex btn-ghost text-sm">
+                    <User className="w-4 h-4" /> Log in
+                  </Link>
+                  <Link href="/register" className="hidden sm:flex btn-primary btn-sm">
+                    Register
+                  </Link>
+                </>
+              )}
               <button
                 onClick={() => setMobileOpen(true)}
                 className="lg:hidden p-2 rounded-lg hover:bg-surface-100 transition-colors"
@@ -209,12 +298,29 @@ export default function Header() {
 
             {/* Mobile CTA */}
             <div className="p-4 border-t border-surface-100 space-y-2">
-              <Link href="/register" className="btn-primary w-full justify-center" onClick={() => setMobileOpen(false)}>
-                Register Free
-              </Link>
-              <Link href="/login" className="btn-secondary w-full justify-center" onClick={() => setMobileOpen(false)}>
-                Log in
-              </Link>
+              {authUser ? (
+                <>
+                  <div className="px-3 py-2 rounded-xl bg-surface-50 text-xs">
+                    <div className="font-bold text-surface-900 truncate">{displayName}</div>
+                    <div className="text-surface-500 truncate">{authUser.email}</div>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="btn-secondary w-full justify-center"
+                  >
+                    <LogOut className="w-4 h-4" /> Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/register" className="btn-primary w-full justify-center" onClick={() => setMobileOpen(false)}>
+                    Register Free
+                  </Link>
+                  <Link href="/login" className="btn-secondary w-full justify-center" onClick={() => setMobileOpen(false)}>
+                    Log in
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

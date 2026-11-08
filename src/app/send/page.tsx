@@ -1,12 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Send, CheckCircle2, ShieldCheck, Zap, Globe2, ArrowRight, Clock, DollarSign, Lock } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Send, CheckCircle2, ShieldCheck, Zap, Lock, Loader2, AlertCircle } from 'lucide-react';
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
 import Accordion from '@/components/ui/Accordion';
 import { currencies } from '@/data/currencies';
 import { getRate, formatRate, formatAmount } from '@/lib/rates';
+import { getSupabaseClient } from '@/lib/supabase';
+
+interface TransferRecord {
+  id: string;
+  recipient_name: string;
+  from_currency: string;
+  to_currency: string;
+  send_amount: number;
+  recipient_amount: number;
+  status: string;
+  created_at: string;
+}
 
 const corridors = [
   { country: 'India', flag: '🇮🇳', currency: 'INR', speed: 'Within minutes', minFee: '$0' },
@@ -41,10 +52,106 @@ const sendFaqs = [
 export default function SendMoneyPage() {
   const [sendAmount, setSendAmount] = useState(2500);
   const [recipientCurrency, setRecipientCurrency] = useState('EUR');
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [recipientIban, setRecipientIban] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
+  const [promoCode, setPromoCode] = useState('');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [recentTransfers, setRecentTransfers] = useState<TransferRecord[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [transferError, setTransferError] = useState<string | null>(null);
+  const [completedRef, setCompletedRef] = useState<string | null>(null);
 
   const rate = getRate('USD', recipientCurrency);
   const recipientGets = sendAmount * rate;
   const transferFee = sendAmount >= 5000 ? 0 : sendAmount >= 1000 ? 3.99 : 5.99;
+  const promoDiscount = promoCode.trim().toUpperCase() === 'VXNEW100' && sendAmount >= 3000 ? 100 : 0;
+
+  const loadTransfers = useCallback(async () => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+    if (!user) {
+      setUserId(null);
+      setRecentTransfers([]);
+      return;
+    }
+    setUserId(user.id);
+    if (user.email) {
+      setSenderEmail((prev) => prev || user.email || '');
+    }
+    const { data } = await supabase
+      .from('transfers')
+      .select('id, recipient_name, from_currency, to_currency, send_amount, recipient_amount, status, created_at')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (data) {
+      setRecentTransfers(data as TransferRecord[]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTransfers();
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      loadTransfers();
+    });
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [loadTransfers]);
+
+  const handleTransferSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTransferError(null);
+    if (!recipientName.trim() || sendAmount <= 0) {
+      setTransferError('Please enter a recipient name and valid transfer amount.');
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setCompletedRef('VX-' + Math.random().toString(36).slice(2, 10).toUpperCase());
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const refCode = 'VX-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+      const { error } = await supabase.from('transfers').insert({
+        user_id: userId,
+        sender_email: senderEmail.trim().toLowerCase() || null,
+        recipient_name: recipientName.trim(),
+        recipient_email: recipientEmail.trim().toLowerCase() || null,
+        recipient_iban: recipientIban.trim() || null,
+        from_currency: 'USD',
+        to_currency: recipientCurrency,
+        send_amount: sendAmount,
+        exchange_rate: Number(formatRate(rate)),
+        fee: transferFee,
+        recipient_amount: Number(recipientGets.toFixed(2)),
+        promo_code: promoDiscount > 0 ? 'VXNEW100' : promoCode.trim() || null,
+        status: 'processing',
+      });
+
+      if (error) {
+        setTransferError(error.message);
+        return;
+      }
+
+      setCompletedRef(refCode);
+      if (userId) {
+        await loadTransfers();
+      }
+    } catch {
+      setTransferError('Could not initiate transfer right now. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-surface-50">
@@ -129,6 +236,193 @@ export default function SendMoneyPage() {
         </div>
       </section>
 
+      {/* Interactive Transfer Initiation */}
+      <section id="initiate-transfer" className="section-padding bg-surface-50 border-b border-surface-200">
+        <div className="container-vx max-w-3xl">
+          <div className="text-center mb-10">
+            <span className="badge-teal">Live Checkout</span>
+            <h2 className="text-3xl font-heading font-bold text-surface-900 mt-2">
+              Initiate an International Transfer
+            </h2>
+            <p className="text-sm text-surface-500 mt-1">
+              Lock in your live mid-market rate and dispatch funds directly to your recipient.
+            </p>
+          </div>
+
+          <div className="card p-6 sm:p-8 bg-white shadow-xl">
+            {completedRef ? (
+              <div className="text-center py-8 space-y-4">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-bold font-heading text-surface-900">Transfer Scheduled!</h3>
+                <p className="text-sm text-surface-600 max-w-md mx-auto">
+                  Your transfer of <strong>${formatAmount(sendAmount)} USD</strong> ({formatAmount(recipientGets)} {recipientCurrency}) to <strong>{recipientName}</strong> is now processing.
+                </p>
+                <div className="inline-block px-4 py-2 rounded-xl bg-surface-100 font-mono text-xs font-bold text-surface-800">
+                  Tracking Reference: {completedRef}
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCompletedRef(null);
+                      setRecipientName('');
+                      setRecipientEmail('');
+                      setRecipientIban('');
+                    }}
+                    className="btn-primary btn-sm"
+                  >
+                    Send Another Transfer
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleTransferSubmit} className="space-y-4">
+                {transferError && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <span>{transferError}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">You Send (USD)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      required
+                      value={sendAmount}
+                      onChange={(e) => setSendAmount(Number(e.target.value) || 0)}
+                      className="input-field text-sm font-semibold"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Recipient Currency</label>
+                    <select
+                      value={recipientCurrency}
+                      onChange={(e) => setRecipientCurrency(e.target.value)}
+                      className="select-field text-sm font-semibold"
+                    >
+                      {currencies.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.code} - {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Recipient Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={recipientName}
+                      onChange={(e) => setRecipientName(e.target.value)}
+                      placeholder="e.g. Priya Sharma"
+                      className="input-field text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Your Confirmation Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={senderEmail}
+                      onChange={(e) => setSenderEmail(e.target.value)}
+                      placeholder="you@domain.com"
+                      className="input-field text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Recipient IBAN / Account Number</label>
+                    <input
+                      type="text"
+                      value={recipientIban}
+                      onChange={(e) => setRecipientIban(e.target.value)}
+                      placeholder="Optional — e.g. DE89 3704 0044..."
+                      className="input-field text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-surface-600 block mb-1">Promo Code</label>
+                    <input
+                      type="text"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      placeholder="VXNEW100"
+                      className="input-field text-sm uppercase font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-surface-50 space-y-1.5 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-surface-500">Guaranteed Mid-Market Rate</span>
+                    <span className="font-mono font-bold text-surface-900">1 USD = {formatRate(rate)} {recipientCurrency}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-surface-500">Recipient Receives</span>
+                    <span className="font-mono font-bold text-brand-600">{formatAmount(recipientGets)} {recipientCurrency}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-surface-500">Transfer Fee</span>
+                    <span className="font-semibold text-emerald-600">{transferFee === 0 ? 'FREE' : `$${transferFee.toFixed(2)}`}</span>
+                  </div>
+                  {promoDiscount > 0 && (
+                    <div className="flex justify-between text-emerald-700 font-bold">
+                      <span>Promo VXNEW100 Applied</span>
+                      <span>-$100.00</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between pt-2 border-t border-surface-200 text-sm font-bold text-surface-900">
+                    <span>Total Payable</span>
+                    <span>${formatAmount(Math.max(0, sendAmount + transferFee - promoDiscount))} USD</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="btn-primary w-full justify-center btn-lg"
+                >
+                  {submitting ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Processing Transfer...</>
+                  ) : (
+                    <><Send className="w-4 h-4" /> Confirm &amp; Send {formatAmount(recipientGets)} {recipientCurrency}</>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+
+          {userId && recentTransfers.length > 0 && (
+            <div className="mt-8 card p-6 bg-white">
+              <h3 className="text-base font-heading font-bold text-surface-900 mb-3">Your Recent Transfers</h3>
+              <div className="divide-y divide-surface-100">
+                {recentTransfers.map((t) => (
+                  <div key={t.id} className="py-3 flex items-center justify-between text-xs">
+                    <div>
+                      <div className="font-bold text-surface-900">{t.recipient_name}</div>
+                      <div className="text-surface-500">
+                        ${formatAmount(Number(t.send_amount))} {t.from_currency} &rarr; {formatAmount(Number(t.recipient_amount))} {t.to_currency}
+                      </div>
+                    </div>
+                    <span className="badge-teal capitalize">{t.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Corridors Grid */}
       <section className="section-padding bg-surface-50 border-b border-surface-200">
         <div className="container-vx">
@@ -155,9 +449,13 @@ export default function SendMoneyPage() {
                   </div>
                   <div className="pt-2 border-t border-surface-100 flex items-center justify-between text-xs">
                     <span className="text-surface-500">Fees from <strong>{c.minFee}</strong></span>
-                    <Link href="/register" className="font-bold text-brand-500 hover:underline">
+                    <a
+                      href="#initiate-transfer"
+                      onClick={() => setRecipientCurrency(c.currency)}
+                      className="font-bold text-brand-500 hover:underline"
+                    >
                       Send now &rsaquo;
-                    </Link>
+                    </a>
                   </div>
                 </div>
               );
@@ -193,9 +491,9 @@ export default function SendMoneyPage() {
                     VectisX (Guaranteed)
                   </td>
                   <td className="py-4 px-6 font-mono text-emerald-600">{formatRate(rate)} (Mid-market)</td>
-                  <td className="py-4 px-6 text-emerald-600">$3.99</td>
+                  <td className="py-4 px-6 text-emerald-600">${transferFee.toFixed(2)}</td>
                   <td className="py-4 px-6 text-right font-mono text-base font-extrabold text-brand-600">
-                    €{formatAmount(recipientGets)}
+                    {formatAmount(recipientGets)} {recipientCurrency}
                   </td>
                 </tr>
                 <tr className="text-surface-600">
@@ -203,7 +501,7 @@ export default function SendMoneyPage() {
                   <td className="py-4 px-6 font-mono text-rose-500">{formatRate(rate * 0.95)} (3-5% markup)</td>
                   <td className="py-4 px-6 text-rose-500">$35.00</td>
                   <td className="py-4 px-6 text-right font-mono font-medium">
-                    €{formatAmount(recipientGets * 0.935)}
+                    {formatAmount(recipientGets * 0.935)} {recipientCurrency}
                   </td>
                 </tr>
                 <tr className="text-surface-600">
@@ -211,7 +509,7 @@ export default function SendMoneyPage() {
                   <td className="py-4 px-6 font-mono text-rose-500">{formatRate(rate * 0.97)} (2-3% markup)</td>
                   <td className="py-4 px-6 text-rose-500">$18.00</td>
                   <td className="py-4 px-6 text-right font-mono font-medium">
-                    €{formatAmount(recipientGets * 0.96)}
+                    {formatAmount(recipientGets * 0.96)} {recipientCurrency}
                   </td>
                 </tr>
               </tbody>

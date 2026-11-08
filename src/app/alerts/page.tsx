@@ -1,10 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { Bell, ArrowRight, CheckCircle2, ShieldCheck, Mail, Zap, TrendingUp } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Bell, CheckCircle2, Trash2, AlertCircle, Loader2 } from 'lucide-react';
 import { currencies } from '@/data/currencies';
 import { getRate, formatRate } from '@/lib/rates';
+import { getSupabaseClient } from '@/lib/supabase';
 import Accordion from '@/components/ui/Accordion';
+
+interface SavedAlert {
+  id: string;
+  from_currency: string;
+  to_currency: string;
+  direction: 'above' | 'below';
+  target_rate: number;
+  email: string;
+  is_active: boolean;
+  created_at: string;
+}
 
 const alertFaqs = [
   {
@@ -31,14 +43,102 @@ export default function AlertsPage() {
   const [direction, setDirection] = useState<'above' | 'below'>('above');
   const [targetRate, setTargetRate] = useState('');
   const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [savedAlerts, setSavedAlerts] = useState<SavedAlert[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const currentRate = getRate(fromCode, toCode);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loadAlerts = useCallback(async () => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+    if (!user) {
+      setUserId(null);
+      setSavedAlerts([]);
+      return;
+    }
+
+    setUserId(user.id);
+    if (user.email) {
+      setEmail((prev) => prev || user.email || '');
+    }
+
+    const { data } = await supabase
+      .from('rate_alerts')
+      .select('id, from_currency, to_currency, direction, target_rate, email, is_active, created_at')
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      setSavedAlerts(data as SavedAlert[]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAlerts();
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      loadAlerts();
+    });
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [loadAlerts]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     if (!email || !targetRate) return;
-    setIsSuccess(true);
+
+    const numericRate = Number(targetRate);
+    if (!Number.isFinite(numericRate) || numericRate <= 0) {
+      setError('Please enter a valid positive target rate.');
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setIsSuccess(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error: insertError } = await supabase.from('rate_alerts').insert({
+        user_id: userId,
+        email: email.trim().toLowerCase(),
+        from_currency: fromCode,
+        to_currency: toCode,
+        direction,
+        target_rate: numericRate,
+      });
+
+      if (insertError) {
+        setError(insertError.message);
+        return;
+      }
+
+      setIsSuccess(true);
+      if (userId) {
+        await loadAlerts();
+      }
+    } catch {
+      setError('Could not save your rate alert right now. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAlert = async (id: string) => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    await supabase.from('rate_alerts').delete().eq('id', id);
+    setSavedAlerts((prev) => prev.filter((a) => a.id !== id));
   };
 
   return (
@@ -76,6 +176,13 @@ export default function AlertsPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-semibold text-surface-600 block mb-1">From</label>
@@ -159,14 +266,69 @@ export default function AlertsPage() {
                   />
                 </div>
 
-                <button type="submit" className="btn-primary w-full justify-center btn-lg">
-                  <Bell className="w-4 h-4" /> Activate Free Rate Alert
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary w-full justify-center btn-lg"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Saving Alert...
+                    </>
+                  ) : (
+                    <>
+                      <Bell className="w-4 h-4" /> Activate Free Rate Alert
+                    </>
+                  )}
                 </button>
               </form>
             )}
           </div>
         </div>
       </section>
+
+      {/* Saved Alerts for Authenticated Users */}
+      {userId && savedAlerts.length > 0 && (
+        <section className="py-12 bg-white border-b border-surface-200">
+          <div className="container-vx max-w-3xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <span className="badge-teal mb-1">Synced with Account</span>
+                <h2 className="text-2xl font-heading font-bold text-surface-900">Your Active Rate Alerts</h2>
+              </div>
+              <span className="text-xs font-semibold text-surface-500">{savedAlerts.length} active</span>
+            </div>
+
+            <div className="space-y-3">
+              {savedAlerts.map((alertItem) => (
+                <div
+                  key={alertItem.id}
+                  className="flex items-center justify-between p-4 rounded-2xl border border-surface-200 bg-surface-50"
+                >
+                  <div>
+                    <div className="font-bold text-sm text-surface-900">
+                      {alertItem.from_currency} / {alertItem.to_currency}{' '}
+                      <span className="text-xs font-semibold text-brand-600">
+                        ({alertItem.direction === 'above' ? '≥' : '≤'} {Number(alertItem.target_rate).toFixed(4)})
+                      </span>
+                    </div>
+                    <div className="text-xs text-surface-500 mt-0.5">
+                      Notifying {alertItem.email}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteAlert(alertItem.id)}
+                    className="p-2 rounded-xl text-surface-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    aria-label="Delete alert"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How it works */}
       <section className="section-padding bg-white border-b border-surface-200">

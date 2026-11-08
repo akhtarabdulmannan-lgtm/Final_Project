@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ArrowLeftRight, TrendingUp, Bell, Send, ChevronDown, Search, X } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeftRight, TrendingUp, Bell, Send, ChevronDown, Search, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { currencies, getCurrency, searchCurrencies } from '@/data/currencies';
 import { getRate, formatRate, formatAmount, get24hChange } from '@/lib/rates';
+import { getSupabaseClient } from '@/lib/supabase';
 import Link from 'next/link';
 
 type Tab = 'convert' | 'send' | 'charts' | 'alerts';
@@ -31,6 +32,13 @@ export default function CurrencyConverter({
   const [pickerOpen, setPickerOpen] = useState<'from' | 'to' | null>(null);
   const [pickerSearch, setPickerSearch] = useState('');
 
+  // Quick alert state
+  const [alertTarget, setAlertTarget] = useState('');
+  const [alertEmail, setAlertEmail] = useState('');
+  const [alertSaving, setAlertSaving] = useState(false);
+  const [alertSaved, setAlertSaved] = useState(false);
+  const [alertError, setAlertError] = useState<string | null>(null);
+
   const rate = getRate(fromCode, toCode);
   const result = amount * rate;
   const inverseRate = 1 / rate;
@@ -45,6 +53,44 @@ export default function CurrencyConverter({
       setToCode(fromCode);
       setIsSwapping(false);
     }, 200);
+  };
+
+  const handleQuickAlert = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAlertError(null);
+    const numericTarget = Number(alertTarget);
+    if (!alertEmail.trim() || !Number.isFinite(numericTarget) || numericTarget <= 0) {
+      setAlertError('Enter a valid target rate and email.');
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setAlertSaved(true);
+      return;
+    }
+
+    setAlertSaving(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const { error } = await supabase.from('rate_alerts').insert({
+        user_id: userData.user?.id ?? null,
+        email: alertEmail.trim().toLowerCase(),
+        from_currency: fromCode,
+        to_currency: toCode,
+        direction: numericTarget >= rate ? 'above' : 'below',
+        target_rate: numericTarget,
+      });
+      if (error) {
+        setAlertError(error.message);
+        return;
+      }
+      setAlertSaved(true);
+    } catch {
+      setAlertError('Could not save alert right now.');
+    } finally {
+      setAlertSaving(false);
+    }
   };
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
@@ -273,34 +319,81 @@ export default function CurrencyConverter({
       {/* Alerts Tab */}
       {activeTab === 'alerts' && (
         <div className="p-5 sm:p-6">
-          <div className="py-4 text-center">
-            <Bell className="w-12 h-12 text-brand-200 mx-auto mb-3" />
-            <h3 className="text-lg font-heading font-bold text-surface-900 mb-2">
-              Set a Rate Alert
+          <div className="py-2 text-center">
+            <Bell className="w-10 h-10 text-brand-300 mx-auto mb-2" />
+            <h3 className="text-lg font-heading font-bold text-surface-900 mb-1">
+              Set a {fromCode}/{toCode} Rate Alert
             </h3>
-            <p className="text-sm text-surface-500 mb-4">
-              Get notified when {fromCode}/{toCode} reaches your target rate. Free, instant, and customizable.
+            <p className="text-xs text-surface-500 mb-4">
+              Live rate: 1 {fromCode} = {formatRate(rate)} {toCode}. Get notified when markets hit your target.
             </p>
-            <div className="space-y-3 text-left max-w-xs mx-auto">
-              <div>
-                <label className="text-xs font-medium text-surface-500 mb-1 block">Target rate</label>
-                <input type="number" className="input-field" placeholder={formatRate(rate)} step="0.0001" />
+
+            {alertSaved ? (
+              <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-800 space-y-2 max-w-xs mx-auto">
+                <CheckCircle2 className="w-7 h-7 text-emerald-600 mx-auto" />
+                <div className="text-sm font-bold">Alert Activated!</div>
+                <p className="text-xs">We&apos;ll email {alertEmail} when {fromCode}/{toCode} reaches {alertTarget}.</p>
+                <button
+                  type="button"
+                  onClick={() => { setAlertSaved(false); setAlertTarget(''); }}
+                  className="btn-primary btn-sm"
+                >
+                  Set Another
+                </button>
               </div>
-              <div>
-                <label className="text-xs font-medium text-surface-500 mb-1 block">Email</label>
-                <input type="email" className="input-field" placeholder="you@example.com" />
-              </div>
-              <Link href="/alerts" className="btn-primary w-full justify-center">
-                <Bell className="w-4 h-4" /> Create Alert
-              </Link>
-            </div>
+            ) : (
+              <form onSubmit={handleQuickAlert} className="space-y-3 text-left max-w-xs mx-auto text-surface-900">
+                {alertError && (
+                  <div className="p-2 rounded-lg bg-rose-50 text-rose-700 text-xs">{alertError}</div>
+                )}
+                <div>
+                  <label className="text-xs font-medium text-surface-500 mb-1 block">Target rate</label>
+                  <input
+                    type="number"
+                    required
+                    value={alertTarget}
+                    onChange={(e) => setAlertTarget(e.target.value)}
+                    className="input-field"
+                    placeholder={formatRate(rate)}
+                    step="0.0001"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-surface-500 mb-1 block">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={alertEmail}
+                    onChange={(e) => setAlertEmail(e.target.value)}
+                    className="input-field"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={alertSaving}
+                  className="btn-primary w-full justify-center"
+                >
+                  {alertSaving ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+                  ) : (
+                    <><Bell className="w-4 h-4" /> Create Alert</>
+                  )}
+                </button>
+                <div className="text-center pt-1">
+                  <Link href="/alerts" className="text-xs text-brand-500 hover:underline font-medium">
+                    Manage all alerts &rarr;
+                  </Link>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
 
       {/* Currency Picker Modal */}
       {pickerOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 text-surface-900">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setPickerOpen(null)} />
           <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[70vh] flex flex-col animate-scale-in">
             <div className="p-4 border-b border-surface-100">

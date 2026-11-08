@@ -1,10 +1,51 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, PhoneCall, MapPin, CheckCircle2, Clock, ShieldCheck } from 'lucide-react';
+import { Mail, PhoneCall, MapPin, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { getSupabaseClient } from '@/lib/supabase';
 
 export default function ContactPage() {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [topic, setTopic] = useState('Personal Money Transfer Inquiry');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setSubmitted(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const { error: insertError } = await supabase.from('contact_inquiries').insert({
+        user_id: userData.user?.id ?? null,
+        full_name: fullName.trim(),
+        email: email.trim().toLowerCase(),
+        topic,
+        message: message.trim(),
+      });
+
+      if (insertError) {
+        setError(insertError.message);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setError('Could not submit inquiry right now. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
@@ -39,7 +80,7 @@ export default function ContactPage() {
               <div className="text-xs space-y-1">
                 <div>Customer Support: <strong className="text-surface-900">support@vectisx.com</strong></div>
                 <div>Corporate FX Dealing: <strong className="text-surface-900">business@vectisx.com</strong></div>
-                <div>API & Integrations: <strong className="text-surface-900">api@vectisx.com</strong></div>
+                <div>API &amp; Integrations: <strong className="text-surface-900">api@vectisx.com</strong></div>
               </div>
             </div>
 
@@ -70,27 +111,62 @@ export default function ContactPage() {
                 <p className="text-xs max-w-sm mx-auto">
                   Thank you for reaching out. A ticket has been created and an assigned specialist will reply to your email shortly.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setMessage('');
+                  }}
+                  className="btn-secondary btn-sm"
+                >
+                  Send Another Message
+                </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-semibold text-surface-600 block mb-1">Full Name</label>
-                    <input type="text" required placeholder="Jane Doe" className="input-field text-sm" />
+                    <input
+                      type="text"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Jane Doe"
+                      className="input-field text-sm"
+                    />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-surface-600 block mb-1">Email Address</label>
-                    <input type="email" required placeholder="jane@example.com" className="input-field text-sm" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="jane@example.com"
+                      className="input-field text-sm"
+                    />
                   </div>
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-surface-600 block mb-1">Topic / Inquiry Type</label>
-                  <select className="select-field text-sm font-semibold">
+                  <select
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    className="select-field text-sm font-semibold"
+                  >
                     <option>Personal Money Transfer Inquiry</option>
                     <option>Corporate Treasury / FX Dealing Desk</option>
                     <option>Developer API / Commercial Licensing</option>
-                    <option>Verification & KYC Questions</option>
+                    <option>Verification &amp; KYC Questions</option>
                     <option>Partnership / Media Inquiry</option>
                   </select>
                 </div>
@@ -100,13 +176,23 @@ export default function ContactPage() {
                   <textarea
                     rows={4}
                     required
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Please describe how we can assist you..."
                     className="input-field text-sm"
                   />
                 </div>
 
-                <button type="submit" className="btn-primary w-full justify-center btn-lg">
-                  Submit Inquiry
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary w-full justify-center btn-lg"
+                >
+                  {loading ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
+                  ) : (
+                    'Submit Inquiry'
+                  )}
                 </button>
               </form>
             )}

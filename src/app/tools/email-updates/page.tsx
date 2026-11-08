@@ -1,17 +1,45 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, CheckCircle2, TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { getSupabaseClient } from '@/lib/supabase';
 
 export default function EmailUpdatesPage() {
   const [email, setEmail] = useState('');
-  const [frequency, setFrequency] = useState('daily');
+  const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setIsSubscribed(true);
+    setError(null);
+    if (!email.trim()) return;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setIsSubscribed(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error: rpcError } = await supabase.rpc('subscribe_newsletter', {
+        p_email: email.trim().toLowerCase(),
+        p_frequency: frequency,
+      });
+
+      if (rpcError) {
+        setError(rpcError.message);
+        return;
+      }
+
+      setIsSubscribed(true);
+    } catch {
+      setError('Could not save your subscription right now. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,10 +63,10 @@ export default function EmailUpdatesPage() {
               </div>
               <h3 className="text-2xl font-bold font-heading text-surface-900">Subscription Confirmed!</h3>
               <p className="text-sm text-surface-600">
-                You will receive your first briefing at <strong className="text-surface-900">{email}</strong> before tomorrow's market open.
+                You will receive your first briefing at <strong className="text-surface-900">{email}</strong> before tomorrow&apos;s market open.
               </p>
               <button
-                onClick={() => { setIsSubscribed(false); setEmail(''); }}
+                onClick={() => { setIsSubscribed(false); }}
                 className="btn-secondary btn-sm"
               >
                 Change Preferences
@@ -46,6 +74,13 @@ export default function EmailUpdatesPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
+
               <div>
                 <label className="text-xs font-semibold text-surface-600 block mb-1">Your Work or Personal Email</label>
                 <input
@@ -82,8 +117,16 @@ export default function EmailUpdatesPage() {
                 </div>
               </div>
 
-              <button type="submit" className="btn-primary w-full justify-center btn-lg">
-                <Mail className="w-4 h-4" /> Subscribe to Market Pulse
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full justify-center btn-lg"
+              >
+                {loading ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Subscribing...</>
+                ) : (
+                  <><Mail className="w-4 h-4" /> Subscribe to Market Pulse</>
+                )}
               </button>
               <p className="text-[11px] text-surface-400 text-center">
                 Unsubscribe with one click anytime. We never share or sell your email address.
