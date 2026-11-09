@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { Newspaper, Download, Mail, ExternalLink } from 'lucide-react';
+import BrandLogo from '@/components/ui/BrandLogo';
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function PressPage() {
   const releases = [
@@ -26,15 +29,20 @@ export default function PressPage() {
 
         {/* Media Kit Card */}
         <div className="card p-6 sm:p-8 bg-brand-900 text-white rounded-3xl mb-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2">
+          <div className="space-y-3">
+            <BrandLogo variant="dark" size="lg" />
             <h3 className="text-xl font-bold font-heading">Download Official Media Brand Kit</h3>
             <p className="text-xs text-surface-300">
-              Access high-resolution vector logos, executive headshots, and brand usage guidelines.
+              Access official VectisX high-resolution brand lockups, monograms, and usage guidelines.
             </p>
           </div>
-          <button className="btn-teal btn-sm flex items-center gap-2 whitespace-nowrap">
-            <Download className="w-4 h-4" /> Download Brand Assets (.ZIP)
-          </button>
+          <a
+            href={`${BASE_PATH}/brand/vectisx-brand-sheet.png`}
+            download="VectisX-Official-Brand-Kit.png"
+            className="btn-teal btn-sm flex items-center gap-2 whitespace-nowrap"
+          >
+            <Download className="w-4 h-4" /> Download Brand Assets
+          </a>
         </div>
 
         {/* Releases */}

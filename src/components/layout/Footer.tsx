@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Zap, Mail, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
+import { Mail, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
 import { footerLinks } from '@/data/navigation';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function Footer() {
   return (
@@ -10,13 +11,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-400 to-teal-400 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-heading font-extrabold">
-                Vectis<span className="text-teal-400">X</span>
-              </span>
+            <Link href="/" className="inline-flex items-center mb-4 transition-opacity hover:opacity-90" aria-label="VectisX Home">
+              <BrandLogo variant="dark" size="md" />
             </Link>
             <p className="text-sm text-surface-400 mb-6 max-w-xs">
               Global Currency Intelligence. Trusted for live institutional exchange rates, historical central-bank charts, and cloud rate alerts.

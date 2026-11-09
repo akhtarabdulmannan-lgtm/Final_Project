@@ -3,12 +3,13 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, X, ChevronDown, ArrowRight, Globe, User, Zap, LogOut, Bell } from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowRight, Globe, User, LogOut, Bell } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { personalNav, businessNav } from '@/data/navigation';
 import { useStickyHeader } from '@/hooks';
 import { NavItem, UserMode } from '@/types';
 import { getSupabaseClient } from '@/lib/supabase';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function Header() {
   const router = useRouter();
@@ -119,13 +120,8 @@ export default function Header() {
         <div className="container-vx">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-teal-500 flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/40 transition-shadow">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-heading font-extrabold text-brand-900">
-                Vectis<span className="text-brand-500">X</span>
-              </span>
+            <Link href="/" className="flex items-center shrink-0 transition-opacity hover:opacity-90" aria-label="VectisX Home">
+              <BrandLogo variant="light" size="md" />
             </Link>
 
             {/* Desktop nav */}
@@ -254,13 +250,8 @@ export default function Header() {
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white shadow-2xl animate-slide-in-right overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-surface-100">
-              <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-teal-500 flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-lg font-heading font-extrabold text-brand-900">
-                  Vectis<span className="text-brand-500">X</span>
-                </span>
+              <Link href="/" className="flex items-center shrink-0" onClick={() => setMobileOpen(false)} aria-label="VectisX Home">
+                <BrandLogo variant="light" size="sm" />
               </Link>
               <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg hover:bg-surface-100">
                 <X className="w-5 h-5" />

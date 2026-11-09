@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Zap, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { getSupabaseClient } from '@/lib/supabase';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -81,11 +82,11 @@ export default function LoginPage() {
       <div className="container-vx max-w-md w-full">
         <div className="card p-8 bg-white shadow-2xl space-y-6">
           <div className="text-center space-y-2">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-teal-500 flex items-center justify-center mx-auto text-white">
-              <Zap className="w-5 h-5" />
-            </div>
+            <Link href="/" className="inline-flex items-center justify-center mb-1" aria-label="VectisX Home">
+              <BrandLogo variant="light" size="md" />
+            </Link>
             <h1 className="text-2xl font-bold font-heading text-surface-900">Welcome Back</h1>
-            <p className="text-xs text-surface-500">Sign in to your VectisX multi-currency account.</p>
+            <p className="text-xs text-surface-500">Sign in to your VectisX currency intelligence workspace.</p>
           </div>
 
           {error && (
