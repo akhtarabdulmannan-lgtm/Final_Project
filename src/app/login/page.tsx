@@ -1,14 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { AlertCircle, CheckCircle2, Loader2, Zap } from 'lucide-react';
 import { getSupabaseClient, isSupabaseConfigured } from '@/lib/supabase';
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,13 +16,13 @@ function LoginForm() {
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('reset') === 'success') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reset') === 'success') {
       setNotice('Your password has been updated. Sign in with your new password.');
-      setEmail(searchParams.get('email') ?? '');
-    } else if (searchParams.get('error') === 'auth') {
+    } else if (params.get('error') === 'auth') {
       setError('That sign-in link is invalid or has expired. Please sign in or reset your password.');
     }
-  }, [searchParams]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,25 +169,5 @@ function LoginForm() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-bg py-12 sm:py-20 flex items-center justify-center">
-          <div className="container-vx max-w-lg w-full">
-            <div className="card p-6 sm:p-8 bg-surface">
-              <div role="status" aria-live="polite" className="text-center text-caption text-ink-500">
-                Loading sign in...
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    >
-      <LoginForm />
-    </Suspense>
   );
 }
