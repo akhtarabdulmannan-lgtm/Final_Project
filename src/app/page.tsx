@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { 
-  ArrowRight, ShieldCheck, Zap, Globe2, RefreshCw, Smartphone, 
+  ArrowRight, ShieldCheck, Zap, Globe2, RefreshCw, 
   Building2, CheckCircle2, Star, TrendingUp, Lock, Award, Users, ChevronRight, HelpCircle
 } from 'lucide-react';
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
@@ -529,68 +529,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Mobile Apps Section */}
-      <section className="section-padding bg-white">
-        <div className="container-vx">
-          <div className="bg-gradient-to-br from-brand-900 to-brand-950 text-white rounded-3xl p-8 sm:p-14 shadow-2xl relative overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-6">
-                <span className="badge-teal">Anytime, Anywhere</span>
-                <h2 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight">
-                  Carry Global Currency Intelligence in Your Pocket
-                </h2>
-                <p className="text-surface-300 text-base">
-                  Track live exchange rates, set custom trigger alerts, and send international transfers starting at $0 fee with biometric authorization.
-                </p>
-
-                <div className="flex flex-wrap gap-6 pt-2">
-                  <div className="flex items-center gap-3">
-                    <div className="text-3xl font-extrabold text-teal-400">4.8★</div>
-                    <div className="text-xs text-surface-300">
-                      <strong>iOS App Store</strong><br />118k+ verified reviews
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-3xl font-extrabold text-teal-400">4.8★</div>
-                    <div className="text-xs text-surface-300">
-                      <strong>Google Play Store</strong><br />380k+ verified reviews
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex flex-wrap gap-4">
-                  <Link href="/apps" className="btn-teal">
-                    <Smartphone className="w-4 h-4 mr-1" /> Get the Free Apps
-                  </Link>
-                  <Link href="/tools/iban" className="btn-ghost text-white border border-white/20 hover:bg-white/10">
-                    Try Free Tools & Calculators
-                  </Link>
-                </div>
-              </div>
-
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="w-64 h-[420px] rounded-[40px] border-4 border-surface-700 bg-surface-950 p-4 shadow-2xl relative flex flex-col justify-between">
-                  <div className="w-20 h-4 bg-surface-800 rounded-full mx-auto" />
-                  <div className="space-y-3 my-auto text-left">
-                    <div className="p-3 bg-brand-900/80 rounded-2xl border border-brand-700/50">
-                      <div className="text-[10px] text-teal-300">Live Rate Trigger</div>
-                      <div className="text-sm font-bold text-white">USD / EUR @ 0.8550</div>
-                      <div className="text-[10px] text-surface-300">Target reached 2 mins ago</div>
-                    </div>
-                    <div className="p-3 bg-white/10 rounded-2xl border border-white/10">
-                      <div className="text-[10px] text-surface-400">Consensus Mid-Market</div>
-                      <div className="text-sm font-bold text-white">1 EUR &rarr; 309.06 PKR</div>
-                      <div className="text-[10px] text-emerald-400">ECB + SBP Verified</div>
-                    </div>
-                  </div>
-                  <div className="w-12 h-1 bg-surface-700 rounded-full mx-auto" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* A-Z Honest Map / Sitemap SEO Directory */}
       <section className="section-padding bg-surface-50 border-t border-surface-200">
         <div className="container-vx">
@@ -599,14 +537,14 @@ export default function HomePage() {
               The VectisX A–Z Honest Directory
             </h2>
             <p className="text-sm text-surface-500 mt-2">
-              Every tool, service, payment corridor, and integration available across our ecosystem.
+              Every currency intelligence tool, chart, benchmark, and integration available across our platform.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 text-xs">
             <div className="p-3 rounded-xl bg-white border border-surface-200">
               <strong className="text-brand-500 block mb-1">A</strong>
-              Alerts, Accounts, API, Apps
+              Alerts, Accounts, API, Analytics
             </div>
             <div className="p-3 rounded-xl bg-white border border-surface-200">
               <strong className="text-brand-500 block mb-1">B</strong>

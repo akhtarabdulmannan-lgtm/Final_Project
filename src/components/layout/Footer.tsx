@@ -19,7 +19,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-surface-400 mb-6 max-w-xs">
-              Global Currency Intelligence. Trusted by millions for live rates, money transfers, and currency data since 1993.
+              Global Currency Intelligence. Trusted for live institutional exchange rates, historical central-bank charts, and cloud rate alerts.
             </p>
             <div className="flex items-center gap-3">
               {[Twitter, Linkedin, Github, Youtube].map((Icon, i) => (
@@ -136,15 +136,11 @@ export default function Footer() {
               ))}
             </div>
             <p className="text-xs text-surface-500 text-center md:text-right">
-              © {new Date().getFullYear()} VectisX. A subsidiary of Meridian Financial Corp. All rights reserved.
-              FinCEN-registered. US state-licensed money transmitter.
+              © {new Date().getFullYear()} VectisX. All rights reserved.
             </p>
           </div>
           <p className="text-[11px] text-surface-600 mt-4 leading-relaxed max-w-4xl">
-            VectisX provides currency data and international money transfer services. Exchange rates shown are mid-market rates 
-            and are not intended to be used as transaction rates. Transfer fees and delivery times vary by corridor. 
-            VectisX is registered with FinCEN as a Money Services Business and licensed as a money transmitter in applicable US states.
-            SOC 2 Type II certified. Past performance does not guarantee future results.
+            VectisX provides currency market intelligence, historical time-series visualization, and rate alert services. Exchange rates shown are informational mid-market and central-bank reference rates and are not intended as binding transaction quotes. Past performance does not guarantee future results.
           </p>
         </div>
       </div>

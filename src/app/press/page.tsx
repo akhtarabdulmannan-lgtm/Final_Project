@@ -8,7 +8,7 @@ export default function PressPage() {
     { date: 'October 24, 2026', title: 'VectisX Crosses $17 Billion in Annual Global Business Payment Volume', tag: 'Corporate' },
     { date: 'August 12, 2026', title: 'VectisX Unveils Next-Gen Rate Blender™ Engine with Millisecond Micro-Spike Filtering', tag: 'Product' },
     { date: 'May 19, 2026', title: 'VectisX Business Announces Native Integration with Microsoft Dynamics 365 Finance', tag: 'Partnership' },
-    { date: 'January 10, 2026', title: 'VectisX Surpasses 500,000 App Store Reviews Across iOS and Android Platforms', tag: 'Milestone' },
+    { date: 'January 10, 2026', title: 'VectisX Surpasses 500,000 Monthly Active Analysts Across Global FX Corridors', tag: 'Milestone' },
   ];
 
   return (

@@ -11,7 +11,7 @@ export default function TermsPage() {
           <section className="space-y-2">
             <h2 className="text-lg font-bold text-surface-900">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using the website, mobile applications, APIs, or money transmission services provided by VectisX Financial Inc. (a subsidiary of Meridian Financial Corporation), you agree to be bound by these Terms of Service.
+              By accessing or using the website, APIs, or currency market data services provided by VectisX, you agree to be bound by these Terms of Service.
             </p>
           </section>
 

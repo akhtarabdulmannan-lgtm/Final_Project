@@ -5,7 +5,7 @@ import { footerLinks } from '@/data/navigation';
 
 export default function SitemapPage() {
   const azMap = [
-    { letter: 'A', items: [{ label: 'Rate Alerts', href: '/alerts' }, { label: 'Multi-Currency Account', href: '/register' }, { label: 'API Platform', href: '/api-platform' }, { label: 'Mobile Apps', href: '/apps' }] },
+    { letter: 'A', items: [{ label: 'Rate Alerts', href: '/alerts' }, { label: 'Multi-Currency Account', href: '/register' }, { label: 'API Platform', href: '/api-platform' }] },
     { letter: 'B', items: [{ label: 'Business Account', href: '/business' }, { label: 'Batch Payments', href: '/business/batch' }, { label: 'Blog', href: '/blog' }] },
     { letter: 'C', items: [{ label: 'Currency Converter', href: '/converter' }, { label: 'Live Charts', href: '/charts' }, { label: 'Currency Tables', href: '/tables' }, { label: 'Contact Us', href: '/contact' }] },
     { letter: 'D', items: [{ label: 'Dealing Desk', href: '/contact' }, { label: 'Developer API Docs', href: '/api-platform/docs' }] },

@@ -13,7 +13,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/tables',
     '/tools/iban',
     '/tools/email-updates',
-    '/apps',
     '/business',
     '/business/payments',
     '/business/scheduled',
