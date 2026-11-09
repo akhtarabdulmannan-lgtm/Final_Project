@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 interface AccordionItem {
@@ -39,36 +39,31 @@ function AccordionPanel({
   isOpen: boolean;
   onToggle: () => void;
 }) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
-    }
-  }, [isOpen]);
-
   return (
-    <div className="rounded-2xl border border-surface-200 bg-white overflow-hidden transition-shadow hover:shadow-sm">
+    <div
+      className={`rounded-2xl border bg-white overflow-hidden transition-colors duration-150 ease-fintech ${
+        isOpen ? 'border-primary-border' : 'border-surface-200 hover:border-surface-300'
+      }`}
+    >
       <button
+        type="button"
+        aria-expanded={isOpen}
         onClick={onToggle}
-        className="flex items-center justify-between w-full px-6 py-4 text-left"
+        className="flex items-center justify-between w-full min-h-[52px] px-6 py-4 text-left"
       >
-        <span className="text-sm font-semibold text-surface-900 pr-4">{item.question}</span>
+        <span className="text-sm font-semibold text-navy pr-4">{item.question}</span>
         <ChevronDown
-          className={`w-5 h-5 text-surface-400 flex-shrink-0 transition-transform duration-300 ${
-            isOpen ? 'rotate-180 text-brand-500' : ''
+          className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ease-fintech ${
+            isOpen ? 'rotate-180 text-primary' : 'text-caption'
           }`}
+          aria-hidden="true"
         />
       </button>
-      <div
-        className="overflow-hidden transition-all duration-300 ease-out"
-        style={{ maxHeight: isOpen ? height : 0 }}
-      >
-        <div ref={contentRef} className="px-6 pb-4 text-sm text-surface-600 leading-relaxed">
-          {item.answer}
+      {isOpen && (
+        <div className="px-6 pb-4 text-sm text-body leading-relaxed">
+          <p>{item.answer}</p>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -48,14 +48,14 @@ export function useCountUp(end: number, duration = 2000, start = 0) {
   return { ref, value };
 }
 
-export function useStickyHeader() {
+export function useStickyHeader(threshold = 10) {
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
-    const handler = () => setIsSticky(window.scrollY > 10);
+    const handler = () => setIsSticky(window.scrollY > threshold);
     window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);
-  }, []);
+  }, [threshold]);
 
   return isSticky;
 }

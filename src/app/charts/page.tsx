@@ -7,7 +7,15 @@ import { currencies } from '@/data/currencies';
 import { formatRate } from '@/lib/rates';
 import { useLiveRates, useHistoricalSeries } from '@/hooks/useLiveRates';
 import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
-import { Download, Share2, Info, Loader2, Check } from 'lucide-react';
+import {
+  RateFlash,
+  RevealSection,
+  Skeleton,
+  useButtonFeedback,
+  useHydrated,
+  usePrefersReducedMotion,
+} from '@/components/ui/MotionPrimitives';
+import { ArrowLeftRight, Download, Share2, Info, Check } from 'lucide-react';
 
 type TimeRange = '1W' | '1M' | '3M' | '6M' | '1Y' | '5Y';
 
@@ -15,7 +23,12 @@ export default function ChartsPage() {
   const [fromCode, setFromCode] = useState('USD');
   const [toCode, setToCode] = useState('EUR');
   const [range, setRange] = useState<TimeRange>('1M');
+  const [swapCount, setSwapCount] = useState(0);
   const [copied, setCopied] = useState(false);
+
+  const hydrated = useHydrated();
+  const reducedMotion = usePrefersReducedMotion();
+  const exportFeedback = useButtonFeedback();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -36,6 +49,7 @@ export default function ChartsPage() {
   };
 
   const {
+    data: spotData,
     isLoading: spotLoading,
     error: spotError,
     source: spotSource,
@@ -72,6 +86,8 @@ export default function ChartsPage() {
     return { high, low, avg, changePct };
   }, [chartData, currentRate]);
 
+  const isPositive = stats.changePct >= 0;
+
   const handleExportCsv = () => {
     if (!chartData.length) return;
     const header = `Date,${fromCode}_to_${toCode}_Rate,Inverse_${toCode}_to_${fromCode}\n`;
@@ -85,6 +101,7 @@ export default function ChartsPage() {
     link.download = `${fromCode}-${toCode}-${range}-rates.csv`;
     link.click();
     URL.revokeObjectURL(url);
+    exportFeedback.triggerSuccess();
   };
 
   const handleShare = async () => {
@@ -93,22 +110,28 @@ export default function ChartsPage() {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      window.setTimeout(() => setCopied(false), 800);
     } catch {
       // Clipboard fallback ignored
     }
   };
 
+  const handleSwap = () => {
+    setSwapCount((c) => c + 1);
+    setFromCode(toCode);
+    setToCode(fromCode);
+  };
+
   return (
-    <div className="min-h-screen bg-surface-50 py-10 sm:py-16">
+    <div className="min-h-screen bg-page py-10 sm:py-16">
       <div className="container-vx">
         {/* Header */}
         <div className="mb-6">
           <span className="badge-brand">Forex Intelligence</span>
-          <h1 className="text-3xl sm:text-4xl font-heading font-extrabold text-surface-900 mt-2">
+          <h1 className="type-h1 text-navy mt-2">
             Interactive FX Currency Charts
           </h1>
-          <p className="text-sm text-surface-500 mt-1">
+          <p className="type-body text-body mt-2">
             Historical exchange rate trends powered by live European Central Bank &amp; Open Exchange REST APIs.
           </p>
         </div>
@@ -127,8 +150,11 @@ export default function ChartsPage() {
         <div className="card p-4 sm:p-6 bg-white mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
             <div>
-              <label className="text-xs font-semibold text-surface-500 block mb-1">Base Currency (From)</label>
+              <label htmlFor="chart-from" className="form-label block mb-1.5">
+                Base Currency (From)
+              </label>
               <select
+                id="chart-from"
                 value={fromCode}
                 onChange={(e) => setFromCode(e.target.value)}
                 className="select-field text-sm font-semibold"
@@ -142,8 +168,11 @@ export default function ChartsPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-surface-500 block mb-1">Quote Currency (To)</label>
+              <label htmlFor="chart-to" className="form-label block mb-1.5">
+                Quote Currency (To)
+              </label>
               <select
+                id="chart-to"
                 value={toCode}
                 onChange={(e) => setToCode(e.target.value)}
                 className="select-field text-sm font-semibold"
@@ -159,13 +188,14 @@ export default function ChartsPage() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => {
-                  const temp = fromCode;
-                  setFromCode(toCode);
-                  setToCode(temp);
-                }}
-                className="btn-secondary w-full justify-center text-xs py-3"
+                onClick={handleSwap}
+                className="btn-secondary w-full justify-center"
               >
+                <ArrowLeftRight
+                  className="w-4 h-4 transition-transform duration-200 ease-fintech"
+                  style={reducedMotion ? undefined : { transform: `rotate(${swapCount * 180}deg)` }}
+                  aria-hidden="true"
+                />
                 Swap Currencies
               </button>
             </div>
@@ -173,7 +203,7 @@ export default function ChartsPage() {
             <div className="flex items-center gap-2">
               <Link
                 href={`/converter/${fromCode.toLowerCase()}-to-${toCode.toLowerCase()}`}
-                className="btn-primary w-full justify-center text-xs py-3"
+                className="btn-primary w-full justify-center"
               >
                 Convert {fromCode}/{toCode}
               </Link>
@@ -184,29 +214,44 @@ export default function ChartsPage() {
         {/* Main Chart Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           <div className="lg:col-span-9 card p-6 bg-white">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-surface-100 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-surface-200 gap-4">
               <div>
-                <div className="text-2xl sm:text-3xl font-extrabold font-mono text-surface-900">
-                  1 {fromCode} = {formatRate(currentRate)} <span className="text-brand-500">{toCode}</span>
+                <div className="text-2xl sm:text-3xl font-heading font-semibold text-navy tabular-nums">
+                  <RateFlash key={`${fromCode}-${toCode}`} value={currentRate} ready={Boolean(spotData)}>
+                    1 {fromCode} = {formatRate(currentRate)} {toCode}
+                  </RateFlash>
                 </div>
-                <div className="text-xs text-surface-400 mt-1 flex items-center gap-2">
-                  <span className={stats.changePct >= 0 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'}>
-                    {stats.changePct >= 0 ? '+' : ''}
-                    {stats.changePct.toFixed(2)}% ({range})
+                <div className="type-caption text-caption mt-2 flex flex-wrap items-center gap-2">
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-semibold border tabular-nums ${
+                      isPositive
+                        ? 'bg-gain-bg text-gain-text border-gain-border'
+                        : 'bg-loss-bg text-loss-text border-loss-border'
+                    }`}
+                  >
+                    {isPositive ? '▲' : '▼'} {Math.abs(stats.changePct).toFixed(2)}% ({range})
                   </span>
                   <span>• {seriesSource}</span>
                 </div>
               </div>
 
-              {/* Time Range Tabs */}
-              <div className="flex flex-wrap rounded-xl bg-surface-100 p-1 text-xs">
+              {/* Time Range Tabs (>= 44px touch targets) */}
+              <div
+                className="flex flex-wrap rounded-xl bg-page border border-surface-200 p-1 gap-1"
+                role="tablist"
+                aria-label="Chart time range"
+              >
                 {(['1W', '1M', '3M', '6M', '1Y', '5Y'] as const).map((t) => (
                   <button
                     type="button"
+                    role="tab"
+                    aria-selected={range === t}
                     key={t}
                     onClick={() => setRange(t)}
-                    className={`px-3 py-1.5 font-bold rounded-lg transition-all ${
-                      range === t ? 'bg-white text-brand-600 shadow-sm' : 'text-surface-600 hover:text-surface-900'
+                    className={`min-h-[44px] min-w-[44px] px-3 py-2 type-caption font-semibold rounded-lg border transition-colors duration-150 ease-fintech ${
+                      range === t
+                        ? 'bg-primary-pale text-primary border-primary-border'
+                        : 'border-transparent text-caption hover:text-navy'
                     }`}
                   >
                     {t}
@@ -216,83 +261,108 @@ export default function ChartsPage() {
             </div>
 
             {seriesNotice && (
-              <div className="mt-4 rounded-xl bg-surface-50 border border-surface-200 px-3 py-2 text-xs text-surface-600">
+              <div className="mt-4 rounded-xl bg-page border border-surface-200 px-3.5 py-2.5 type-caption text-body">
                 {seriesNotice}
               </div>
             )}
 
-            {/* Recharts Area */}
+            {/* Recharts Area — Flat Pale-Blue Fill (#EFF4FF) & Primary Stroke (#1D4ED8), Zero Gradients */}
             <div className="h-96 w-full pt-6 relative">
-              {seriesLoading ? (
-                <div className="h-full flex items-center justify-center gap-2 text-sm text-surface-500">
-                  <Loader2 className="w-5 h-5 animate-spin text-brand-500" />
-                  Loading historical series from API...
+              {hydrated && seriesLoading ? (
+                <div
+                  className="h-full w-full flex flex-col justify-between p-4 rounded-2xl border border-surface-200 bg-page"
+                  aria-busy="true"
+                  aria-label="Loading historical exchange rate chart"
+                >
+                  <div className="flex justify-between gap-4">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                  <Skeleton className="h-56 w-full rounded-xl" />
+                  <div className="flex justify-between gap-2">
+                    <Skeleton className="h-3 w-12" />
+                    <Skeleton className="h-3 w-12" />
+                    <Skeleton className="h-3 w-12" />
+                    <Skeleton className="h-3 w-12" />
+                    <Skeleton className="h-3 w-12" />
+                  </div>
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData}>
-                    <defs>
-                      <linearGradient id="chartColor" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0052FF" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="#0052FF" stopOpacity={0.0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E3E8F0" />
                     <XAxis
                       dataKey="date"
                       tickLine={false}
                       axisLine={false}
-                      tick={{ fill: '#64748B', fontSize: 11 }}
+                      tick={{ fill: '#5B6B82', fontSize: 12 }}
                       tickFormatter={(d) => d.slice(5)}
                     />
                     <YAxis
                       domain={['auto', 'auto']}
                       tickLine={false}
                       axisLine={false}
-                      tick={{ fill: '#64748B', fontSize: 11 }}
+                      tick={{ fill: '#5B6B82', fontSize: 12 }}
                       tickFormatter={(v) => formatRate(v)}
                     />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0A1628', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
+                      contentStyle={{
+                        backgroundColor: '#0B1B33',
+                        border: '1px solid #223859',
+                        borderRadius: '12px',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
                       formatter={(v: number) => [`${formatRate(v)} ${toCode}`, 'Rate']}
                     />
                     <Area
                       type="monotone"
                       dataKey="rate"
-                      stroke="#0052FF"
-                      strokeWidth={2.5}
+                      stroke="#1D4ED8"
+                      strokeWidth={2}
                       fillOpacity={1}
-                      fill="url(#chartColor)"
+                      fill="#EFF4FF"
+                      isAnimationActive={!reducedMotion}
+                      animationDuration={250}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-surface-100 text-xs text-surface-400">
-              <span className="flex items-center gap-1">
-                <Info className="w-3.5 h-3.5" /> Period statistics computed across {chartData.length} daily observations
+            <div className="flex flex-wrap justify-between items-center pt-4 border-t border-surface-200 type-caption text-caption gap-2">
+              <span className="flex items-center gap-1.5 tabular-nums">
+                <Info className="w-4 h-4 flex-shrink-0" aria-hidden="true" /> Period statistics computed across {chartData.length} daily observations
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={handleExportCsv}
-                  className="flex items-center gap-1 hover:text-brand-500 font-semibold text-surface-600"
+                  className="inline-flex items-center gap-1.5 min-h-[44px] px-3 rounded-xl text-primary hover:bg-primary-pale transition-colors duration-150 ease-fintech font-semibold"
                 >
-                  <Download className="w-3.5 h-3.5" /> Export CSV
+                  {exportFeedback.status === 'success' ? (
+                    <>
+                      <Check className="w-4 h-4 text-gain-text" aria-hidden="true" /> Exported
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" aria-hidden="true" /> Export CSV
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="flex items-center gap-1 hover:text-brand-500 font-semibold text-surface-600 ml-3"
+                  className="inline-flex items-center gap-1.5 min-h-[44px] px-3 rounded-xl text-primary hover:bg-primary-pale transition-colors duration-150 ease-fintech font-semibold"
                 >
                   {copied ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600" /> Copied Link
+                      <Check className="w-4 h-4 text-gain-text" aria-hidden="true" /> Copied Link
                     </>
                   ) : (
                     <>
-                      <Share2 className="w-3.5 h-3.5" /> Share
+                      <Share2 className="w-4 h-4" aria-hidden="true" /> Share
                     </>
                   )}
                 </button>
@@ -303,81 +373,88 @@ export default function ChartsPage() {
           {/* Stats Sidebar */}
           <div className="lg:col-span-3 space-y-4">
             <div className="card p-5 bg-white space-y-4">
-              <h3 className="font-heading font-bold text-base text-surface-900 border-b border-surface-100 pb-2">
+              <h3 className="type-h3 text-navy border-b border-surface-200 pb-2">
                 {range} Period Summary
               </h3>
               <div>
-                <span className="text-xs text-surface-400 block">Period High</span>
-                <span className="text-lg font-bold font-mono text-surface-900">{formatRate(stats.high)}</span>
+                <span className="type-caption text-caption block">Period High</span>
+                <span className="text-lg font-semibold text-navy tabular-nums">
+                  {hydrated && seriesLoading ? <Skeleton className="h-6 w-24" /> : formatRate(stats.high)}
+                </span>
               </div>
               <div>
-                <span className="text-xs text-surface-400 block">Period Low</span>
-                <span className="text-lg font-bold font-mono text-surface-900">{formatRate(stats.low)}</span>
+                <span className="type-caption text-caption block">Period Low</span>
+                <span className="text-lg font-semibold text-navy tabular-nums">
+                  {hydrated && seriesLoading ? <Skeleton className="h-6 w-24" /> : formatRate(stats.low)}
+                </span>
               </div>
               <div>
-                <span className="text-xs text-surface-400 block">Period Average</span>
-                <span className="text-lg font-bold font-mono text-surface-900">{formatRate(stats.avg)}</span>
+                <span className="type-caption text-caption block">Period Average</span>
+                <span className="text-lg font-semibold text-navy tabular-nums">
+                  {hydrated && seriesLoading ? <Skeleton className="h-6 w-24" /> : formatRate(stats.avg)}
+                </span>
               </div>
               <div>
-                <span className="text-xs text-surface-400 block">Inverse (1 {toCode} =)</span>
-                <span className="text-lg font-bold font-mono text-surface-900">
+                <span className="type-caption text-caption block">Inverse (1 {toCode} =)</span>
+                <span className="text-lg font-semibold text-navy tabular-nums">
                   {formatRate(currentRate > 0 ? 1 / currentRate : 0)} {fromCode}
                 </span>
               </div>
               <div className="pt-2">
-                <Link href="/alerts" className="btn-primary w-full justify-center text-xs">
+                <Link href="/alerts" className="btn-primary w-full justify-center">
                   Set Free Rate Alert
                 </Link>
               </div>
             </div>
 
-            <div className="card p-5 bg-gradient-to-br from-brand-900 to-brand-950 text-white space-y-3">
-              <h4 className="font-bold text-sm">Comparing {fromCode} Markets?</h4>
-              <p className="text-xs text-surface-300">
+            <div className="card-dark p-5 space-y-3">
+              <h4 className="font-heading font-semibold text-base text-white">Comparing {fromCode} Markets?</h4>
+              <p className="type-caption text-[#C9D3E3]">
                 Inspect regional exchange matrices, pin favorite currencies to your watchlist, and switch between live central-bank and market feeds.
               </p>
-              <Link href="/rates" className="btn-teal btn-sm w-full justify-center">
+              <Link href="/rates" className="btn-primary btn-sm w-full justify-center">
                 Explore Live Rate Matrix
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Historical Table Preview */}
-        <div className="card p-6 bg-white">
-          <h3 className="font-heading font-bold text-lg text-surface-900 mb-4">
-            Recent {fromCode} to {toCode} Daily Close Rates
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="bg-surface-50 text-xs font-semibold text-surface-500 uppercase border-b border-surface-200">
-                  <th className="py-3 px-4">Date</th>
-                  <th className="py-3 px-4">Close Rate</th>
-                  <th className="py-3 px-4">100 {fromCode} Equivalent</th>
-                  <th className="py-3 px-4">Inverse Rate</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-surface-100 font-mono text-xs">
-                {chartData
-                  .slice(-7)
-                  .reverse()
-                  .map((row) => (
-                    <tr key={row.date} className="hover:bg-surface-50">
-                      <td className="py-3 px-4 font-medium text-surface-900">{row.date}</td>
-                      <td className="py-3 px-4 font-bold text-surface-900">{formatRate(row.rate)}</td>
-                      <td className="py-3 px-4 text-surface-600">
-                        {formatRate(100 * row.rate)} {toCode}
-                      </td>
-                      <td className="py-3 px-4 text-surface-500">
-                        {formatRate(row.rate > 0 ? 1 / row.rate : 0)} {fromCode}
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+        {/* Major Pairs Quick Switch */}
+        <RevealSection className="card p-6 bg-white">
+          <h3 className="type-h3 text-navy mb-4">Quick Switch Popular Pairs</h3>
+          <div className="flex flex-wrap gap-2">
+            {[
+              ['USD', 'EUR'],
+              ['EUR', 'PKR'],
+              ['USD', 'PKR'],
+              ['GBP', 'USD'],
+              ['USD', 'JPY'],
+              ['USD', 'CAD'],
+              ['AUD', 'USD'],
+              ['EUR', 'GBP'],
+            ].map(([f, t]) => {
+              const active = fromCode === f && toCode === t;
+              return (
+                <button
+                  key={`${f}-${t}`}
+                  type="button"
+                  aria-label={`View ${f} to ${t} chart`}
+                  onClick={() => {
+                    setFromCode(f);
+                    setToCode(t);
+                  }}
+                  className={`min-h-[44px] px-4 py-2 rounded-xl type-caption font-semibold border transition-colors duration-150 ease-fintech ${
+                    active
+                      ? 'bg-primary-pale text-primary border-primary-border'
+                      : 'bg-page text-navy border-surface-200 hover:border-primary hover:text-primary'
+                  }`}
+                >
+                  {f} / {t}
+                </button>
+              );
+            })}
           </div>
-        </div>
+        </RevealSection>
       </div>
     </div>
   );

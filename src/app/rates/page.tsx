@@ -2,11 +2,17 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, ArrowUpDown, Plus, ExternalLink, Star } from 'lucide-react';
+import { Search, ArrowUpDown, Plus, ExternalLink, Star, X } from 'lucide-react';
 import { currencies } from '@/data/currencies';
 import { formatRate, get24hChange } from '@/lib/rates';
 import { useLiveRates } from '@/hooks/useLiveRates';
 import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
+import {
+  RateFlash,
+  RevealSection,
+  Skeleton,
+  useHydrated,
+} from '@/components/ui/MotionPrimitives';
 
 export default function RatesPage() {
   const [baseCurrency, setBaseCurrency] = useState('USD');
@@ -16,9 +22,22 @@ export default function RatesPage() {
   const [pinnedCodes, setPinnedCodes] = useState<string[]>(['EUR', 'GBP', 'JPY', 'PKR']);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const { isLoading, error, source, lastUpdated, refresh, getLivePairRate } = useLiveRates(baseCurrency);
+  const hydrated = useHydrated();
+  const { data, isLoading, error, source, lastUpdated, refresh, getLivePairRate } = useLiveRates(baseCurrency);
+  const showSkeleton = hydrated && isLoading && !data;
 
-  const regions = ['All', 'Europe', 'Asia', 'North America', 'South America', 'Middle East', 'Africa', 'Oceania', 'Metals', 'Crypto'];
+  const regions = [
+    'All',
+    'Europe',
+    'Asia',
+    'North America',
+    'South America',
+    'Middle East',
+    'Africa',
+    'Oceania',
+    'Metals',
+    'Crypto',
+  ];
 
   const togglePin = (code: string) => {
     setPinnedCodes((prev) =>
@@ -44,16 +63,16 @@ export default function RatesPage() {
   }, [baseCurrency, searchQuery, selectedRegion, pinnedCodes]);
 
   return (
-    <div className="min-h-screen bg-surface-50 py-10 sm:py-16">
+    <div className="min-h-screen bg-page py-10 sm:py-16">
       <div className="container-vx">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
           <div>
             <span className="badge-brand">Market Intelligence</span>
-            <h1 className="text-3xl sm:text-4xl font-heading font-extrabold text-surface-900 mt-2">
+            <h1 className="type-h1 text-navy mt-2">
               Live Currency Exchange Rates
             </h1>
-            <p className="text-sm text-surface-500 mt-1">
+            <p className="type-body text-body mt-2">
               Real-time mid-market rates fetched asynchronously from public foreign exchange REST APIs.
             </p>
           </div>
@@ -62,22 +81,22 @@ export default function RatesPage() {
             <button
               type="button"
               onClick={() => setIsInverse(!isInverse)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
+              className={`inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-xl type-caption font-semibold border transition-colors duration-150 ease-fintech ${
                 isInverse
-                  ? 'bg-brand-500 text-white border-brand-500'
-                  : 'bg-white text-surface-700 border-surface-300 hover:bg-surface-100'
+                  ? 'bg-primary-pale text-primary border-primary-border'
+                  : 'bg-white text-navy border-surface-300 hover:border-primary hover:text-primary'
               }`}
             >
-              <ArrowUpDown className="w-3.5 h-3.5" />
+              <ArrowUpDown className="w-4 h-4" aria-hidden="true" />
               Inverse Rates: {isInverse ? 'ON' : 'OFF'}
             </button>
 
             <button
               type="button"
               onClick={() => setShowAddModal(true)}
-              className="btn-primary btn-sm flex items-center gap-1.5"
+              className="btn-primary btn-sm"
             >
-              <Plus className="w-3.5 h-3.5" /> Pin Currency
+              <Plus className="w-4 h-4" aria-hidden="true" /> Pin Currency
             </button>
           </div>
         </div>
@@ -97,11 +116,15 @@ export default function RatesPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-caption"
+                aria-hidden="true"
+              />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search by currency code or country"
                 placeholder="Search by currency code or country (e.g. EUR, Yen, Rupee)..."
                 className="input-field pl-10 text-sm"
               />
@@ -109,8 +132,11 @@ export default function RatesPage() {
 
             {/* Base Currency Selector */}
             <div className="flex items-center gap-2 sm:w-64">
-              <span className="text-xs font-bold text-surface-500 whitespace-nowrap">Base:</span>
+              <label htmlFor="rates-base-select" className="form-label whitespace-nowrap">
+                Base:
+              </label>
               <select
+                id="rates-base-select"
                 value={baseCurrency}
                 onChange={(e) => setBaseCurrency(e.target.value)}
                 className="select-field text-sm font-semibold"
@@ -125,14 +151,22 @@ export default function RatesPage() {
           </div>
 
           {/* Region Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide text-xs">
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide"
+            role="tablist"
+            aria-label="Filter by region"
+          >
             {regions.map((r) => (
               <button
                 type="button"
+                role="tab"
+                aria-selected={selectedRegion === r}
                 key={r}
                 onClick={() => setSelectedRegion(r)}
-                className={`px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-colors ${
-                  selectedRegion === r ? 'bg-brand-50 text-brand-600 font-bold' : 'text-surface-600 hover:bg-surface-100'
+                className={`min-h-[44px] px-3.5 py-2 rounded-xl type-caption whitespace-nowrap border transition-colors duration-150 ease-fintech ${
+                  selectedRegion === r
+                    ? 'bg-primary-pale text-primary border-primary-border font-semibold'
+                    : 'border-transparent text-caption hover:text-navy hover:bg-page font-medium'
                 }`}
               >
                 {r}
@@ -142,11 +176,11 @@ export default function RatesPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden">
+        <RevealSection className="bg-white rounded-2xl border border-surface-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-50 text-[11px] font-bold text-surface-500 uppercase border-b border-surface-200 tracking-wider">
+                <tr className="bg-page type-caption font-semibold text-caption uppercase border-b border-surface-200 tracking-wider">
                   <th className="py-4 px-6">Currency</th>
                   <th className="py-4 px-6">Name</th>
                   <th className="py-4 px-6">Region</th>
@@ -157,7 +191,7 @@ export default function RatesPage() {
                   <th className="py-4 px-6 text-center">Charts &amp; Tools</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-100 text-sm">
+              <tbody className="divide-y divide-surface-200">
                 {filteredCurrencies.map((c) => {
                   const rawRate = getLivePairRate(baseCurrency, c.code);
                   const displayRate = isInverse ? (rawRate > 0 ? 1 / rawRate : 0) : rawRate;
@@ -166,49 +200,62 @@ export default function RatesPage() {
                   const isPinned = pinnedCodes.includes(c.code);
 
                   return (
-                    <tr key={c.code} className="hover:bg-surface-50/70 transition-colors">
-                      <td className="py-4 px-6 font-bold flex items-center gap-2.5">
-                        <button
-                          type="button"
-                          onClick={() => togglePin(c.code)}
-                          title={isPinned ? 'Unpin currency' : 'Pin currency to top'}
-                          className="text-surface-300 hover:text-amber-400 transition-colors"
-                        >
-                          <Star
-                            className={`w-4 h-4 ${
-                              isPinned ? 'text-amber-400 fill-amber-400' : ''
-                            }`}
-                          />
-                        </button>
-                        <span className="text-xl">{c.flag}</span>
-                        <span className="font-mono text-surface-900">{c.code}</span>
+                    <tr key={c.code} className="hover:bg-page transition-colors duration-150 ease-fintech">
+                      <td className="py-3 px-4 sm:px-6 font-semibold">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => togglePin(c.code)}
+                            title={isPinned ? 'Unpin currency' : 'Pin currency to top'}
+                            aria-label={isPinned ? `Unpin ${c.code}` : `Pin ${c.code}`}
+                            className="inline-flex items-center justify-center w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl text-caption hover:text-primary hover:bg-primary-pale transition-colors duration-150 ease-fintech"
+                          >
+                            <Star
+                              className={`w-4 h-4 ${isPinned ? 'text-primary fill-primary' : ''}`}
+                              aria-hidden="true"
+                            />
+                          </button>
+                          <span className="text-xl" aria-hidden="true">
+                            {c.flag}
+                          </span>
+                          <span className="text-navy">{c.code}</span>
+                        </div>
                       </td>
-                      <td className="py-4 px-6 text-surface-700 font-medium">{c.name}</td>
-                      <td className="py-4 px-6 text-surface-400 text-xs">{c.region}</td>
-                      <td className="py-4 px-6 text-right font-mono font-bold text-surface-900">
-                        {formatRate(displayRate)}
+                      <td className="py-3 px-6 text-body font-medium">{c.name}</td>
+                      <td className="py-3 px-6 text-caption type-caption">{c.region}</td>
+                      <td className="py-3 px-6 text-right font-semibold text-navy tabular-nums">
+                        {showSkeleton ? (
+                          <Skeleton className="h-5 w-20" />
+                        ) : (
+                          <RateFlash value={displayRate} ready={Boolean(data)}>
+                            {formatRate(displayRate)}
+                          </RateFlash>
+                        )}
                       </td>
-                      <td className="py-4 px-6 text-right font-semibold">
+                      <td className="py-3 px-6 text-right font-semibold">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded-full text-xs ${
-                            isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full type-caption border tabular-nums ${
+                            isPositive
+                              ? 'bg-gain-bg text-gain-text border-gain-border'
+                              : 'bg-loss-bg text-loss-text border-loss-border'
                           }`}
                         >
-                          {isPositive ? '▲ +' : '▼ '}
-                          {change.toFixed(2)}%
+                          {isPositive ? '▲' : '▼'} {Math.abs(change).toFixed(2)}%
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-center">
+                      <td className="py-3 px-6 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Link
                             href={`/charts?from=${baseCurrency}&to=${c.code}`}
-                            className="p-1.5 rounded-lg text-brand-500 hover:bg-brand-50 transition-colors text-xs font-semibold flex items-center gap-1"
+                            aria-label={`View ${baseCurrency} to ${c.code} chart`}
+                            className="inline-flex items-center justify-center gap-1 min-h-[44px] px-3 rounded-xl text-primary hover:bg-primary-pale transition-colors duration-150 ease-fintech type-caption font-semibold"
                           >
-                            Chart <ExternalLink className="w-3 h-3" />
+                            Chart <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                           </Link>
                           <Link
                             href={`/converter/${baseCurrency.toLowerCase()}-to-${c.code.toLowerCase()}`}
-                            className="px-2.5 py-1 rounded-lg bg-surface-100 text-surface-700 hover:bg-brand-500 hover:text-white transition-all text-xs font-semibold"
+                            aria-label={`Convert ${baseCurrency} to ${c.code}`}
+                            className="inline-flex items-center justify-center min-h-[44px] px-3.5 rounded-xl bg-white border border-surface-300 text-navy hover:border-primary hover:text-primary hover:bg-primary-pale transition-colors duration-150 ease-fintech type-caption font-semibold"
                           >
                             Convert
                           </Link>
@@ -220,14 +267,29 @@ export default function RatesPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </RevealSection>
 
         {/* Modal for pinning currency */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
-              <h3 className="text-lg font-bold font-heading text-surface-900 mb-2">Pin Watchlist Currency</h3>
-              <p className="text-xs text-surface-500 mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/50">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Pin watchlist currency"
+              className="bg-white rounded-2xl border border-surface-200 p-6 max-w-md w-full"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="type-h3 text-navy">Pin Watchlist Currency</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  aria-label="Close pin currency dialog"
+                  className="inline-flex items-center justify-center w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl text-navy hover:bg-page"
+                >
+                  <X className="w-5 h-5" aria-hidden="true" />
+                </button>
+              </div>
+              <p className="type-caption text-caption mb-4">
                 Select any currency to pin to the top of your live exchange rate monitor.
               </p>
               <div className="max-h-60 overflow-y-auto space-y-1 mb-4">
@@ -243,12 +305,12 @@ export default function RatesPage() {
                           togglePin(c.code);
                           setShowAddModal(false);
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-50 text-left text-sm"
+                        className="w-full min-h-[44px] flex items-center justify-between p-2.5 rounded-xl hover:bg-page text-left text-sm"
                       >
-                        <span className="flex items-center gap-2 font-medium">
-                          <span>{c.flag}</span> {c.code} - {c.name}
+                        <span className="flex items-center gap-2 font-medium text-navy">
+                          <span aria-hidden="true">{c.flag}</span> {c.code} - {c.name}
                         </span>
-                        <span className="text-xs text-brand-500 font-semibold">
+                        <span className="type-caption text-primary font-semibold">
                           {pinned ? 'Unpin' : 'Pin to Top'}
                         </span>
                       </button>

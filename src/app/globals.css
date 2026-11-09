@@ -4,32 +4,192 @@
 
 @layer base {
   :root {
-    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    /*
+     * Semantic Design Tokens (Light Theme)
+     * Structured cleanly so a future [data-theme="dark"] block can remap
+     * surface, ink, border, brand, and status tokens without altering components.
+     */
+    --bg: #F6F8FB;
+    --bg-subtle: #EDF2F8;
+    --surface: #FFFFFF;
+    --surface-inverse: #0B1B33;
+    --surface-inverse-elevated: #122645;
+
+    --line: #E3E8F0;
+    --line-strong: #C9D3E3;
+    --line-inverse: #223859;
+
+    --ink-900: #0B1B33;
+    --ink-700: #334155;
+    --ink-500: #5B6B82;
+    --ink-inverse: #FFFFFF;
+    --ink-inverse-muted: #C9D3E3;
+
+    --brand-600: #1D4ED8;
+    --brand-700: #1E40AF;
+    --brand-800: #1E3A8A;
+    --brand-50: #EFF4FF;
+    --brand-100: #DBE6FD;
+
+    --gain: #047857;
+    --gain-bg: #ECFDF5;
+    --gain-border: #A7F3D0;
+
+    --loss: #B91C1C;
+    --loss-bg: #FEF2F2;
+    --loss-border: #FECACA;
+
+    /* Aliases used across components */
+    --color-primary: var(--brand-600);
+    --color-primary-hover: var(--brand-700);
+    --color-primary-pressed: var(--brand-800);
+    --color-primary-pale: var(--brand-50);
+    --color-primary-border: var(--brand-100);
+
+    --color-navy: var(--surface-inverse);
+    --color-navy-elevated: var(--surface-inverse-elevated);
+    --color-navy-border: var(--line-inverse);
+    --color-body: var(--ink-700);
+    --color-caption: var(--ink-500);
+
+    --color-bg-page: var(--bg);
+    --color-bg-subtle: var(--bg-subtle);
+    --color-bg-card: var(--surface);
+    --color-border-subtle: var(--line);
+    --color-border-strong: var(--line-strong);
+
+    --color-gain-text: var(--gain);
+    --color-gain-bg: var(--gain-bg);
+    --color-gain-border: var(--gain-border);
+    --color-loss-text: var(--loss);
+    --color-loss-bg: var(--loss-bg);
+    --color-loss-border: var(--loss-border);
+
+    /* Motion Curve */
+    --ease-fintech: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   html {
-    font-family: var(--font-inter);
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bg);
+    color: var(--ink-700);
   }
 
-  body, button, input, select, textarea {
-    font-family: var(--font-inter);
+  body,
+  button,
+  input,
+  select,
+  textarea,
+  table {
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   body {
-    @apply bg-white text-surface-900 font-sans;
+    background-color: var(--bg);
+    color: var(--ink-700);
+    font-size: 1rem;       /* 16px */
+    line-height: 1.625rem; /* 26px */
+    font-weight: 400;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
-    font-family: var(--font-inter);
+  b,
+  strong {
+    font-weight: 600;
   }
 
-  .font-mono, code, pre {
-    font-family: var(--font-inter);
+  p {
+    max-width: 65ch;
+  }
+
+  /* Headings: "Inter Tight" 600, letter-spacing -0.02em, text-wrap: balance */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-heading {
+    font-family: var(--font-inter-tight), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Scale: H1 36/40 mobile -> 56/60 desktop */
+  h1 {
+    font-size: 2.25rem;    /* 36px */
+    line-height: 2.5rem;   /* 40px */
+  }
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 3.5rem;     /* 56px */
+      line-height: 3.75rem;  /* 60px */
+    }
+  }
+
+  /* Scale: H2 28/34 mobile -> 40/44 desktop */
+  h2 {
+    font-size: 1.75rem;    /* 28px */
+    line-height: 2.125rem; /* 34px */
+  }
+  @media (min-width: 768px) {
+    h2 {
+      font-size: 2.5rem;     /* 40px */
+      line-height: 2.75rem;  /* 44px */
+    }
+  }
+
+  /* Scale: H3 24/32 */
+  h3 {
+    font-size: 1.5rem;     /* 24px */
+    line-height: 2rem;     /* 32px */
+  }
+
+  /* Form labels: 13px / 18px, weight 500 */
+  label {
+    font-size: 0.8125rem;  /* 13px */
+    line-height: 1.125rem; /* 18px */
+    font-weight: 500;
+  }
+
+  /* Tables: 14px text, tabular numerals on cells */
+  table {
+    font-size: 0.875rem;   /* 14px */
+    line-height: 1.25rem;  /* 20px */
+  }
+
+  table td,
+  table th,
+  input[type="number"],
+  .tabular-nums,
+  .rate-value,
+  .badge-gain,
+  .badge-loss,
+  .recharts-cartesian-axis-tick-value,
+  .recharts-tooltip-wrapper {
     font-variant-numeric: tabular-nums;
+  }
+
+  code,
+  pre {
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Accessible keyboard focus ring on every interactive control */
+  a:focus-visible,
+  button:focus-visible,
+  select:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [role="button"]:focus-visible,
+  [role="tab"]:focus-visible {
+    outline: 2px solid var(--brand-600);
+    outline-offset: 2px;
   }
 }
 
@@ -42,104 +202,239 @@
     @apply py-16 md:py-24;
   }
 
+  /* Explicit Typographic Scale Helpers */
+  .type-h1 {
+    font-family: var(--font-inter-tight), var(--font-inter), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+  @media (min-width: 768px) {
+    .type-h1 {
+      font-size: 3.5rem;
+      line-height: 3.75rem;
+    }
+  }
+
+  .type-h2 {
+    font-family: var(--font-inter-tight), var(--font-inter), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    font-size: 1.75rem;
+    line-height: 2.125rem;
+  }
+  @media (min-width: 768px) {
+    .type-h2 {
+      font-size: 2.5rem;
+      line-height: 2.75rem;
+    }
+  }
+
+  .type-h3 {
+    font-family: var(--font-inter-tight), var(--font-inter), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .type-body {
+    font-size: 1rem;
+    line-height: 1.625rem;
+    max-width: 65ch;
+  }
+
+  .type-caption {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+  }
+
+  .form-label {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    font-weight: 500;
+    color: var(--ink-500);
+  }
+
+  /* Interactive Buttons — >= 44px touch targets, 150ms fintech transition */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition-all duration-200 hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-500/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white border border-primary transition-colors duration-150 ease-fintech hover:bg-primary-hover hover:border-primary-hover active:bg-primary-pressed active:border-primary-pressed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-brand-500 px-6 py-3 text-sm font-semibold text-brand-500 transition-all duration-200 hover:bg-brand-500 hover:text-white hover:-translate-y-0.5 active:translate-y-0;
-  }
-
-  .btn-teal {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:bg-teal-600 hover:shadow-xl hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] rounded-xl border border-surface-300 bg-white px-6 py-2.5 text-sm font-semibold text-navy transition-colors duration-150 ease-fintech hover:bg-primary-pale hover:border-primary hover:text-primary active:bg-primary-pale focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-900 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-brand-800 hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] rounded-xl bg-navy border border-navy px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-150 ease-fintech hover:bg-navy-elevated active:bg-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-surface-600 transition-all duration-200 hover:bg-surface-100 hover:text-surface-900;
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] rounded-xl px-4 py-2.5 text-sm font-medium text-body transition-colors duration-150 ease-fintech hover:bg-page hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
   .btn-sm {
-    @apply px-4 py-2 text-xs;
+    @apply min-h-[44px] px-4 py-2 text-[13px] leading-[18px];
   }
 
   .btn-lg {
-    @apply px-8 py-4 text-base;
+    @apply min-h-[48px] px-7 py-3.5 text-base;
   }
 
+  /* Cards: border-color 150ms on hover & focus, zero lift, zero growing shadow */
   .card {
-    @apply rounded-2xl bg-white border border-surface-200 p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+    @apply rounded-2xl bg-white border border-surface-200 p-6;
+    transition: border-color 150ms var(--ease-fintech);
+  }
+
+  a.card:hover,
+  a.card:focus-visible,
+  button.card:hover,
+  button.card:focus-visible,
+  .card-interactive:hover,
+  .card-interactive:focus-visible,
+  .card-interactive:focus-within {
+    border-color: var(--brand-600);
+  }
+
+  .card:hover {
+    border-color: var(--line-strong);
+  }
+
+  a.card:hover,
+  button.card:hover,
+  .card-interactive:hover {
+    border-color: var(--brand-600);
   }
 
   .card-flat {
-    @apply rounded-2xl bg-surface-50 p-6 transition-all duration-300 hover:bg-surface-100;
+    @apply rounded-2xl bg-page border border-surface-200 p-6;
+    transition: border-color 150ms var(--ease-fintech);
   }
 
   .card-dark {
-    @apply rounded-2xl bg-brand-900 p-6 text-white;
+    @apply rounded-2xl bg-navy border border-navy-border p-6 text-white;
+    transition: border-color 150ms var(--ease-fintech);
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-surface-300 bg-white px-4 py-3 text-sm text-surface-900 placeholder-surface-400 outline-none transition-all duration-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+    @apply w-full min-h-[44px] rounded-xl border border-surface-300 bg-white px-4 py-2.5 text-sm text-navy placeholder-caption outline-none transition-colors duration-150 ease-fintech focus:border-primary focus:ring-2 focus:ring-primary-border;
   }
 
   .select-field {
-    @apply w-full rounded-xl border border-surface-300 bg-white px-4 py-3 text-sm text-surface-900 outline-none transition-all duration-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer;
+    @apply w-full min-h-[44px] rounded-xl border border-surface-300 bg-white px-4 py-2.5 text-sm text-navy outline-none transition-colors duration-150 ease-fintech focus:border-primary focus:ring-2 focus:ring-primary-border appearance-none cursor-pointer;
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-[13px] leading-[18px] font-medium;
   }
 
   .badge-brand {
-    @apply badge bg-brand-100 text-brand-600;
+    @apply badge bg-primary-pale text-primary border border-primary-border;
   }
 
-  .badge-teal {
-    @apply badge bg-teal-100 text-teal-700;
-  }
-
-  .badge-accent {
-    @apply badge bg-accent-100 text-accent-600;
-  }
-
+  .badge-gain,
   .badge-success {
-    @apply badge bg-emerald-100 text-emerald-700;
+    @apply badge bg-gain-bg text-gain-text border border-gain-border tabular-nums;
   }
 
-  .badge-warning {
-    @apply badge bg-amber-100 text-amber-700;
+  .badge-loss,
+  .badge-danger {
+    @apply badge bg-loss-bg text-loss-text border border-loss-border tabular-nums;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-teal-500;
+  /* Motion #1: Live rate flash (600ms hold, background-color transition only) */
+  .rate-flash {
+    border-radius: 0.375rem;
+    padding-inline: 0.25rem;
+    margin-inline: -0.25rem;
+    transition: background-color 200ms var(--ease-fintech);
+    font-variant-numeric: tabular-nums;
+  }
+  .rate-flash-gain {
+    background-color: var(--gain-bg);
+  }
+  .rate-flash-loss {
+    background-color: var(--loss-bg);
   }
 
-  .skeleton {
-    @apply animate-pulse rounded-lg bg-surface-200;
+  /* Motion #2: 6px --gain dot with slow 2s opacity pulse */
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: var(--gain);
+    display: inline-block;
+    flex-shrink: 0;
+    animation: liveDotPulse 2s var(--ease-fintech) infinite;
   }
 
-  .divider {
-    @apply border-t border-surface-200;
+  /* Motion #4: Scroll reveal — visible by default without JS; JS sets [data-reveal="hidden"] only below fold */
+  [data-reveal="hidden"] {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  [data-reveal="shown"] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 250ms var(--ease-fintech), transform 250ms var(--ease-fintech);
   }
 
-  .link-hover {
-    @apply text-surface-600 transition-colors duration-200 hover:text-brand-500;
+  /* Motion #5: Step connector line draw — visible by default without JS */
+  .step-connector-line {
+    transform-origin: left center;
+    transform: scaleX(1);
+  }
+  .step-connector-line[data-connector="hidden"] {
+    transform: scaleX(0);
+  }
+  .step-connector-line[data-connector="shown"] {
+    transform: scaleX(1);
+    transition: transform 250ms var(--ease-fintech);
   }
 
-  .overlay-gradient {
-    @apply bg-gradient-to-t from-brand-900/80 via-brand-900/40 to-transparent;
+  /* Motion #7: Neutral --line skeleton shimmer (1.2s, transform only, zero gradients) */
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--line);
+    border-radius: 0.5rem;
+  }
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 45%;
+    background-color: var(--bg-subtle);
+    opacity: 0.85;
+    transform: translateX(-120%);
+    animation: skeletonSlide 1.2s var(--ease-fintech) infinite;
+  }
+}
+
+@keyframes liveDotPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.32;
+  }
+}
+
+@keyframes skeletonSlide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(260%);
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -147,17 +442,34 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+}
 
-  .animation-delay-150 {
-    animation-delay: 150ms;
+/* Global prefers-reduced-motion override: stops every CSS animation and transition */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
   }
-  .animation-delay-300 {
-    animation-delay: 300ms;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
-  .animation-delay-500 {
-    animation-delay: 500ms;
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+    transform: none !important;
   }
-  .animation-delay-700 {
-    animation-delay: 700ms;
+  .step-connector-line[data-connector="hidden"] {
+    transform: scaleX(1) !important;
+  }
+  .skeleton-shimmer::after {
+    animation: none !important;
+    display: none !important;
+  }
+  .live-dot {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }

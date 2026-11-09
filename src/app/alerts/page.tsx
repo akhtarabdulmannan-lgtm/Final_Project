@@ -1,21 +1,29 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Bell, CheckCircle2, Trash2, AlertCircle, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Bell, CheckCircle2, Trash2, AlertCircle, Loader2, Check } from 'lucide-react';
 import { currencies } from '@/data/currencies';
 import { formatRate } from '@/lib/rates';
 import { getSupabaseClient } from '@/lib/supabase';
 import { useLiveRates } from '@/hooks/useLiveRates';
 import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
 import Accordion from '@/components/ui/Accordion';
+import {
+  RateFlash,
+  RevealCard,
+  RevealSection,
+  Skeleton,
+  StepConnector,
+  useHydrated,
+} from '@/components/ui/MotionPrimitives';
 
-interface SavedAlert {
+interface SavedAlertRow {
   id: string;
+  email: string;
   from_currency: string;
   to_currency: string;
   direction: 'above' | 'below';
   target_rate: number;
-  email: string;
   is_active: boolean;
   created_at: string;
 }
@@ -23,115 +31,128 @@ interface SavedAlert {
 const alertFaqs = [
   {
     question: 'How do VectisX rate alerts work?',
-    answer: 'You choose a currency pair (e.g. USD to EUR) and your target exchange rate threshold. Our live monitoring engine continuously checks market fluctuations 24/7. As soon as the rate hits or exceeds your target, we trigger an immediate alert via email and mobile push notification.'
+    answer:
+      'Choose any source and target currency pair, specify your desired exchange rate threshold, and enter your email. Our engine continuously monitors live institutional FX feeds and notifies you when markets reach your target.',
   },
   {
     question: 'Are VectisX rate alerts free?',
-    answer: 'Yes! Personal rate alerts are 100% free with no hidden charges, subscription fees, or limits on standard pairs.'
+    answer:
+      'Yes. Creating, managing, and syncing unlimited currency rate alerts to your VectisX cloud watchlist is completely free.',
   },
   {
-    question: 'Can I set multiple alerts simultaneously?',
-    answer: 'Absolutely. You can monitor up to 20 currency pairs at the same time and configure both "rise above" and "drop below" triggers.'
+    question: 'How often are target thresholds checked against live rates?',
+    answer:
+      'Live spot benchmarks are polled continuously from global interbank market feeds alongside official European Central Bank and central-bank reference tables.',
   },
-  {
-    question: 'How fast will I receive the notification?',
-    answer: 'Alerts are dispatched within seconds of the threshold being reached on interbank trading networks.'
-  }
 ];
 
 export default function AlertsPage() {
   const [fromCode, setFromCode] = useState('USD');
-  const [toCode, setToCode] = useState('EUR');
+  const [toCode, setToCode] = useState('PKR');
   const [direction, setDirection] = useState<'above' | 'below'>('above');
   const [targetRate, setTargetRate] = useState('');
   const [email, setEmail] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
-  const [savedAlerts, setSavedAlerts] = useState<SavedAlert[]>([]);
+  const [savedAlerts, setSavedAlerts] = useState<SavedAlertRow[]>([]);
+  const [alertsLoading, setAlertsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [justSucceeded, setJustSucceeded] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { isLoading: ratesLoading, error: ratesError, source, lastUpdated, refresh, getLivePairRate } = useLiveRates(fromCode);
+  const hydrated = useHydrated();
+  const {
+    data: ratesData,
+    isLoading: ratesLoading,
+    error: ratesError,
+    source,
+    lastUpdated,
+    refresh,
+    getLivePairRate,
+  } = useLiveRates(fromCode);
+
   const currentRate = getLivePairRate(fromCode, toCode);
 
-  const loadAlerts = useCallback(async () => {
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
-
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
-    if (!user) {
-      setUserId(null);
-      setSavedAlerts([]);
-      return;
-    }
-
-    setUserId(user.id);
-    if (user.email) {
-      setEmail((prev) => prev || user.email || '');
-    }
-
-    const { data } = await supabase
-      .from('rate_alerts')
-      .select('id, from_currency, to_currency, direction, target_rate, email, is_active, created_at')
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setSavedAlerts(data as SavedAlert[]);
-    }
-  }, []);
-
   useEffect(() => {
-    loadAlerts();
     const supabase = getSupabaseClient();
     if (!supabase) return;
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      loadAlerts();
+
+    supabase.auth.getUser().then(async ({ data }) => {
+      const u = data.user;
+      if (!u) return;
+      setUserId(u.id);
+      if (u.email) setEmail(u.email);
+
+      setAlertsLoading(true);
+      try {
+        const { data: rows } = await supabase
+          .from('rate_alerts')
+          .select('*')
+          .eq('user_id', u.id)
+          .order('created_at', { ascending: false });
+
+        if (rows) setSavedAlerts(rows as SavedAlertRow[]);
+      } finally {
+        setAlertsLoading(false);
+      }
     });
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, [loadAlerts]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email || !targetRate) return;
 
-    const numericRate = Number(targetRate);
-    if (!Number.isFinite(numericRate) || numericRate <= 0) {
-      setError('Please enter a valid positive target rate.');
+    const parsedRate = Number(targetRate);
+    if (!email.trim() || !Number.isFinite(parsedRate) || parsedRate <= 0) {
+      setError('Please enter a valid positive target rate and notification email.');
       return;
     }
 
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setIsSuccess(true);
+      setJustSucceeded(true);
+      window.setTimeout(() => {
+        setJustSucceeded(false);
+        setIsSuccess(true);
+      }, 800);
       return;
     }
 
     setLoading(true);
     try {
-      const { error: insertError } = await supabase.from('rate_alerts').insert({
+      const payload = {
         user_id: userId,
         email: email.trim().toLowerCase(),
         from_currency: fromCode,
         to_currency: toCode,
         direction,
-        target_rate: numericRate,
-      });
+        target_rate: parsedRate,
+      };
+
+      const { data: inserted, error: insertError } = await supabase
+        .from('rate_alerts')
+        .insert(payload)
+        .select('*')
+        .maybeSingle();
 
       if (insertError) {
         setError(insertError.message);
         return;
       }
 
-      setIsSuccess(true);
-      if (userId) {
-        await loadAlerts();
+      if (inserted && userId) {
+        setSavedAlerts((prev) => [inserted as SavedAlertRow, ...prev]);
       }
+
+      setLoading(false);
+      setJustSucceeded(true);
+      window.setTimeout(() => {
+        setJustSucceeded(false);
+        setIsSuccess(true);
+      }, 800);
+      return;
     } catch {
-      setError('Could not save your rate alert right now. Please try again.');
+      setError('Unable to save rate alert right now. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -145,33 +166,41 @@ export default function AlertsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-50">
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-950 via-brand-900 to-brand-800 text-white py-14 sm:py-20">
+    <div className="min-h-screen bg-page">
+      {/* Hero — Flat Navy #0B1B33 */}
+      <section className="bg-navy text-white border-b border-navy-border py-14 sm:py-20">
         <div className="container-vx">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="badge-teal mb-3">24/7 Exchange Rate Triggers</span>
-            <h1 className="text-3xl sm:text-5xl font-heading font-extrabold tracking-tight">
+            <span className="badge-brand mb-3">24/7 Exchange Rate Triggers</span>
+            <h1 className="type-h1 text-white">
               Never Miss the Ideal Exchange Rate
             </h1>
-            <p className="text-surface-300 mt-3 text-base">
-              Set automated notifications for any currency pair. Get notified by email or mobile push the second markets reach your target.
+            <p className="type-body text-[#C9D3E3] mt-3 mx-auto">
+              Set automated notifications for any currency pair and get alerted the moment global markets cross your target threshold.
             </p>
           </div>
 
           {/* Alert Form Card */}
-          <div className="max-w-xl mx-auto card p-6 sm:p-8 bg-white text-surface-900 shadow-2xl">
+          <div className="max-w-xl mx-auto card p-6 sm:p-8 bg-white text-navy">
             {isSuccess ? (
               <div className="text-center py-8 space-y-4">
-                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
+                <div className="w-16 h-16 bg-gain-bg border border-gain-border text-gain-text rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
                 </div>
-                <h3 className="text-2xl font-bold font-heading text-surface-900">Rate Alert Activated!</h3>
-                <p className="text-sm text-surface-600">
-                  We will notify <strong className="text-surface-900">{email}</strong> immediately when <strong>{fromCode}/{toCode}</strong> goes {direction} <strong>{targetRate}</strong>.
+                <h3 className="type-h3 text-navy">Rate Alert Activated!</h3>
+                <p className="text-sm text-body mx-auto">
+                  We will notify <strong className="text-navy">{email}</strong> immediately when{' '}
+                  <strong className="text-navy">
+                    {fromCode}/{toCode}
+                  </strong>{' '}
+                  goes {direction} <strong className="text-navy tabular-nums">{targetRate}</strong>.
                 </p>
                 <button
-                  onClick={() => { setIsSuccess(false); setTargetRate(''); }}
+                  type="button"
+                  onClick={() => {
+                    setIsSuccess(false);
+                    setTargetRate('');
+                  }}
                   className="btn-primary btn-sm"
                 >
                   Create Another Alert
@@ -189,63 +218,85 @@ export default function AlertsPage() {
                 />
 
                 {error && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <div className="p-3 rounded-xl bg-loss-bg border border-loss-border text-loss-text type-caption flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
                     <span>{error}</span>
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-surface-600 block mb-1">From</label>
+                    <label htmlFor="alert-from" className="form-label block mb-1.5">
+                      From
+                    </label>
                     <select
+                      id="alert-from"
                       value={fromCode}
                       onChange={(e) => setFromCode(e.target.value)}
                       className="select-field text-sm font-semibold"
                     >
-                      {currencies.map(c => (
-                        <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                      {currencies.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.code} - {c.name}
+                        </option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-surface-600 block mb-1">To</label>
+                    <label htmlFor="alert-to" className="form-label block mb-1.5">
+                      To
+                    </label>
                     <select
+                      id="alert-to"
                       value={toCode}
                       onChange={(e) => setToCode(e.target.value)}
                       className="select-field text-sm font-semibold"
                     >
-                      {currencies.map(c => (
-                        <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                      {currencies.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.code} - {c.name}
+                        </option>
                       ))}
                     </select>
                   </div>
                 </div>
 
-                <div className="p-3 bg-surface-50 rounded-xl flex items-center justify-between text-xs">
-                  <span className="text-surface-500">Current live rate:</span>
-                  <span className="font-mono font-bold text-surface-900">
-                    1 {fromCode} = {formatRate(currentRate)} {toCode}
-                  </span>
+                <div className="p-3.5 bg-page border border-surface-200 rounded-xl flex items-center justify-between type-caption">
+                  <span className="text-caption">Current live rate:</span>
+                  {hydrated && ratesLoading && !ratesData ? (
+                    <Skeleton className="h-5 w-36" />
+                  ) : (
+                    <RateFlash key={`${fromCode}-${toCode}`} value={currentRate} ready={Boolean(ratesData)}>
+                      <span className="font-semibold text-navy tabular-nums">
+                        1 {fromCode} = {formatRate(currentRate)} {toCode}
+                      </span>
+                    </RateFlash>
+                  )}
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-surface-600 block mb-1">Notify me when rate goes</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <span className="form-label block mb-1.5">Notify me when rate goes</span>
+                  <div className="grid grid-cols-2 gap-2" role="group" aria-label="Alert trigger direction">
                     <button
                       type="button"
+                      aria-pressed={direction === 'above'}
                       onClick={() => setDirection('above')}
-                      className={`py-2 text-xs font-bold rounded-xl border transition-all ${
-                        direction === 'above' ? 'bg-brand-500 text-white border-brand-500' : 'bg-surface-50 border-surface-200 text-surface-700'
+                      className={`min-h-[44px] px-3 py-2.5 type-caption font-semibold rounded-xl border transition-colors duration-150 ease-fintech ${
+                        direction === 'above'
+                          ? 'bg-primary-pale text-primary border-primary-border'
+                          : 'bg-white border-surface-300 text-body hover:border-primary hover:text-primary'
                       }`}
                     >
                       Above or equal to &uarr;
                     </button>
                     <button
                       type="button"
+                      aria-pressed={direction === 'below'}
                       onClick={() => setDirection('below')}
-                      className={`py-2 text-xs font-bold rounded-xl border transition-all ${
-                        direction === 'below' ? 'bg-brand-500 text-white border-brand-500' : 'bg-surface-50 border-surface-200 text-surface-700'
+                      className={`min-h-[44px] px-3 py-2.5 type-caption font-semibold rounded-xl border transition-colors duration-150 ease-fintech ${
+                        direction === 'below'
+                          ? 'bg-primary-pale text-primary border-primary-border'
+                          : 'bg-white border-surface-300 text-body hover:border-primary hover:text-primary'
                       }`}
                     >
                       Below or equal to &darr;
@@ -254,21 +305,27 @@ export default function AlertsPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-surface-600 block mb-1">Target Rate</label>
+                  <label htmlFor="alert-target-rate" className="form-label block mb-1.5">
+                    Target Rate
+                  </label>
                   <input
+                    id="alert-target-rate"
                     type="number"
                     step="0.0001"
                     placeholder={`e.g. ${(currentRate * 1.02).toFixed(4)}`}
                     value={targetRate}
                     onChange={(e) => setTargetRate(e.target.value)}
                     required
-                    className="input-field text-base font-semibold"
+                    className="input-field text-base font-semibold text-navy tabular-nums"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-surface-600 block mb-1">Notification Email</label>
+                  <label htmlFor="alert-email" className="form-label block mb-1.5">
+                    Notification Email
+                  </label>
                   <input
+                    id="alert-email"
                     type="email"
                     placeholder="name@example.com"
                     value={email}
@@ -280,16 +337,20 @@ export default function AlertsPage() {
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || justSucceeded}
                   className="btn-primary w-full justify-center btn-lg"
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Saving Alert...
+                      <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Saving Alert...
+                    </>
+                  ) : justSucceeded ? (
+                    <>
+                      <Check className="w-4 h-4" aria-hidden="true" /> Alert Saved
                     </>
                   ) : (
                     <>
-                      <Bell className="w-4 h-4" /> Activate Free Rate Alert
+                      <Bell className="w-4 h-4" aria-hidden="true" /> Activate Free Rate Alert
                     </>
                   )}
                 </button>
@@ -299,100 +360,122 @@ export default function AlertsPage() {
         </div>
       </section>
 
-      {/* Saved Alerts for Authenticated Users */}
-      {userId && savedAlerts.length > 0 && (
+      {/* Saved Alerts for Authenticated Users (with neutral --line skeleton loading) */}
+      {userId && (alertsLoading || savedAlerts.length > 0) && (
         <section className="py-12 bg-white border-b border-surface-200">
           <div className="container-vx max-w-3xl">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <span className="badge-teal mb-1">Synced with Account</span>
-                <h2 className="text-2xl font-heading font-bold text-surface-900">Your Active Rate Alerts</h2>
+                <span className="badge-gain mb-1">Synced with Account</span>
+                <h2 className="type-h2 text-navy">Your Active Rate Alerts</h2>
               </div>
-              <span className="text-xs font-semibold text-surface-500">{savedAlerts.length} active</span>
+              <span className="type-caption font-semibold text-caption tabular-nums">
+                {alertsLoading ? 'Syncing...' : `${savedAlerts.length} active`}
+              </span>
             </div>
 
-            <div className="space-y-3">
-              {savedAlerts.map((alertItem) => (
-                <div
-                  key={alertItem.id}
-                  className="flex items-center justify-between p-4 rounded-2xl border border-surface-200 bg-surface-50"
-                >
-                  <div>
-                    <div className="font-bold text-sm text-surface-900">
-                      {alertItem.from_currency} / {alertItem.to_currency}{' '}
-                      <span className="text-xs font-semibold text-brand-600">
-                        ({alertItem.direction === 'above' ? '≥' : '≤'} {Number(alertItem.target_rate).toFixed(4)})
-                      </span>
-                    </div>
-                    <div className="text-xs text-surface-500 mt-0.5">
-                      Notifying {alertItem.email}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteAlert(alertItem.id)}
-                    className="p-2 rounded-xl text-surface-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                    aria-label="Delete alert"
+            {alertsLoading ? (
+              <div className="space-y-3" aria-busy="true" aria-label="Loading saved alerts">
+                <Skeleton className="h-16 w-full rounded-2xl" />
+                <Skeleton className="h-16 w-full rounded-2xl" />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {savedAlerts.map((alertItem) => (
+                  <div
+                    key={alertItem.id}
+                    className="flex items-center justify-between p-4 rounded-2xl border border-surface-200 bg-page"
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <div>
+                      <div className="font-semibold text-sm text-navy tabular-nums">
+                        {alertItem.from_currency} / {alertItem.to_currency}{' '}
+                        <span className="type-caption font-semibold text-navy">
+                          ({alertItem.direction === 'above' ? '≥' : '≤'} {Number(alertItem.target_rate).toFixed(4)})
+                        </span>
+                      </div>
+                      <div className="type-caption text-caption mt-0.5">Notifying {alertItem.email}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteAlert(alertItem.id)}
+                      className="inline-flex items-center justify-center w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl text-caption hover:text-loss-text hover:bg-loss-bg transition-colors duration-150 ease-fintech"
+                      aria-label={`Delete ${alertItem.from_currency} to ${alertItem.to_currency} alert`}
+                    >
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
 
-      {/* How it works */}
+      {/* How it works (with animated StepConnector & staggered RevealCard) */}
       <section className="section-padding bg-white border-b border-surface-200">
-        <div className="container-vx">
+        <RevealSection className="container-vx">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl font-heading font-bold text-surface-900">How Rate Alerts Work</h2>
-            <p className="text-sm text-surface-500 mt-2">Effortless automated monitoring while you go about your day.</p>
+            <h2 className="type-h2 text-navy">How Rate Alerts Work</h2>
+            <p className="type-caption text-caption mt-2 mx-auto">
+              Effortless automated monitoring while you focus on your priorities.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="card text-center p-6">
-              <div className="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                1
-              </div>
-              <h3 className="font-bold text-surface-900 text-base mb-2">Configure Your Target</h3>
-              <p className="text-xs text-surface-500 leading-relaxed">
-                Choose any pair and input your desired conversion threshold based on historical market trends.
-              </p>
+          <div className="relative">
+            <div className="hidden md:block absolute top-12 left-[18%] right-[18%] z-0 pointer-events-none">
+              <StepConnector />
             </div>
 
-            <div className="card text-center p-6">
-              <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                2
-              </div>
-              <h3 className="font-bold text-surface-900 text-base mb-2">We Watch 24/7</h3>
-              <p className="text-xs text-surface-500 leading-relaxed">
-                Our automated algorithms poll continuous live feeds from global interbank markets without interruption.
-              </p>
-            </div>
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <RevealCard index={0}>
+                <div className="card text-center p-6 h-full">
+                  <div className="w-12 h-12 rounded-xl bg-primary-pale border border-primary-border text-primary flex items-center justify-center mx-auto mb-4 font-semibold text-lg tabular-nums">
+                    1
+                  </div>
+                  <h3 className="type-h3 text-navy mb-2">Configure Your Target</h3>
+                  <p className="text-sm text-body mx-auto">
+                    Choose any pair and input your desired conversion threshold based on historical market trends.
+                  </p>
+                </div>
+              </RevealCard>
 
-            <div className="card text-center p-6">
-              <div className="w-12 h-12 rounded-2xl bg-accent-100 text-accent-600 flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                3
-              </div>
-              <h3 className="font-bold text-surface-900 text-base mb-2">Receive Instant Notification</h3>
-              <p className="text-xs text-surface-500 leading-relaxed">
-                Receive instant emails and mobile push pings with direct one-click buttons to lock in your transfer rate.
-              </p>
+              <RevealCard index={1}>
+                <div className="card text-center p-6 h-full">
+                  <div className="w-12 h-12 rounded-xl bg-primary-pale border border-primary-border text-primary flex items-center justify-center mx-auto mb-4 font-semibold text-lg tabular-nums">
+                    2
+                  </div>
+                  <h3 className="type-h3 text-navy mb-2">Continuous 24/7 Polling</h3>
+                  <p className="text-sm text-body mx-auto">
+                    Our automated engine monitors live feeds from global interbank and central-bank sources continuously.
+                  </p>
+                </div>
+              </RevealCard>
+
+              <RevealCard index={2}>
+                <div className="card text-center p-6 h-full">
+                  <div className="w-12 h-12 rounded-xl bg-primary-pale border border-primary-border text-primary flex items-center justify-center mx-auto mb-4 font-semibold text-lg tabular-nums">
+                    3
+                  </div>
+                  <h3 className="type-h3 text-navy mb-2">Instant Email Trigger</h3>
+                  <p className="text-sm text-body mx-auto">
+                    Receive immediate notifications with live rate context the moment markets cross your threshold.
+                  </p>
+                </div>
+              </RevealCard>
             </div>
           </div>
-        </div>
+        </RevealSection>
       </section>
 
       {/* FAQ */}
-      <section className="section-padding bg-surface-50">
-        <div className="container-vx max-w-4xl">
+      <section className="section-padding bg-page">
+        <RevealSection className="container-vx max-w-4xl">
           <div className="text-center mb-10">
-            <span className="badge-brand">Assistance</span>
-            <h2 className="text-3xl font-heading font-bold text-surface-900 mt-2">Frequently Asked Questions</h2>
+            <span className="badge-brand">Support</span>
+            <h2 className="type-h2 text-navy mt-2">Rate Alert FAQs</h2>
           </div>
           <Accordion items={alertFaqs} />
-        </div>
+        </RevealSection>
       </section>
     </div>
   );

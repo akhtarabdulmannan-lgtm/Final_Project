@@ -1,17 +1,24 @@
 'use client';
 
-import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { getSupabaseClient } from '@/lib/supabase';
+import {
+  RevealCard,
+  RevealSection,
+  StatefulButtonContent,
+  useButtonFeedback,
+} from '@/components/ui/MotionPrimitives';
 
 export default function ApiPartnersPage() {
   const [companyName, setCompanyName] = useState('');
   const [businessEmail, setBusinessEmail] = useState('');
   const [track, setTrack] = useState('ISV & SaaS Embedded Integration');
   const [estimatedVolume, setEstimatedVolume] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  const feedback = useButtonFeedback();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +26,12 @@ export default function ApiPartnersPage() {
 
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setSubmitted(true);
+      feedback.triggerSuccess();
+      setTimeout(() => setSubmitted(true), 800);
       return;
     }
 
-    setLoading(true);
+    feedback.startLoading();
     try {
       const { error: insertError } = await supabase.from('partner_applications').insert({
         company_name: companyName.trim(),
@@ -33,96 +41,110 @@ export default function ApiPartnersPage() {
       });
 
       if (insertError) {
+        feedback.reset();
         setError(insertError.message);
         return;
       }
 
-      setSubmitted(true);
+      feedback.triggerSuccess();
+      setTimeout(() => setSubmitted(true), 800);
     } catch {
+      feedback.reset();
       setError('Could not submit partner application right now. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-page py-12 sm:py-20">
       <div className="container-vx">
         <div className="max-w-3xl mb-12">
           <span className="badge-brand">Ecosystem Partnerships</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
+          <h1 className="type-h1 text-navy mt-2">
             VectisX Partner Program
           </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
+          <p className="type-body text-body mt-3">
             Collaborate with the world&apos;s trusted currency data authority. Earn recurring revenue shares, deliver white-label FX modules, and co-brand seamless international payment experiences.
           </p>
         </div>
 
         {/* 3 Tracks */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="card p-6 bg-white space-y-3">
-            <span className="badge-teal">Track 1</span>
-            <h3 className="font-bold text-surface-900 text-xl font-heading">ISV &amp; SaaS Providers</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Embed VectisX real-time FX data and cross-border payment rails directly into your billing, ERP, or e-commerce software.
-            </p>
-            <ul className="text-xs text-surface-500 space-y-1.5 pt-2 border-t border-surface-100">
-              <li>• Up to 25% recurring net revenue share</li>
-              <li>• Dedicated developer sandboxes</li>
-              <li>• Co-marketing in our integration directory</li>
-            </ul>
-          </div>
+        <RevealSection className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <RevealCard index={0}>
+            <div className="card p-6 bg-white space-y-3 h-full">
+              <span className="badge-brand">Track 1</span>
+              <h2 className="type-h3 text-navy">ISV &amp; SaaS Providers</h2>
+              <p className="text-sm text-body">
+                Embed VectisX real-time FX data and analytics modules directly into your billing, ERP, or e-commerce software.
+              </p>
+              <ul className="type-caption text-caption space-y-1.5 pt-2 border-t border-surface-200 tabular-nums">
+                <li>• Up to 25% recurring net revenue share</li>
+                <li>• Dedicated developer sandboxes</li>
+                <li>• Co-marketing in our integration directory</li>
+              </ul>
+            </div>
+          </RevealCard>
 
-          <div className="card p-6 bg-white space-y-3">
-            <span className="badge-brand">Track 2</span>
-            <h3 className="font-bold text-surface-900 text-xl font-heading">IT Services &amp; System Integrators</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Implement VectisX enterprise treasury connectors into client deployments of Microsoft Dynamics 365, Sage, and SAP.
-            </p>
-            <ul className="text-xs text-surface-500 space-y-1.5 pt-2 border-t border-surface-100">
-              <li>• Direct access to partner solution architects</li>
-              <li>• Implementation bounties &amp; commissions</li>
-              <li>• Certified Partner credentials</li>
-            </ul>
-          </div>
+          <RevealCard index={1}>
+            <div className="card p-6 bg-white space-y-3 h-full">
+              <span className="badge-brand">Track 2</span>
+              <h2 className="type-h3 text-navy">IT Services &amp; System Integrators</h2>
+              <p className="text-sm text-body">
+                Implement VectisX enterprise treasury connectors into client deployments of Microsoft Dynamics 365, Sage, and SAP.
+              </p>
+              <ul className="type-caption text-caption space-y-1.5 pt-2 border-t border-surface-200">
+                <li>• Direct access to partner solution architects</li>
+                <li>• Implementation bounties &amp; commissions</li>
+                <li>• Certified Partner credentials</li>
+              </ul>
+            </div>
+          </RevealCard>
 
-          <div className="card p-6 bg-white space-y-3">
-            <span className="badge-accent">Track 3</span>
-            <h3 className="font-bold text-surface-900 text-xl font-heading">Referral &amp; Affiliate Network</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Introduce enterprise clients requiring high-volume commercial payments or forward contracts to our dealing desk.
-            </p>
-            <ul className="text-xs text-surface-500 space-y-1.5 pt-2 border-t border-surface-100">
-              <li>• Generous lifetime spread share on client volume</li>
-              <li>• Dedicated partner portal &amp; real-time analytics</li>
-              <li>• Turnkey marketing collateral</li>
-            </ul>
-          </div>
-        </div>
+          <RevealCard index={2}>
+            <div className="card p-6 bg-white space-y-3 h-full">
+              <span className="badge-brand">Track 3</span>
+              <h2 className="type-h3 text-navy">Referral &amp; Affiliate Network</h2>
+              <p className="text-sm text-body">
+                Introduce enterprise clients requiring multi-currency analytics or FX hedging insights to our institutional team.
+              </p>
+              <ul className="type-caption text-caption space-y-1.5 pt-2 border-t border-surface-200">
+                <li>• Generous recurring commission on client subscriptions</li>
+                <li>• Dedicated partner portal &amp; real-time analytics</li>
+                <li>• Turnkey marketing collateral</li>
+              </ul>
+            </div>
+          </RevealCard>
+        </RevealSection>
 
         {/* Form */}
-        <div className="max-w-xl mx-auto card p-8 bg-white shadow-xl">
-          <h3 className="text-2xl font-bold font-heading text-surface-900 mb-2">Apply to the Partner Network</h3>
-          <p className="text-xs text-surface-500 mb-6">Our partner alliances team will review your application within 2 business days.</p>
+        <RevealSection className="max-w-xl mx-auto card p-8 bg-white">
+          <h2 className="type-h3 text-navy mb-2">Apply to the Partner Network</h2>
+          <p className="type-caption text-caption mb-6">
+            Our partner alliances team will review your application within 2 business days.
+          </p>
 
           {submitted ? (
-            <div className="p-6 bg-emerald-50 text-emerald-800 rounded-2xl text-center space-y-2">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-              <div className="font-bold">Application Received!</div>
-              <p className="text-xs">We look forward to collaborating. An alliance manager will contact you shortly.</p>
+            <div className="p-6 bg-gain-bg border border-gain-border text-gain-text rounded-2xl text-center space-y-2">
+              <CheckCircle2 className="w-8 h-8 mx-auto" aria-hidden="true" />
+              <div className="font-semibold text-base">Application Received!</div>
+              <p className="type-caption">
+                We look forward to collaborating. An alliance manager will contact you shortly.
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <div className="p-3 rounded-xl bg-loss-bg border border-loss-border text-loss-text type-caption flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
                   <span>{error}</span>
                 </div>
               )}
 
               <div>
-                <label className="text-xs font-semibold text-surface-600 block mb-1">Company / Organization</label>
+                <label htmlFor="partner-company" className="form-label block mb-1.5">
+                  Company / Organization
+                </label>
                 <input
+                  id="partner-company"
                   type="text"
                   required
                   value={companyName}
@@ -132,8 +154,11 @@ export default function ApiPartnersPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-surface-600 block mb-1">Business Email</label>
+                <label htmlFor="partner-email" className="form-label block mb-1.5">
+                  Business Email
+                </label>
                 <input
+                  id="partner-email"
                   type="email"
                   required
                   value={businessEmail}
@@ -143,8 +168,11 @@ export default function ApiPartnersPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-surface-600 block mb-1">Desired Partnership Track</label>
+                <label htmlFor="partner-track" className="form-label block mb-1.5">
+                  Desired Partnership Track
+                </label>
                 <select
+                  id="partner-track"
                   value={track}
                   onChange={(e) => setTrack(e.target.value)}
                   className="select-field text-sm font-semibold"
@@ -155,8 +183,11 @@ export default function ApiPartnersPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-surface-600 block mb-1">Estimated Annual Volume / Users</label>
+                <label htmlFor="partner-volume" className="form-label block mb-1.5">
+                  Estimated Annual Volume / Users
+                </label>
                 <input
+                  id="partner-volume"
                   type="text"
                   value={estimatedVolume}
                   onChange={(e) => setEstimatedVolume(e.target.value)}
@@ -166,18 +197,19 @@ export default function ApiPartnersPage() {
               </div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={feedback.status === 'loading'}
                 className="btn-primary w-full justify-center btn-lg"
               >
-                {loading ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Submitting Application...</>
-                ) : (
-                  'Submit Partner Application'
-                )}
+                <StatefulButtonContent
+                  status={feedback.status}
+                  idleLabel="Submit Partner Application"
+                  loadingLabel="Submitting Application..."
+                  successLabel="Application Sent"
+                />
               </button>
             </form>
           )}
-        </div>
+        </RevealSection>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { CheckCircle2, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { RevealCard, RevealSection } from '@/components/ui/MotionPrimitives';
 
 export default function ApiPricingPage() {
   const tiers = [
@@ -17,10 +18,10 @@ export default function ApiPricingPage() {
         '220+ Currencies & Metals',
         'Standard Email Developer Support',
         'JSON REST API Format',
-        'Standard Rate Blender Filtering'
+        'Standard Rate Blender Filtering',
       ],
       highlighted: false,
-      cta: 'Choose Core'
+      cta: 'Choose Core',
     },
     {
       name: 'Intermediate',
@@ -34,10 +35,10 @@ export default function ApiPricingPage() {
         '220+ Currencies, Metals & Selected Crypto',
         'Historical Rates back to 1998',
         'Monthly Averages & Volatility Indices',
-        'Priority Technical Support'
+        'Priority Technical Support',
       ],
       highlighted: true,
-      cta: 'Choose Intermediate'
+      cta: 'Choose Intermediate',
     },
     {
       name: 'Prime',
@@ -51,10 +52,10 @@ export default function ApiPricingPage() {
         'Bid & Ask Real-Time Spreads (Beta)',
         'Central Bank Benchmark Rate Feeds',
         'Dedicated Technical Account Manager',
-        '99.9% Uptime Guarantee'
+        '99.9% Uptime Guarantee',
       ],
       highlighted: false,
-      cta: 'Choose Prime'
+      cta: 'Choose Prime',
     },
     {
       name: 'Enterprise',
@@ -68,122 +69,170 @@ export default function ApiPricingPage() {
         'Custom Margin & Source Rate Overrides',
         'Multi-Entity License Allowance',
         '99.99% Uptime SLA with Financial Backing',
-        'Direct Engineering Phone Support & Slack'
+        'Direct Engineering Phone Support & Slack',
       ],
       highlighted: false,
-      cta: 'Contact Sales'
-    }
+      cta: 'Contact Sales',
+    },
   ];
 
   const addons = [
-    { name: 'Central Bank Reference Rates', price: '+$199/yr', desc: 'Direct feeds from ECB, Federal Reserve, Bank of England, Bank of Canada, and RBI.' },
-    { name: 'Alternative Source Feeds', price: '+$299/yr', desc: 'Custom secondary liquidity feeds for parallel audit verification.' },
-    { name: 'Custom Margin Layer', price: '+$99/yr', desc: 'Automatically embed custom corporate spread markups in output API JSON responses.' },
-    { name: 'Extended Entity Allowance', price: '+$149/yr', desc: 'Extend API licensing across multiple subsidiary corporate parent entities.' },
+    {
+      name: 'Central Bank Reference Rates',
+      price: '+$199/yr',
+      desc: 'Direct feeds from ECB, Federal Reserve, Bank of England, Bank of Canada, and RBI.',
+    },
+    {
+      name: 'Alternative Source Feeds',
+      price: '+$299/yr',
+      desc: 'Custom secondary liquidity feeds for parallel audit verification.',
+    },
+    {
+      name: 'Custom Margin Layer',
+      price: '+$99/yr',
+      desc: 'Automatically embed custom corporate spread markups in output API JSON responses.',
+    },
+    {
+      name: 'Extended Entity Allowance',
+      price: '+$149/yr',
+      desc: 'Extend API licensing across multiple subsidiary corporate parent entities.',
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-page py-12 sm:py-20">
       <div className="container-vx">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="badge-brand">Commercial API Licensing</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
+          <h1 className="type-h1 text-navy mt-2">
             Predictable, Transparent API Pricing
           </h1>
-          <p className="text-surface-600 text-sm mt-3 leading-relaxed">
+          <p className="type-body text-body mt-3 mx-auto">
             Choose the update frequency and query quota tailored for your application. All plans include full SDK access and proprietary Rate Blender filtering.
           </p>
         </div>
 
         {/* 4 Tiers */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {tiers.map(t => (
-            <div 
-              key={t.name}
-              className={`rounded-3xl p-6 flex flex-col justify-between transition-all ${
-                t.highlighted 
-                  ? 'bg-brand-900 text-white shadow-2xl ring-2 ring-brand-500 scale-105' 
-                  : 'bg-white text-surface-900 border border-surface-200 shadow-sm'
-              }`}
-            >
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-bold text-lg font-heading">{t.name}</h3>
-                  {t.highlighted && (
-                    <span className="text-[10px] font-bold text-teal-300 bg-teal-900/60 px-2 py-0.5 rounded-full uppercase">
-                      Most Popular
+        <RevealSection className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {tiers.map((t, idx) => (
+            <RevealCard key={t.name} index={idx}>
+              <div
+                className={`rounded-2xl p-6 flex flex-col justify-between border transition-colors duration-150 ease-fintech h-full ${
+                  t.highlighted
+                    ? 'bg-navy text-white border-primary ring-1 ring-primary'
+                    : 'bg-white text-navy border-surface-200 hover:border-surface-300'
+                }`}
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <h2 className={`type-h3 ${t.highlighted ? 'text-white' : 'text-navy'}`}>
+                      {t.name}
+                    </h2>
+                    {t.highlighted && (
+                      <span className="badge-brand text-[11px] uppercase">Most Popular</span>
+                    )}
+                  </div>
+                  <div className="mb-4 tabular-nums">
+                    <span
+                      className={`text-3xl font-heading font-semibold ${
+                        t.highlighted ? 'text-white' : 'text-navy'
+                      }`}
+                    >
+                      {t.price}
                     </span>
-                  )}
-                </div>
-                <div className="mb-4">
-                  <span className="text-3xl font-extrabold font-mono">{t.price}</span>
-                  <span className={`text-xs ml-1 ${t.highlighted ? 'text-surface-300' : 'text-surface-500'}`}>{t.period}</span>
-                </div>
-                <div className={`text-xs font-semibold px-2.5 py-1 rounded-lg mb-4 inline-block ${
-                  t.highlighted ? 'bg-white/10 text-teal-300' : 'bg-surface-100 text-surface-700'
-                }`}>
-                  {t.requests}
-                </div>
-                <p className={`text-xs mb-6 leading-relaxed ${t.highlighted ? 'text-surface-300' : 'text-surface-600'}`}>
-                  {t.desc}
-                </p>
+                    <span
+                      className={`type-caption ml-1.5 ${
+                        t.highlighted ? 'text-[#C9D3E3]' : 'text-caption'
+                      }`}
+                    >
+                      {t.period}
+                    </span>
+                  </div>
+                  <div
+                    className={`type-caption font-semibold px-2.5 py-1 rounded-lg mb-4 inline-block border tabular-nums ${
+                      t.highlighted
+                        ? 'bg-navy-elevated border-navy-border text-[#DBE6FD]'
+                        : 'bg-page border-surface-200 text-navy'
+                    }`}
+                  >
+                    {t.requests}
+                  </div>
+                  <p
+                    className={`text-sm mb-6 ${
+                      t.highlighted ? 'text-[#C9D3E3]' : 'text-body'
+                    }`}
+                  >
+                    {t.desc}
+                  </p>
 
-                <div className="space-y-2.5 border-t pt-4 border-surface-100/20 text-xs">
-                  {t.features.map((f, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <CheckCircle2 className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${t.highlighted ? 'text-teal-400' : 'text-brand-500'}`} />
-                      <span className={t.highlighted ? 'text-surface-200' : 'text-surface-700'}>{f}</span>
-                    </div>
-                  ))}
+                  <div
+                    className={`space-y-2.5 border-t pt-4 type-caption ${
+                      t.highlighted ? 'border-navy-border' : 'border-surface-200'
+                    }`}
+                  >
+                    {t.features.map((f) => (
+                      <div key={f} className="flex items-start gap-2">
+                        <CheckCircle2
+                          className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${
+                            t.highlighted ? 'text-[#DBE6FD]' : 'text-primary'
+                          }`}
+                          aria-hidden="true"
+                        />
+                        <span className={t.highlighted ? 'text-[#E3E8F0]' : 'text-body'}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-8">
+                  <Link
+                    href={t.name === 'Enterprise' ? '/contact' : '/register'}
+                    className={`w-full justify-center btn-sm ${
+                      t.highlighted ? 'btn-primary' : 'btn-secondary'
+                    }`}
+                  >
+                    {t.cta}
+                  </Link>
                 </div>
               </div>
-
-              <div className="pt-8">
-                <Link
-                  href={t.name === 'Enterprise' ? '/contact' : '/register'}
-                  className={`w-full justify-center btn-sm ${
-                    t.highlighted ? 'btn-teal' : 'btn-primary'
-                  }`}
-                >
-                  {t.cta}
-                </Link>
-              </div>
-            </div>
+            </RevealCard>
           ))}
-        </div>
+        </RevealSection>
 
         {/* Add-ons */}
-        <div className="card p-8 bg-white mb-16">
+        <RevealSection className="card p-8 bg-white mb-16">
           <div className="max-w-xl mb-6">
-            <span className="badge-teal">Modular Capabilities</span>
-            <h3 className="text-2xl font-bold font-heading text-surface-900 mt-1">
+            <span className="badge-brand">Modular Capabilities</span>
+            <h2 className="type-h2 text-navy mt-2">
               Enterprise Add-On Options
-            </h3>
-            <p className="text-xs text-surface-500 mt-1">
+            </h2>
+            <p className="type-caption text-caption mt-1">
               Enhance any tier with specialized regulatory rate data and subsidiary licensing rights.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {addons.map(a => (
-              <div key={a.name} className="p-4 rounded-2xl bg-surface-50 border border-surface-200 space-y-2">
-                <div className="font-bold text-surface-900 text-sm">{a.name}</div>
-                <div className="text-brand-600 font-bold font-mono text-xs">{a.price}</div>
-                <p className="text-[11px] text-surface-500 leading-relaxed">{a.desc}</p>
+            {addons.map((a) => (
+              <div key={a.name} className="p-4 rounded-2xl bg-page border border-surface-200 space-y-2">
+                <div className="font-semibold text-navy text-sm">{a.name}</div>
+                <div className="text-navy font-semibold tabular-nums type-caption">{a.price}</div>
+                <p className="type-caption text-caption">{a.desc}</p>
               </div>
             ))}
           </div>
-        </div>
+        </RevealSection>
 
         {/* Free Sandbox CTA */}
-        <div className="card p-8 bg-gradient-to-r from-brand-900 to-brand-950 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="card-dark p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold font-heading">Start with a 14-day free developer trial</h3>
-            <p className="text-xs text-surface-300 mt-1">Get immediate test credentials. No credit card required.</p>
+            <h2 className="type-h3 text-white">Start with a 14-day free developer trial</h2>
+            <p className="type-caption text-[#C9D3E3] mt-1">
+              Get immediate test credentials. No credit card required.
+            </p>
           </div>
-          <Link href="/register" className="btn-teal whitespace-nowrap">
-            Generate Free Sandbox Key <ArrowRight className="w-4 h-4 ml-1" />
+          <Link href="/register" className="btn-primary whitespace-nowrap">
+            Generate Free Sandbox Key <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
           </Link>
         </div>
       </div>

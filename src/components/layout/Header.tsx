@@ -2,23 +2,27 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ChevronDown, ArrowRight, Globe, User, LogOut, Bell } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { personalNav, businessNav } from '@/data/navigation';
 import { useStickyHeader } from '@/hooks';
+import { useLiveRates } from '@/hooks/useLiveRates';
 import { NavItem, UserMode } from '@/types';
 import { getSupabaseClient } from '@/lib/supabase';
 import BrandLogo from '@/components/ui/BrandLogo';
+import { LiveTimestamp } from '@/components/ui/MotionPrimitives';
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mode, setMode] = useState<UserMode>('personal');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [authUser, setAuthUser] = useState<SupabaseUser | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const isSticky = useStickyHeader();
+  const isSticky = useStickyHeader(20);
+  const { lastUpdated } = useLiveRates('USD');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const nav = mode === 'personal' ? personalNav : businessNav;
@@ -56,7 +60,9 @@ export default function Header() {
   useEffect(() => {
     if (mobileOpen) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [mobileOpen]);
 
   const handleSignOut = async () => {
@@ -75,107 +81,172 @@ export default function Header() {
     authUser?.email?.split('@')[0] ||
     'Account';
 
+  const isNavItemActive = (item: NavItem) => {
+    if (!pathname) return false;
+    if (pathname === item.href || pathname.startsWith(`${item.href}/`)) return true;
+    if (item.children?.some((c) => pathname === c.href || pathname.startsWith(`${c.href}/`))) return true;
+    return false;
+  };
+
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isSticky ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-surface-200' : 'bg-white'
-      }`}>
-        {/* Top bar - mode toggle */}
-        <div className="border-b border-surface-100">
-          <div className="container-vx flex items-center justify-between py-1.5">
-            <div className="flex items-center gap-1 rounded-full bg-surface-100 p-0.5">
-              <button
-                onClick={() => setMode('personal')}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${
-                  mode === 'personal'
-                    ? 'bg-white text-brand-500 shadow-sm'
-                    : 'text-surface-500 hover:text-surface-700'
-                }`}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 bg-white border-b border-surface-200 transition-transform duration-200 ease-fintech ${
+          isSticky ? '-translate-y-11' : 'translate-y-0'
+        }`}
+      >
+        {/* Top utility row — 44px height; slides up & hides over 200ms on scroll */}
+        <div
+          className={`h-11 border-b border-surface-200 bg-page transition-opacity duration-200 ease-fintech ${
+            isSticky ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          <div className="container-vx h-full flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div
+                className="flex items-center gap-0.5 rounded-full bg-white border border-surface-200 p-0.5"
+                role="tablist"
+                aria-label="Account mode"
               >
-                Personal
-              </button>
-              <button
-                onClick={() => setMode('business')}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${
-                  mode === 'business'
-                    ? 'bg-white text-brand-500 shadow-sm'
-                    : 'text-surface-500 hover:text-surface-700'
-                }`}
-              >
-                Business
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === 'personal'}
+                  onClick={() => setMode('personal')}
+                  className={`min-h-[34px] rounded-full px-3 py-1 type-caption font-semibold transition-colors duration-150 ease-fintech ${
+                    mode === 'personal'
+                      ? 'bg-primary-pale text-primary border border-primary-border'
+                      : 'text-caption hover:text-navy border border-transparent'
+                  }`}
+                >
+                  Personal
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === 'business'}
+                  onClick={() => setMode('business')}
+                  className={`min-h-[34px] rounded-full px-3 py-1 type-caption font-semibold transition-colors duration-150 ease-fintech ${
+                    mode === 'business'
+                      ? 'bg-primary-pale text-primary border border-primary-border'
+                      : 'text-caption hover:text-navy border border-transparent'
+                  }`}
+                >
+                  Business
+                </button>
+              </div>
+
+              <div className="hidden md:flex items-center">
+                <LiveTimestamp timestamp={lastUpdated ?? undefined} />
+              </div>
             </div>
-            <div className="hidden sm:flex items-center gap-4 text-xs text-surface-500">
-              <Link href="/help" className="hover:text-brand-500 transition-colors">Help</Link>
-              <Link href="/blog" className="hover:text-brand-500 transition-colors">Blog</Link>
-              <span className="text-surface-300">|</span>
-              <Link href="/contact" className="hover:text-brand-500 transition-colors flex items-center gap-1">
-                <Globe className="w-3 h-3" /> EN
+
+            <div className="hidden sm:flex items-center gap-1 type-caption text-caption">
+              <Link
+                href="/help"
+                className="inline-flex items-center min-h-[44px] px-2.5 hover:text-primary transition-colors duration-150 ease-fintech"
+              >
+                Help
+              </Link>
+              <Link
+                href="/blog"
+                className="inline-flex items-center min-h-[44px] px-2.5 hover:text-primary transition-colors duration-150 ease-fintech"
+              >
+                Blog
+              </Link>
+              <span className="text-surface-300" aria-hidden="true">
+                |
+              </span>
+              <Link
+                href="/contact"
+                aria-label="Language and regional offices (English)"
+                className="inline-flex items-center gap-1 min-h-[44px] px-2.5 hover:text-primary transition-colors duration-150 ease-fintech"
+              >
+                <Globe className="w-3.5 h-3.5" aria-hidden="true" /> EN
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Main nav */}
+        {/* Main navigation row */}
         <div className="container-vx">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center shrink-0 transition-opacity hover:opacity-90" aria-label="VectisX Home">
+            <Link
+              href="/"
+              className="inline-flex items-center min-h-[44px] shrink-0 transition-opacity duration-150 ease-fintech hover:opacity-90 rounded-lg"
+              aria-label="VectisX Home"
+            >
               <BrandLogo variant="light" size="md" />
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-1" ref={dropdownRef}>
-              {nav.map((item) => (
-                <div key={item.label} className="relative">
-                  {item.children ? (
-                    <button
-                      onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
-                      className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        activeDropdown === item.label
-                          ? 'text-brand-500 bg-brand-50'
-                          : 'text-surface-700 hover:text-brand-500 hover:bg-surface-50'
-                      }`}
-                    >
-                      {item.label}
-                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        activeDropdown === item.label ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="px-3 py-2 text-sm font-medium text-surface-700 hover:text-brand-500 hover:bg-surface-50 rounded-lg transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+            <nav className="hidden lg:flex items-center gap-1" ref={dropdownRef} aria-label="Primary">
+              {nav.map((item) => {
+                const isActive = isNavItemActive(item) || activeDropdown === item.label;
+                return (
+                  <div key={item.label} className="relative">
+                    {item.children ? (
+                      <button
+                        type="button"
+                        aria-expanded={activeDropdown === item.label}
+                        onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
+                        className={`inline-flex items-center gap-1 min-h-[44px] px-3.5 py-2 text-sm font-medium rounded-xl border transition-colors duration-150 ease-fintech ${
+                          isActive
+                            ? 'text-primary bg-primary-pale border-primary-border font-semibold'
+                            : 'text-body border-transparent hover:text-primary hover:bg-page'
+                        }`}
+                      >
+                        {item.label}
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 transition-transform duration-150 ease-fintech ${
+                            activeDropdown === item.label ? 'rotate-180' : ''
+                          }`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={`inline-flex items-center min-h-[44px] px-3.5 py-2 text-sm font-medium rounded-xl border transition-colors duration-150 ease-fintech ${
+                          isActive
+                            ? 'text-primary bg-primary-pale border-primary-border font-semibold'
+                            : 'text-body border-transparent hover:text-primary hover:bg-page'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    )}
 
-                  {/* Dropdown */}
-                  {item.children && activeDropdown === item.label && (
-                    <div className="absolute top-full left-0 mt-1 w-72 rounded-2xl bg-white border border-surface-200 shadow-xl shadow-surface-900/10 p-2 animate-scale-in origin-top-left">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-50 transition-colors group"
-                        >
-                          <div className="flex-1">
-                            <div className="text-sm font-semibold text-surface-900 group-hover:text-brand-500 transition-colors">
-                              {child.label}
+                    {/* Dropdown */}
+                    {item.children && activeDropdown === item.label && (
+                      <div className="absolute top-full left-0 mt-1.5 w-72 rounded-2xl bg-white border border-surface-200 p-2 z-50">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-start gap-3 min-h-[44px] p-3 rounded-xl hover:bg-primary-pale transition-colors duration-150 ease-fintech group"
+                          >
+                            <div className="flex-1">
+                              <div className="text-sm font-semibold text-navy group-hover:text-primary transition-colors duration-150 ease-fintech">
+                                {child.label}
+                              </div>
+                              {child.description && (
+                                <div className="type-caption text-caption mt-0.5">{child.description}</div>
+                              )}
                             </div>
-                            {child.description && (
-                              <div className="text-xs text-surface-500 mt-0.5">{child.description}</div>
-                            )}
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-surface-300 group-hover:text-brand-500 mt-0.5 transition-colors" />
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                            <ArrowRight
+                              className="w-4 h-4 text-caption group-hover:text-primary mt-0.5 transition-colors duration-150 ease-fintech"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
 
             {/* Right actions */}
@@ -183,61 +254,64 @@ export default function Header() {
               {authUser ? (
                 <div className="relative hidden sm:block" ref={userMenuRef}>
                   <button
+                    type="button"
                     onClick={() => setUserMenuOpen((v) => !v)}
-                    className="flex items-center gap-2 rounded-xl border border-surface-200 bg-surface-50 px-3 py-2 text-xs font-semibold text-surface-800 hover:border-brand-300 transition-colors"
+                    className="inline-flex items-center gap-2 min-h-[44px] rounded-xl border border-surface-300 bg-white px-3.5 py-2 type-caption font-semibold text-navy hover:border-primary transition-colors duration-150 ease-fintech"
                   >
-                    <span className="w-6 h-6 rounded-full bg-brand-500 text-white flex items-center justify-center text-[11px] font-bold uppercase">
+                    <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-[11px] font-semibold uppercase">
                       {displayName.slice(0, 1)}
                     </span>
                     <span className="max-w-[140px] truncate">{displayName}</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-surface-400" />
+                    <ChevronDown className="w-3.5 h-3.5 text-caption" aria-hidden="true" />
                   </button>
 
                   {userMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-white border border-surface-200 shadow-xl p-2 z-50">
-                      <div className="px-3 py-2 border-b border-surface-100">
-                        <div className="text-xs font-bold text-surface-900 truncate">{displayName}</div>
-                        <div className="text-[11px] text-surface-500 truncate">{authUser.email}</div>
+                    <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-white border border-surface-200 p-2 z-50">
+                      <div className="px-3 py-2 border-b border-surface-200">
+                        <div className="type-caption font-semibold text-navy truncate">{displayName}</div>
+                        <div className="text-[12px] text-caption truncate">{authUser.email}</div>
                       </div>
                       <Link
                         href="/alerts"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-surface-700 hover:bg-surface-50 hover:text-brand-500 rounded-xl mt-1"
+                        className="flex items-center gap-2 min-h-[44px] px-3 py-2 type-caption font-medium text-body hover:bg-primary-pale hover:text-primary rounded-xl mt-1"
                       >
-                        <Bell className="w-3.5 h-3.5" /> My Rate Alerts
+                        <Bell className="w-3.5 h-3.5" aria-hidden="true" /> My Rate Alerts
                       </Link>
                       <Link
                         href="/rates"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-surface-700 hover:bg-surface-50 hover:text-brand-500 rounded-xl"
+                        className="flex items-center gap-2 min-h-[44px] px-3 py-2 type-caption font-medium text-body hover:bg-primary-pale hover:text-primary rounded-xl"
                       >
-                        <ArrowRight className="w-3.5 h-3.5" /> Live Rate Tables
+                        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" /> Live Rate Tables
                       </Link>
                       <button
+                        type="button"
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-xl mt-1"
+                        className="w-full flex items-center gap-2 min-h-[44px] px-3 py-2 type-caption font-medium text-loss-text hover:bg-loss-bg rounded-xl mt-1"
                       >
-                        <LogOut className="w-3.5 h-3.5" /> Sign out
+                        <LogOut className="w-3.5 h-3.5" aria-hidden="true" /> Sign out
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
                 <>
-                  <Link href="/login" className="hidden sm:flex btn-ghost text-sm">
-                    <User className="w-4 h-4" /> Log in
+                  <Link href="/login" className="hidden sm:inline-flex btn-secondary btn-sm">
+                    <User className="w-4 h-4" aria-hidden="true" /> Log in
                   </Link>
-                  <Link href="/register" className="hidden sm:flex btn-primary btn-sm">
+                  <Link href="/register" className="hidden sm:inline-flex btn-primary btn-sm">
                     Register
                   </Link>
                 </>
               )}
               <button
+                type="button"
                 onClick={() => setMobileOpen(true)}
-                className="lg:hidden p-2 rounded-lg hover:bg-surface-100 transition-colors"
-                aria-label="Open menu"
+                className="lg:hidden inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl border border-transparent hover:bg-page hover:border-surface-200 transition-colors duration-150 ease-fintech"
+                aria-label="Open navigation menu"
               >
-                <Menu className="w-6 h-6 text-surface-700" />
+                <Menu className="w-6 h-6 text-navy" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -247,59 +321,78 @@ export default function Header() {
       {/* Mobile menu overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white shadow-2xl animate-slide-in-right overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-surface-100">
-              <Link href="/" className="flex items-center shrink-0" onClick={() => setMobileOpen(false)} aria-label="VectisX Home">
+          <div className="absolute inset-0 bg-navy/50" onClick={() => setMobileOpen(false)} />
+          <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white border-l border-surface-200 overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b border-surface-200">
+              <Link
+                href="/"
+                className="inline-flex items-center min-h-[44px] shrink-0"
+                onClick={() => setMobileOpen(false)}
+                aria-label="VectisX Home"
+              >
                 <BrandLogo variant="light" size="sm" />
               </Link>
-              <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg hover:bg-surface-100">
-                <X className="w-5 h-5" />
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl text-navy hover:bg-page"
+                aria-label="Close navigation menu"
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
             {/* Mode toggle mobile */}
-            <div className="p-4 border-b border-surface-100">
-              <div className="flex rounded-full bg-surface-100 p-1">
+            <div className="p-4 border-b border-surface-200 bg-page space-y-3">
+              <div className="flex rounded-full bg-white border border-surface-200 p-1">
                 <button
+                  type="button"
                   onClick={() => setMode('personal')}
-                  className={`flex-1 rounded-full py-2 text-sm font-medium transition-all ${
-                    mode === 'personal' ? 'bg-white text-brand-500 shadow-sm' : 'text-surface-500'
+                  className={`flex-1 min-h-[44px] rounded-full py-2 text-sm font-semibold transition-colors duration-150 ease-fintech ${
+                    mode === 'personal'
+                      ? 'bg-primary-pale text-primary border border-primary-border'
+                      : 'text-caption border border-transparent'
                   }`}
                 >
                   Personal
                 </button>
                 <button
+                  type="button"
                   onClick={() => setMode('business')}
-                  className={`flex-1 rounded-full py-2 text-sm font-medium transition-all ${
-                    mode === 'business' ? 'bg-white text-brand-500 shadow-sm' : 'text-surface-500'
+                  className={`flex-1 min-h-[44px] rounded-full py-2 text-sm font-semibold transition-colors duration-150 ease-fintech ${
+                    mode === 'business'
+                      ? 'bg-primary-pale text-primary border border-primary-border'
+                      : 'text-caption border border-transparent'
                   }`}
                 >
                   Business
                 </button>
               </div>
+              <LiveTimestamp timestamp={lastUpdated ?? undefined} />
             </div>
 
             {/* Mobile nav links */}
-            <nav className="p-4 space-y-1">
-              {nav.map((item, i) => (
-                <MobileNavItem key={item.label} item={item} index={i} onClose={() => setMobileOpen(false)} />
+            <nav className="p-4 space-y-1" aria-label="Mobile navigation">
+              {nav.map((item) => (
+                <MobileNavItem
+                  key={item.label}
+                  item={item}
+                  isActive={isNavItemActive(item)}
+                  onClose={() => setMobileOpen(false)}
+                />
               ))}
             </nav>
 
             {/* Mobile CTA */}
-            <div className="p-4 border-t border-surface-100 space-y-2">
+            <div className="p-4 border-t border-surface-200 space-y-2">
               {authUser ? (
                 <>
-                  <div className="px-3 py-2 rounded-xl bg-surface-50 text-xs">
-                    <div className="font-bold text-surface-900 truncate">{displayName}</div>
-                    <div className="text-surface-500 truncate">{authUser.email}</div>
+                  <div className="px-3 py-2.5 rounded-xl bg-page border border-surface-200 type-caption">
+                    <div className="font-semibold text-navy truncate">{displayName}</div>
+                    <div className="text-caption truncate">{authUser.email}</div>
                   </div>
-                  <button
-                    onClick={handleSignOut}
-                    className="btn-secondary w-full justify-center"
-                  >
-                    <LogOut className="w-4 h-4" /> Sign out
+                  <button type="button" onClick={handleSignOut} className="btn-secondary w-full justify-center">
+                    <LogOut className="w-4 h-4" aria-hidden="true" /> Sign out
                   </button>
                 </>
               ) : (
@@ -317,13 +410,21 @@ export default function Header() {
         </div>
       )}
 
-      {/* Spacer */}
-      <div className="h-[106px]" />
+      {/* Spacer matching 44px utility row + 64px main nav = 108px */}
+      <div className="h-[108px]" />
     </>
   );
 }
 
-function MobileNavItem({ item, index, onClose }: { item: NavItem; index: number; onClose: () => void }) {
+function MobileNavItem({
+  item,
+  isActive,
+  onClose,
+}: {
+  item: NavItem;
+  isActive: boolean;
+  onClose: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   if (!item.children) {
@@ -331,8 +432,11 @@ function MobileNavItem({ item, index, onClose }: { item: NavItem; index: number;
       <Link
         href={item.href}
         onClick={onClose}
-        className="block px-4 py-3 text-base font-medium text-surface-800 hover:text-brand-500 hover:bg-surface-50 rounded-xl transition-colors"
-        style={{ animationDelay: `${index * 50}ms` }}
+        className={`flex items-center min-h-[44px] px-4 py-3 text-base font-medium rounded-xl border transition-colors duration-150 ease-fintech ${
+          isActive
+            ? 'text-primary bg-primary-pale border-primary-border font-semibold'
+            : 'text-navy border-transparent hover:text-primary hover:bg-page'
+        }`}
       >
         {item.label}
       </Link>
@@ -342,20 +446,29 @@ function MobileNavItem({ item, index, onClose }: { item: NavItem; index: number;
   return (
     <div>
       <button
+        type="button"
+        aria-expanded={open}
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-4 py-3 text-base font-medium text-surface-800 hover:text-brand-500 hover:bg-surface-50 rounded-xl transition-colors"
+        className={`flex items-center justify-between w-full min-h-[44px] px-4 py-3 text-base font-medium rounded-xl border transition-colors duration-150 ease-fintech ${
+          isActive
+            ? 'text-primary bg-primary-pale border-primary-border font-semibold'
+            : 'text-navy border-transparent hover:text-primary hover:bg-page'
+        }`}
       >
         {item.label}
-        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform duration-150 ease-fintech ${open ? 'rotate-180' : ''}`}
+          aria-hidden="true"
+        />
       </button>
       {open && (
-        <div className="ml-4 space-y-1 pb-2">
+        <div className="ml-4 space-y-1 pt-1 pb-2">
           {item.children.map((child) => (
             <Link
               key={child.href}
               href={child.href}
               onClick={onClose}
-              className="block px-4 py-2 text-sm text-surface-600 hover:text-brand-500 rounded-lg transition-colors"
+              className="flex items-center min-h-[44px] px-4 py-2 text-sm text-body hover:text-primary hover:bg-primary-pale rounded-xl transition-colors duration-150 ease-fintech"
             >
               {child.label}
             </Link>

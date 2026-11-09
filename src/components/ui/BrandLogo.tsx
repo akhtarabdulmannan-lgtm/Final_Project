@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface BrandLogoProps {
   variant?: 'light' | 'dark' | 'mark' | 'icon';
   size?: 'sm' | 'md' | 'lg';
@@ -6,7 +8,10 @@ interface BrandLogoProps {
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
-const ASSET_MAP: Record<NonNullable<BrandLogoProps['variant']>, { src: string; width: number; height: number }> = {
+const ASSET_MAP: Record<
+  NonNullable<BrandLogoProps['variant']>,
+  { src: string; width: number; height: number }
+> = {
   light: {
     src: `${BASE_PATH}/brand/vectisx-logo-light.png`,
     width: 1240,
@@ -43,12 +48,12 @@ export default function BrandLogo({
   const asset = ASSET_MAP[variant];
 
   return (
-    <img
+    <Image
       src={asset.src}
       alt="VectisX"
       width={asset.width}
       height={asset.height}
-      decoding="async"
+      unoptimized
       className={`${SIZE_CLASSES[size]} select-none object-contain ${className}`.trim()}
     />
   );

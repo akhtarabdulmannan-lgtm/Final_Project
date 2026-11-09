@@ -12,6 +12,7 @@ import {
   type LiveRatesResponse,
   type HistoricalPoint,
 } from '@/lib/fxApi';
+import { getHistoricalRates } from '@/lib/rates';
 
 export function useLiveRates(baseCurrency = 'USD') {
   const [providerMode, setProviderState] = useState<FxProviderMode>(() => getFxProviderMode());
@@ -74,17 +75,12 @@ export function useLiveRates(baseCurrency = 'USD') {
 }
 
 export function useHistoricalSeries(fromCode: string, toCode: string, days: number) {
-  const [providerMode, setProviderState] = useState<FxProviderMode>(() => getFxProviderMode());
-  const [points, setPoints] = useState<HistoricalPoint[]>([]);
+  const [points, setPoints] = useState<HistoricalPoint[]>(() =>
+    getHistoricalRates(fromCode, toCode, days)
+  );
   const [source, setSource] = useState<string>('Frankfurter ECB Historical REST API');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [notice, setNotice] = useState<string | null>(null);
-
-  useEffect(() => {
-    return subscribeFxProviderMode((newMode) => {
-      setProviderState(newMode);
-    });
-  }, []);
 
   const loadSeries = useCallback(async () => {
     setIsLoading(true);
@@ -99,10 +95,16 @@ export function useHistoricalSeries(fromCode: string, toCode: string, days: numb
     } finally {
       setIsLoading(false);
     }
-  }, [fromCode, toCode, days, providerMode]);
+  }, [fromCode, toCode, days]);
 
   useEffect(() => {
     loadSeries();
+  }, [loadSeries]);
+
+  useEffect(() => {
+    return subscribeFxProviderMode(() => {
+      loadSeries();
+    });
   }, [loadSeries]);
 
   return {

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { TrendingUp, ShieldCheck, Lock, Target, ArrowRight, DollarSign } from 'lucide-react';
+import { TrendingUp, Lock, Target, ArrowRight } from 'lucide-react';
+import { CountUpAmount, RevealCard, RevealSection } from '@/components/ui/MotionPrimitives';
 
 export default function BusinessFxRiskPage() {
   const [contractAmount, setContractAmount] = useState(250000);
@@ -11,68 +12,74 @@ export default function BusinessFxRiskPage() {
   const potentialExposure = contractAmount * (volatilityPercent / 100);
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-page py-12 sm:py-20">
       <div className="container-vx">
         <div className="max-w-3xl mb-12">
           <span className="badge-brand">Treasury Protection</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            FX Risk Management & Hedging
+          <h1 className="type-h1 text-navy mt-2">
+            FX Risk Management &amp; Hedging
           </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
+          <p className="type-body text-body mt-3">
             Eliminate currency market volatility from your balance sheet. Lock in forward exchange rates, automate limit orders, and protect commercial profit margins against unforeseen currency devaluations.
           </p>
         </div>
 
         {/* 3 Risk Tools */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="card p-6 bg-white space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
-              <Lock className="w-6 h-6" />
+        <RevealSection className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <RevealCard index={0}>
+            <div className="card p-6 bg-white space-y-3 h-full">
+              <div className="w-12 h-12 rounded-2xl bg-primary-pale text-primary border border-primary-border flex items-center justify-center">
+                <Lock className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h2 className="type-h3 text-navy">Forward Contracts</h2>
+              <p className="text-sm text-body">
+                Model binding exchange rates today for horizons up to 24 months ahead to benchmark future import/export costs regardless of spot volatility.
+              </p>
+              <div className="p-3 bg-page border border-surface-200 rounded-xl type-caption text-caption tabular-nums">
+                Example: Benchmark GBP/USD @ 1.2850 across a 12-month operating budget.
+              </div>
             </div>
-            <h3 className="font-bold text-surface-900 text-lg">Forward Contracts</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Lock in a binding exchange rate today for delivery up to 24 months in the future. Guarantee future import/export purchase prices regardless of where spot markets move.
-            </p>
-            <div className="p-3 bg-surface-50 rounded-xl text-[11px] text-surface-500 font-mono">
-              Example: Lock GBP/USD @ 1.2850 for 12 months with only a modest initial margin deposit.
-            </div>
-          </div>
+          </RevealCard>
 
-          <div className="card p-6 bg-white space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center font-bold">
-              <Target className="w-6 h-6" />
+          <RevealCard index={1}>
+            <div className="card p-6 bg-white space-y-3 h-full">
+              <div className="w-12 h-12 rounded-2xl bg-primary-pale text-primary border border-primary-border flex items-center justify-center">
+                <Target className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h2 className="type-h3 text-navy">Target Rate Alerts</h2>
+              <p className="text-sm text-body">
+                Target a favorable exchange rate above current spot levels. When the market crosses your threshold, our cloud engine notifies your treasury desk.
+              </p>
+              <div className="p-3 bg-page border border-surface-200 rounded-xl type-caption text-caption tabular-nums">
+                Example: Monitor EUR/USD @ 1.1000 automatically 24/7 without manual watching.
+              </div>
             </div>
-            <h3 className="font-bold text-surface-900 text-lg">Limit Orders</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Target a favorable exchange rate above current spot levels. If the market spikes overnight to touch your price, our engine automatically executes and locks your trade.
-            </p>
-            <div className="p-3 bg-surface-50 rounded-xl text-[11px] text-surface-500 font-mono">
-              Example: Target EUR/USD @ 1.1000. Trade triggers automatically 24/7 without manual watching.
-            </div>
-          </div>
+          </RevealCard>
 
-          <div className="card p-6 bg-white space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-accent-100 text-accent-600 flex items-center justify-center font-bold">
-              <TrendingUp className="w-6 h-6" />
+          <RevealCard index={2}>
+            <div className="card p-6 bg-white space-y-3 h-full">
+              <div className="w-12 h-12 rounded-2xl bg-primary-pale text-primary border border-primary-border flex items-center justify-center">
+                <TrendingUp className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h2 className="type-h3 text-navy">FX Options &amp; Scenario Models</h2>
+              <p className="text-sm text-body">
+                Tailored hedging structures that cap downside risk while allowing your business to participate when currency movements turn favorable.
+              </p>
+              <div className="p-3 bg-page border border-surface-200 rounded-xl type-caption text-caption">
+                Bespoke treasury advisory tailored to multi-million dollar annual FX exposures.
+              </div>
             </div>
-            <h3 className="font-bold text-surface-900 text-lg">FX Options & Structured Deals</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Tailored hedging structures that cap downside risk while allowing your business to benefit if currency movements turn favorably in your direction.
-            </p>
-            <div className="p-3 bg-surface-50 rounded-xl text-[11px] text-surface-500 font-mono">
-              Bespoke treasury desk advisory tailored to multi-million dollar annual foreign exchange volumes.
-            </div>
-          </div>
-        </div>
+          </RevealCard>
+        </RevealSection>
 
         {/* Currency Risk Exposure Calculator */}
-        <div className="card p-8 bg-white mb-12 shadow-md">
+        <RevealSection className="card p-8 bg-white mb-12">
           <div className="max-w-xl mb-6">
-            <span className="badge-teal">Interactive Risk Calculator</span>
-            <h3 className="text-2xl font-bold font-heading text-surface-900 mt-1">
+            <span className="badge-brand">Interactive Risk Calculator</span>
+            <h2 className="type-h2 text-navy mt-2">
               Estimate Your Unhedged FX Exposure
-            </h3>
-            <p className="text-xs text-surface-500 mt-1">
+            </h2>
+            <p className="type-caption text-caption mt-1">
               See how an unexpected 2% to 6% currency swing impacts your annual bottom-line margin.
             </p>
           </div>
@@ -80,51 +87,69 @@ export default function BusinessFxRiskPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-surface-600 block mb-1">Annual Cross-Border Volume (USD)</label>
+                <label htmlFor="risk-volume" className="form-label block mb-1.5">
+                  Annual Cross-Border Volume (USD)
+                </label>
                 <input
+                  id="risk-volume"
                   type="number"
                   step="10000"
                   value={contractAmount}
                   onChange={(e) => setContractAmount(Number(e.target.value) || 0)}
-                  className="input-field font-semibold text-base"
+                  className="input-field font-semibold text-navy text-base tabular-nums"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-surface-600 block mb-1">
-                  Currency Fluctuation Margin: <strong>{volatilityPercent}%</strong>
+                <label htmlFor="risk-margin" className="form-label block mb-1.5 tabular-nums">
+                  Currency Fluctuation Margin:{' '}
+                  <strong className="font-semibold text-navy">{volatilityPercent}%</strong>
                 </label>
                 <input
+                  id="risk-margin"
                   type="range"
                   min="1"
                   max="10"
                   value={volatilityPercent}
                   onChange={(e) => setVolatilityPercent(Number(e.target.value))}
-                  className="w-full accent-brand-500 cursor-pointer"
+                  className="w-full min-h-[44px] accent-primary cursor-pointer"
                 />
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-rose-50 border border-rose-100 text-center space-y-2">
-              <span className="text-xs font-bold text-rose-600 uppercase tracking-wider">Potential Unhedged Balance Sheet Loss</span>
-              <div className="text-4xl font-extrabold text-rose-700 font-mono">
-                ${potentialExposure.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <div className="p-6 rounded-2xl bg-loss-bg border border-loss-border text-center space-y-2">
+              <span className="type-caption font-semibold text-loss-text uppercase tracking-wider">
+                ▼ Potential Unhedged Balance Sheet Loss
+              </span>
+              <div className="text-4xl font-heading font-semibold text-loss-text tabular-nums">
+                <CountUpAmount
+                  value={potentialExposure}
+                  prefix="$"
+                  format={(v) =>
+                    v.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  }
+                />
               </div>
-              <p className="text-xs text-surface-600 mt-2">
-                A simple forward contract can lock your rate and completely eliminate this volatility from your EBITDA.
+              <p className="type-caption text-body mt-2">
+                Structured FX hedging locks your target benchmark and protects EBITDA against adverse currency swings.
               </p>
             </div>
           </div>
-        </div>
+        </RevealSection>
 
         {/* CTA */}
-        <div className="card p-8 bg-gradient-to-r from-brand-900 to-brand-950 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="card-dark p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold font-heading">Consult our Senior FX Dealing Desk</h3>
-            <p className="text-xs text-surface-300 mt-1">Get custom pricing and institutional margin credit facilities.</p>
+            <h2 className="type-h3 text-white">Consult our Senior FX Advisory Desk</h2>
+            <p className="type-caption text-[#C9D3E3] mt-1">
+              Get custom scenario modeling and institutional treasury guidance.
+            </p>
           </div>
-          <Link href="/contact" className="btn-teal whitespace-nowrap">
-            Schedule Treasury Consultation <ArrowRight className="w-4 h-4 ml-1" />
+          <Link href="/contact" className="btn-primary whitespace-nowrap">
+            Schedule Treasury Consultation <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
           </Link>
         </div>
       </div>

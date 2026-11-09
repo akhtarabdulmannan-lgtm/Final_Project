@@ -2,60 +2,69 @@
 
 import Link from 'next/link';
 import { Calendar, RefreshCw, CheckCircle2, ArrowRight } from 'lucide-react';
+import { RevealCard, RevealSection } from '@/components/ui/MotionPrimitives';
 
 export default function BusinessScheduledPage() {
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-page py-12 sm:py-20">
       <div className="container-vx">
         <div className="max-w-3xl mb-12">
           <span className="badge-brand">Automated Accounts Payable</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            Scheduled & Recurring Business Payments
+          <h1 className="type-h1 text-navy mt-2">
+            Scheduled &amp; Recurring Business Payments
           </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
+          <p className="type-body text-body mt-3">
             Eliminate manual payment handling for recurring vendor contracts, international rent, and scheduled subscriptions. Set auto-pilot transfers that execute precisely when needed.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="card p-6 bg-white">
-            <div className="w-10 h-10 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center font-bold mb-4">
-              <Calendar className="w-5 h-5" />
+        <RevealSection className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <RevealCard index={0}>
+            <div className="card p-6 bg-white h-full">
+              <div className="w-10 h-10 rounded-xl bg-primary-pale text-primary border border-primary-border flex items-center justify-center mb-4">
+                <Calendar className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <h2 className="type-h3 text-navy mb-2">Flexible Cadence</h2>
+              <p className="text-sm text-body">
+                Configure weekly, bi-weekly, monthly, or quarterly benchmark schedules with customized date anchors and automated treasury notifications.
+              </p>
             </div>
-            <h3 className="font-bold text-surface-900 text-lg mb-2">Flexible Cadence</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Configure weekly, bi-weekly, monthly, or quarterly payment schedules with customized date anchors and automated pre-funding notifications.
-            </p>
-          </div>
+          </RevealCard>
 
-          <div className="card p-6 bg-white">
-            <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center font-bold mb-4">
-              <RefreshCw className="w-5 h-5" />
+          <RevealCard index={1}>
+            <div className="card p-6 bg-white h-full">
+              <div className="w-10 h-10 rounded-xl bg-primary-pale text-primary border border-primary-border flex items-center justify-center mb-4">
+                <RefreshCw className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <h2 className="type-h3 text-navy mb-2">Automated Rate Snapshots</h2>
+              <p className="text-sm text-body">
+                Rate snapshots capture certified mid-market fixings automatically without requiring repetitive manual exports for recurring contracts.
+              </p>
             </div>
-            <h3 className="font-bold text-surface-900 text-lg mb-2">Automated Execution</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              Payments execute seamlessly from your multi-currency balance vaults without requiring repetitive approval workflows for fixed agreements.
-            </p>
-          </div>
+          </RevealCard>
 
-          <div className="card p-6 bg-white">
-            <div className="w-10 h-10 rounded-xl bg-accent-100 text-accent-600 flex items-center justify-center font-bold mb-4">
-              <CheckCircle2 className="w-5 h-5" />
+          <RevealCard index={2}>
+            <div className="card p-6 bg-white h-full">
+              <div className="w-10 h-10 rounded-xl bg-primary-pale text-primary border border-primary-border flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <h2 className="type-h3 text-navy mb-2">Audit Reconciliation</h2>
+              <p className="text-sm text-body">
+                All FX rate records sync directly with your ERP ledgers with timestamped benchmark certificates and invoice reference metadata.
+              </p>
             </div>
-            <h3 className="font-bold text-surface-900 text-lg mb-2">Audit Reconciliation</h3>
-            <p className="text-xs text-surface-600 leading-relaxed">
-              All transactions sync directly with your ERP records with timestamped payment receipts and invoice reference metadata.
-            </p>
-          </div>
-        </div>
+          </RevealCard>
+        </RevealSection>
 
-        <div className="card p-8 bg-gradient-to-r from-brand-900 to-brand-950 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="card-dark p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold font-heading">Automate your international AP workflows</h3>
-            <p className="text-xs text-surface-300 mt-1">Set up automated schedules in your VectisX Business dashboard.</p>
+            <h2 className="type-h3 text-white">Automate your international FX audit workflows</h2>
+            <p className="type-caption text-[#C9D3E3] mt-1">
+              Set up automated rate schedules in your VectisX Business workspace.
+            </p>
           </div>
-          <Link href="/register" className="btn-teal whitespace-nowrap">
-            Schedule a Payment <ArrowRight className="w-4 h-4 ml-1" />
+          <Link href="/register" className="btn-primary whitespace-nowrap">
+            Open Business Workspace <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
           </Link>
         </div>
       </div>

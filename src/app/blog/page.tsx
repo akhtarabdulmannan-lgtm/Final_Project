@@ -2,51 +2,51 @@
 
 import Link from 'next/link';
 import { blogPosts } from '@/data/blog';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { RevealCard, RevealSection } from '@/components/ui/MotionPrimitives';
 
 export default function BlogIndexPage() {
   const featured = blogPosts[0];
   const rest = blogPosts.slice(1);
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-page py-12 sm:py-20">
       <div className="container-vx">
         <div className="max-w-3xl mb-12">
           <span className="badge-brand">Market Intelligence</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            VectisX Currency & Macro Insights
+          <h1 className="type-h1 text-navy mt-2">
+            VectisX Currency &amp; Macro Insights
           </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
+          <p className="type-body text-body mt-3">
             Market commentary, exchange rate analysis, international business treasury guides, and technical developer tutorials.
           </p>
         </div>
 
         {/* Featured Post */}
         {featured && (
-          <Link href={`/blog/${featured.slug}`} className="block card p-6 sm:p-8 bg-white mb-12 hover:border-brand-500/40 transition-all">
+          <Link
+            href={`/blog/${featured.slug}`}
+            aria-label={`Read featured article: ${featured.title}`}
+            className="block card card-interactive p-6 sm:p-8 bg-white mb-12 group"
+          >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-3">
-                <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full">
-                  Featured • {featured.category}
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-bold font-heading text-surface-900 hover:text-brand-500 transition-colors">
+                <span className="badge-brand">Featured • {featured.category}</span>
+                <h2 className="type-h2 text-navy group-hover:text-primary transition-colors duration-150 ease-fintech">
                   {featured.title}
                 </h2>
-                <p className="text-sm text-surface-600 leading-relaxed">
-                  {featured.excerpt}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-surface-400 pt-2">
+                <p className="type-body text-body">{featured.excerpt}</p>
+                <div className="flex flex-wrap items-center gap-3 type-caption text-caption pt-2">
                   <span>{featured.author}</span>
-                  <span>•</span>
+                  <span aria-hidden="true">•</span>
                   <span>{featured.date}</span>
-                  <span>•</span>
+                  <span aria-hidden="true">•</span>
                   <span>{featured.readTime}</span>
                 </div>
               </div>
-              <div className="lg:col-span-5 bg-gradient-to-br from-brand-900 to-brand-950 rounded-2xl h-56 flex items-center justify-center text-white p-6 text-center">
+              <div className="lg:col-span-5 bg-navy border border-navy-border rounded-2xl h-56 flex items-center justify-center text-white p-6 text-center">
                 <div className="space-y-2">
-                  <div className="text-3xl font-extrabold font-mono text-teal-400">FX Insights</div>
-                  <div className="text-xs text-surface-300">Read analysis &rarr;</div>
+                  <div className="text-3xl font-heading font-semibold text-white">FX Insights</div>
+                  <div className="type-caption text-[#C9D3E3]">Read analysis &rarr;</div>
                 </div>
               </div>
             </div>
@@ -54,32 +54,30 @@ export default function BlogIndexPage() {
         )}
 
         {/* Grid of Posts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {rest.map(post => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="card p-6 bg-white flex flex-col justify-between hover:border-brand-500/30 transition-all group"
-            >
-              <div>
-                <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full uppercase">
-                  {post.category}
-                </span>
-                <h3 className="font-bold text-surface-900 text-lg font-heading mt-2 group-hover:text-brand-500 transition-colors">
-                  {post.title}
-                </h3>
-                <p className="text-xs text-surface-500 mt-2 line-clamp-3 leading-relaxed">
-                  {post.excerpt}
-                </p>
-              </div>
+        <RevealSection className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {rest.map((post, idx) => (
+            <RevealCard key={post.slug} index={idx}>
+              <Link
+                href={`/blog/${post.slug}`}
+                aria-label={`Read article: ${post.title}`}
+                className="card card-interactive p-6 bg-white flex flex-col justify-between h-full group"
+              >
+                <div>
+                  <span className="badge-brand text-[11px] uppercase">{post.category}</span>
+                  <h3 className="type-h3 text-navy mt-3 group-hover:text-primary transition-colors duration-150 ease-fintech">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-body mt-2 line-clamp-3">{post.excerpt}</p>
+                </div>
 
-              <div className="flex items-center justify-between text-[11px] text-surface-400 pt-6 border-t border-surface-100 mt-6">
-                <span>{post.date}</span>
-                <span>{post.readTime}</span>
-              </div>
-            </Link>
+                <div className="flex items-center justify-between type-caption text-caption pt-6 border-t border-surface-200 mt-6">
+                  <span>{post.date}</span>
+                  <span>{post.readTime}</span>
+                </div>
+              </Link>
+            </RevealCard>
           ))}
-        </div>
+        </RevealSection>
       </div>
     </div>
   );
