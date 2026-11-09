@@ -11,7 +11,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/alerts',
     '/historical',
     '/tables',
-    '/tools/iban',
     '/tools/email-updates',
     '/business',
     '/business/payments',

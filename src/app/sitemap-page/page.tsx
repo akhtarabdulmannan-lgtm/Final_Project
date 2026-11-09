@@ -13,7 +13,7 @@ export default function SitemapPage() {
     { letter: 'F', items: [{ label: 'Forward Contracts', href: '/business/fx-risk' }, { label: 'FX Risk Management', href: '/business/fx-risk' }] },
     { letter: 'G', items: [{ label: 'Global Payments', href: '/business/payments' }, { label: 'GitHub SDKs', href: '/api-platform' }] },
     { letter: 'H', items: [{ label: 'Historical Rates', href: '/historical' }, { label: 'Help Center', href: '/help' }] },
-    { letter: 'I', items: [{ label: 'IBAN Calculator', href: '/tools/iban' }, { label: 'Integrations', href: '/business/integrations' }] },
+    { letter: 'I', items: [{ label: 'Integrations', href: '/business/integrations' }, { label: 'Institutional FX API', href: '/api-platform' }] },
     { letter: 'L', items: [{ label: 'Limit Orders', href: '/business/fx-risk' }, { label: 'Live Rate Tables', href: '/rates' }, { label: 'Licenses & Regulations', href: '/licenses' }] },
     { letter: 'M', items: [{ label: 'Multi-Currency Vault', href: '/register' }, { label: 'Mid-Market Rates Explained', href: '/about' }] },
     { letter: 'P', items: [{ label: 'Partner Program', href: '/api-platform/partners' }, { label: 'API Pricing', href: '/api-platform/pricing' }, { label: 'Privacy Policy', href: '/privacy' }] },

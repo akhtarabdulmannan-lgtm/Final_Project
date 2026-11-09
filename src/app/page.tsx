@@ -576,7 +576,7 @@ export default function HomePage() {
             </div>
             <div className="p-3 rounded-xl bg-white border border-surface-200">
               <strong className="text-brand-500 block mb-1">I</strong>
-              IBAN Calculator, Integrations
+              Institutional Feeds, Integrations
             </div>
             <div className="p-3 rounded-xl bg-white border border-surface-200">
               <strong className="text-brand-500 block mb-1">L</strong>

@@ -25,10 +25,11 @@ export const personalNav: NavItem[] = [
   },
   {
     label: 'Tools',
-    href: '/tools/iban',
+    href: '/tools/email-updates',
     children: [
-      { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
       { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
+      { label: 'Historical Rates', href: '/historical', description: 'Rates back to 1998' },
+      { label: 'Currency Tables', href: '/tables', description: 'Cross-rate matrix' },
     ],
   },
 ];
@@ -71,7 +72,7 @@ export const footerLinks = {
     { label: 'Rate Alerts', href: '/alerts' },
     { label: 'Historical Rates', href: '/historical' },
     { label: 'Currency Tables', href: '/tables' },
-    { label: 'IBAN Calculator', href: '/tools/iban' },
+    { label: 'Rate Email Updates', href: '/tools/email-updates' },
   ],
   business: [
     { label: 'Business Overview', href: '/business' },

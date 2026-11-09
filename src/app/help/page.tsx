@@ -55,7 +55,7 @@ export default function HelpPage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by topic, keyword, or error message (e.g., 'wire limit', 'IBAN')..."
+              placeholder="Search by topic, keyword, or feature (e.g., 'rate alerts', 'ECB charts')..."
               className="input-field pl-12 py-4 text-base shadow-lg"
             />
           </div>
