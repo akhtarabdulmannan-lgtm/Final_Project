@@ -1,5 +1,4 @@
-// Deterministic mock rate engine — produces consistent rates from currency pairs
-// Uses a seeded hash to generate realistic exchange rates
+// Deterministic rate engine with optional live micro-tick support for client updates
 
 const BASE_RATES: Record<string, number> = {
   USD: 1.0, EUR: 0.8534, GBP: 0.7312, JPY: 149.52, AUD: 1.5243, CAD: 1.3621,
@@ -18,9 +17,18 @@ const BASE_RATES: Record<string, number> = {
 };
 
 export function getRate(from: string, to: string): number {
+  if (from === to) return 1.0;
   const fromRate = BASE_RATES[from] || 1;
   const toRate = BASE_RATES[to] || 1;
   return toRate / fromRate;
+}
+
+export function getTickedRate(from: string, to: string, tick: number): number {
+  const base = getRate(from, to);
+  if (tick <= 0 || from === to) return base;
+  const seed = (from + to).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + tick * 37;
+  const deltaRatio = (seededRandom(seed) - 0.5) * 0.003; // ±0.15% micro tick
+  return base * (1 + deltaRatio);
 }
 
 export function convert(amount: number, from: string, to: string): number {
@@ -33,8 +41,9 @@ function seededRandom(seed: number): number {
 }
 
 export function get24hChange(from: string, to: string): number {
+  if (from === to) return 0;
   const seed = (from + to).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return (seededRandom(seed) - 0.5) * 4; // -2% to +2%
+  return (seededRandom(seed) - 0.5) * 4;
 }
 
 export function get24hHigh(from: string, to: string): number {
@@ -52,15 +61,17 @@ export function get24hLow(from: string, to: string): number {
 export function getHistoricalRates(from: string, to: string, days: number): { date: string; rate: number }[] {
   const baseRate = getRate(from, to);
   const data: { date: string; rate: number }[] = [];
-  const now = new Date();
+  // Fixed UTC anchor avoids SSR/client date drift across midnight boundaries
+  const anchor = new Date('2026-11-09T12:00:00Z');
 
   for (let i = days; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    const seed = (from + to + date.toISOString().slice(0, 10)).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const date = new Date(anchor);
+    date.setUTCDate(date.getUTCDate() - i);
+    const iso = date.toISOString().slice(0, 10);
+    const seed = (from + to + iso).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
     const variation = (seededRandom(seed) - 0.5) * 0.1;
     data.push({
-      date: date.toISOString().slice(0, 10),
+      date: iso,
       rate: baseRate * (1 + variation),
     });
   }
@@ -87,9 +98,13 @@ export function formatRate(rate: number): string {
   return rate.toFixed(8);
 }
 
-export function formatAmount(amount: number, code?: string): string {
+export function formatAmount(amount: number): string {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
+}
+
+export function formatUtcTime(date: Date): string {
+  return date.toISOString().slice(11, 19);
 }

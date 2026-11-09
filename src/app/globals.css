@@ -4,22 +4,176 @@
 
 @layer base {
   :root {
-    --font-inter: 'Inter', system-ui, sans-serif;
-    --font-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+    /* Surface Tokens */
+    --bg: #F6F7F9;
+    --surface: #FFFFFF;
+    --surface-subtle: #EEF1F5;
+    --surface-invert: #111418;
+
+    /* Ink / Text Tokens */
+    --ink: #0D1117;
+    --ink-700: #242B35;
+    --ink-500: #4B5565;
+    --ink-invert: #FFFFFF;
+    --ink-invert-muted: #C2CAD6;
+
+    /* Border & Structural Line Tokens */
+    --line: #E1E5EC;
+    --line-strong: #C5CDD9;
+    --line-invert: #282E38;
+
+    /* Primary Interactive Accent Tokens */
+    --accent: #111418;
+    --accent-hover: #252B33;
+    --accent-subtle: #EAECEF;
+    --accent-fg: #FFFFFF;
+
+    /* Semantic Delta Tokens (Green / Red reserved for rate deltas & live status) */
+    --gain: #116E3B;
+    --gain-bg: #E6F4EC;
+    --gain-border: #BCE2CC;
+    --loss: #B42318;
+    --loss-bg: #FDECEC;
+    --loss-border: #F5C2BE;
+
+    /* Focus & Motion Tokens */
+    --focus-ring: #111418;
+    --ease-fintech: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
+
+  /*
+   * Dark-theme token structure prepared for future opt-in via [data-theme="dark"]
+   * (Dark mode is intentionally disabled in this release.)
+   *
+   * [data-theme="dark"] {
+   *   --bg: #0D1117;
+   *   --surface: #141922;
+   *   --surface-subtle: #1D2430;
+   *   --surface-invert: #090C10;
+   *   --ink: #F3F5F8;
+   *   --ink-700: #D0D7E2;
+   *   --ink-500: #9AA5B5;
+   *   --line: #27303F;
+   *   --line-strong: #39455A;
+   *   --accent: #F3F5F8;
+   *   --accent-hover: #DCE2EC;
+   *   --accent-fg: #0D1117;
+   *   --gain: #4ADE80;
+   *   --gain-bg: #122E1E;
+   *   --loss: #F87171;
+   *   --loss-bg: #361618;
+   * }
+   */
 
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-inter), sans-serif;
+    background-color: var(--bg);
+    color: var(--ink-700);
   }
 
   body {
-    @apply bg-white text-surface-900 font-sans;
+    background-color: var(--bg);
+    color: var(--ink-700);
+    font-family: var(--font-inter), sans-serif;
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 400;
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
+    font-family: var(--font-inter-tight), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  h1 {
+    font-size: 36px;
+    line-height: 40px;
+  }
+
+  h2 {
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  h3 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 56px;
+      line-height: 60px;
+    }
+
+    h2 {
+      font-size: 40px;
+      line-height: 44px;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 26px;
+    max-width: 65ch;
+  }
+
+  table {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  label {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    color: var(--ink-700);
+  }
+
+  button, input, select, textarea {
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .bg-surface-invert a:focus-visible,
+  .bg-surface-invert button:focus-visible,
+  .bg-surface-invert input:focus-visible,
+  .bg-surface-invert select:focus-visible,
+  .bg-surface-invert textarea:focus-visible,
+  .card-invert a:focus-visible,
+  .card-invert button:focus-visible,
+  .card-invert input:focus-visible,
+  .card-invert select:focus-visible,
+  .card-invert textarea:focus-visible,
+  footer a:focus-visible,
+  footer button:focus-visible,
+  footer input:focus-visible {
+    outline: 2px solid var(--ink-invert);
+    outline-offset: 2px;
+  }
+
+  .recharts-text,
+  .recharts-tooltip-wrapper {
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -29,105 +183,224 @@
   }
 
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-14 md:py-20;
+  }
+
+  .text-caption {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .prose-measure {
+    max-width: 65ch;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition-all duration-200 hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-500/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[15px] font-medium min-h-[44px] transition-[background-color,border-color,color,opacity] duration-150 ease-fintech disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--accent);
+    color: var(--accent-fg);
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-brand-500 px-6 py-3 text-sm font-semibold text-brand-500 transition-all duration-200 hover:bg-brand-500 hover:text-white hover:-translate-y-0.5 active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[15px] font-medium min-h-[44px] transition-[background-color,border-color,color,opacity] duration-150 ease-fintech disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-subtle);
+    border-color: var(--ink);
   }
 
-  .btn-teal {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:bg-teal-600 hover:shadow-xl hover:-translate-y-0.5;
+  .btn-invert {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[15px] font-medium min-h-[44px] transition-[background-color,border-color,color,opacity] duration-150 ease-fintech disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--ink-invert);
+    color: var(--ink);
+    border: 1px solid var(--ink-invert);
   }
-
-  .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-900 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-brand-800 hover:-translate-y-0.5;
+  .btn-invert:hover:not(:disabled) {
+    background-color: var(--surface-subtle);
+    border-color: var(--surface-subtle);
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-surface-600 transition-all duration-200 hover:bg-surface-100 hover:text-surface-900;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-[14px] font-medium min-h-[44px] transition-[background-color,border-color,color] duration-150 ease-fintech;
+    color: var(--ink-700);
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    background-color: var(--surface-subtle);
+    color: var(--ink);
   }
 
   .btn-sm {
-    @apply px-4 py-2 text-xs;
+    @apply px-4 py-2 text-[13px] min-h-[44px];
   }
 
   .btn-lg {
-    @apply px-8 py-4 text-base;
+    @apply px-7 py-3 text-[16px] min-h-[48px];
   }
 
   .card {
-    @apply rounded-2xl bg-white border border-surface-200 p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+    @apply rounded-2xl p-6;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 150ms var(--ease-fintech);
+  }
+  .card:hover,
+  .card:focus-within {
+    border-color: var(--line-strong);
+  }
+
+  .card-interactive {
+    @apply rounded-2xl p-6 block;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 150ms var(--ease-fintech);
+  }
+  .card-interactive:hover,
+  .card-interactive:focus-visible {
+    border-color: var(--ink);
   }
 
   .card-flat {
-    @apply rounded-2xl bg-surface-50 p-6 transition-all duration-300 hover:bg-surface-100;
+    @apply rounded-2xl p-6;
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--line);
+    transition: border-color 150ms var(--ease-fintech);
   }
 
-  .card-dark {
-    @apply rounded-2xl bg-brand-900 p-6 text-white;
+  .card-invert {
+    @apply rounded-2xl p-6;
+    background-color: var(--surface-invert);
+    color: var(--ink-invert);
+    border: 1px solid var(--line-invert);
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-surface-300 bg-white px-4 py-3 text-sm text-surface-900 placeholder-surface-400 outline-none transition-all duration-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+    @apply w-full rounded-xl px-4 py-2.5 text-[15px] min-h-[44px] outline-none transition-[border-color,background-color] duration-150 ease-fintech;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .input-field::placeholder {
+    color: var(--ink-500);
+  }
+  .input-field:focus {
+    border-color: var(--ink);
   }
 
   .select-field {
-    @apply w-full rounded-xl border border-surface-300 bg-white px-4 py-3 text-sm text-surface-900 outline-none transition-all duration-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer;
+    @apply w-full rounded-xl px-4 py-2.5 text-[15px] min-h-[44px] outline-none transition-[border-color,background-color] duration-150 ease-fintech cursor-pointer;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .select-field:focus {
+    border-color: var(--ink);
   }
 
-  .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+  .badge-neutral {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] leading-[18px] font-medium;
+    background-color: var(--surface-subtle);
+    color: var(--ink-700);
+    border: 1px solid var(--line);
   }
 
-  .badge-brand {
-    @apply badge bg-brand-100 text-brand-600;
+  .badge-invert {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] leading-[18px] font-medium;
+    background-color: #202630;
+    color: var(--ink-invert);
+    border: 1px solid var(--line-invert);
   }
 
-  .badge-teal {
-    @apply badge bg-teal-100 text-teal-700;
+  .badge-gain {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] leading-[18px] font-medium tabular-nums;
+    background-color: var(--gain-bg);
+    color: var(--gain);
+    border: 1px solid var(--gain-border);
   }
 
-  .badge-accent {
-    @apply badge bg-accent-100 text-accent-600;
-  }
-
-  .badge-success {
-    @apply badge bg-emerald-100 text-emerald-700;
-  }
-
-  .badge-warning {
-    @apply badge bg-amber-100 text-amber-700;
-  }
-
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-teal-500;
-  }
-
-  .skeleton {
-    @apply animate-pulse rounded-lg bg-surface-200;
+  .badge-loss {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] leading-[18px] font-medium tabular-nums;
+    background-color: var(--loss-bg);
+    color: var(--loss);
+    border: 1px solid var(--loss-border);
   }
 
   .divider {
-    @apply border-t border-surface-200;
+    border-top: 1px solid var(--line);
   }
 
-  .link-hover {
-    @apply text-surface-600 transition-colors duration-200 hover:text-brand-500;
+  /* 4C.1: Live rate background flash (600ms, never on initial render) */
+  @keyframes rateFlashGain {
+    0% { background-color: var(--gain-bg); }
+    70% { background-color: var(--gain-bg); }
+    100% { background-color: transparent; }
   }
 
-  .overlay-gradient {
-    @apply bg-gradient-to-t from-brand-900/80 via-brand-900/40 to-transparent;
+  @keyframes rateFlashLoss {
+    0% { background-color: var(--loss-bg); }
+    70% { background-color: var(--loss-bg); }
+    100% { background-color: transparent; }
+  }
+
+  .rate-flash-gain {
+    animation: rateFlashGain 600ms var(--ease-fintech) forwards;
+    border-radius: 6px;
+  }
+
+  .rate-flash-loss {
+    animation: rateFlashLoss 600ms var(--ease-fintech) forwards;
+    border-radius: 6px;
+  }
+
+  /* 4C.2: Live updated 6px --gain dot pulse (2s opacity pulse) */
+  @keyframes liveDotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .live-dot-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: var(--gain);
+    animation: liveDotPulse 2s var(--ease-fintech) infinite;
+    flex-shrink: 0;
+  }
+
+  /* 4C.7: Skeleton neutral --line shimmer (1.2s, transform-only) */
+  @keyframes skeletonShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--line);
+    border-radius: 8px;
+  }
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-color: rgba(255, 255, 255, 0.45);
+    opacity: 0.7;
+    animation: skeletonShimmer 1.2s var(--ease-fintech) infinite;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 
   .scrollbar-hide {
@@ -137,17 +410,28 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+}
 
-  .animation-delay-150 {
-    animation-delay: 150ms;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
   }
-  .animation-delay-300 {
-    animation-delay: 300ms;
+
+  *:not(.animate-spin),
+  *:not(.animate-spin)::before,
+  *:not(.animate-spin)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  .animation-delay-500 {
-    animation-delay: 500ms;
+
+  .skeleton-shimmer::after {
+    display: none !important;
   }
-  .animation-delay-700 {
-    animation-delay: 700ms;
+
+  .live-dot-pulse {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }
