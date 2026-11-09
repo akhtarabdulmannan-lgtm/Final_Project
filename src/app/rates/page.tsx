@@ -207,10 +207,10 @@ export default function RatesPage() {
                             Chart <ExternalLink className="w-3 h-3" />
                           </Link>
                           <Link
-                            href="/send"
+                            href={`/converter/${baseCurrency.toLowerCase()}-to-${c.code.toLowerCase()}`}
                             className="px-2.5 py-1 rounded-lg bg-surface-100 text-surface-700 hover:bg-brand-500 hover:text-white transition-all text-xs font-semibold"
                           >
-                            Send
+                            Convert
                           </Link>
                         </div>
                       </td>

@@ -10,11 +10,11 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'VectisX — Global Currency Intelligence | Live Exchange Rates & Money Transfers',
+    default: 'VectisX — Global Currency Intelligence | Live Exchange Rates & Charts',
     template: '%s | VectisX',
   },
-  description: 'Get live exchange rates for 220+ currencies, send money to 190+ countries, set rate alerts, and access historical charts. Powered by live REST APIs.',
-  keywords: ['currency converter', 'exchange rates', 'money transfer', 'live rates', 'FX', 'currency data API'],
+  description: 'Get live institutional exchange rates for 200+ currencies, set cloud rate alerts, and explore official central-bank historical charts. Powered by live REST APIs.',
+  keywords: ['currency converter', 'exchange rates', 'live rates', 'FX charts', 'rate alerts', 'currency data API'],
   authors: [{ name: 'Abdul Mannan Akhtar' }],
   openGraph: {
     type: 'website',
@@ -22,12 +22,12 @@ export const metadata: Metadata = {
     url: 'https://vectisx.vercel.app',
     siteName: 'VectisX',
     title: 'VectisX — Global Currency Intelligence',
-    description: 'Live exchange rates, money transfers, rate alerts, and currency data powered by live financial APIs.',
+    description: 'Live institutional exchange rates, historical ECB charts, and cloud rate alerts powered by live financial APIs.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'VectisX — Global Currency Intelligence',
-    description: 'Live exchange rates, money transfers, and currency data.',
+    description: 'Live institutional exchange rates, historical charts, and cloud rate alerts.',
   },
   robots: {
     index: true,

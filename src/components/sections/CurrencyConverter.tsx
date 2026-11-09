@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeftRight, TrendingUp, Bell, Send, ChevronDown, Search, X, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, Bell, ChevronDown, Search, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { currencies, getCurrency, searchCurrencies } from '@/data/currencies';
 import { formatRate, formatAmount, get24hChange } from '@/lib/rates';
 import { getSupabaseClient } from '@/lib/supabase';
@@ -9,7 +9,7 @@ import { useLiveRates } from '@/hooks/useLiveRates';
 import ApiStatusBanner from '@/components/ui/ApiStatusBanner';
 import Link from 'next/link';
 
-type Tab = 'convert' | 'send' | 'charts' | 'alerts';
+type Tab = 'convert' | 'charts' | 'alerts';
 
 interface CurrencyConverterProps {
   defaultFrom?: string;
@@ -100,7 +100,6 @@ export default function CurrencyConverter({
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'convert', label: 'Convert', icon: <ArrowLeftRight className="w-4 h-4" /> },
-    { key: 'send', label: 'Send', icon: <Send className="w-4 h-4" /> },
     { key: 'charts', label: 'Charts', icon: <TrendingUp className="w-4 h-4" /> },
     { key: 'alerts', label: 'Alerts', icon: <Bell className="w-4 h-4" /> },
   ];
@@ -227,89 +226,10 @@ export default function CurrencyConverter({
               <Link href="/charts" className="btn-primary flex-1 justify-center">
                 View Full Chart
               </Link>
-              <Link href="/send" className="btn-secondary flex-1 justify-center">
-                Send {toCode}
+              <Link href="/alerts" className="btn-secondary flex-1 justify-center">
+                Set Rate Alert
               </Link>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Send Tab */}
-      {activeTab === 'send' && (
-        <div className="p-5 sm:p-6">
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-surface-500 mb-1.5 block">You send</label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 font-medium">
-                    {fromCurrency?.symbol}
-                  </span>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(Number(e.target.value) || 0)}
-                    className="input-field pl-10 text-lg font-semibold"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => { setPickerOpen('from'); setPickerSearch(''); }}
-                  className="input-field w-28 flex items-center gap-1.5 justify-center"
-                >
-                  <span>{fromCurrency?.flag}</span>
-                  <span className="font-semibold text-sm">{fromCode}</span>
-                  <ChevronDown className="w-3 h-3 text-surface-400" />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between px-2 text-xs text-surface-500">
-              <span>Send rate: {formatRate(rate)}</span>
-              <span>Fee: {amount >= 5000 ? 'FREE' : amount >= 1000 ? '$3.99' : '$5.99'}</span>
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-surface-500 mb-1.5 block">Recipient gets</label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 font-medium">
-                    {toCurrency?.symbol}
-                  </span>
-                  <input
-                    type="number"
-                    value={Number(result.toFixed(2))}
-                    readOnly
-                    className="input-field pl-10 text-lg font-semibold bg-surface-50"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => { setPickerOpen('to'); setPickerSearch(''); }}
-                  className="input-field w-28 flex items-center gap-1.5 justify-center"
-                >
-                  <span>{toCurrency?.flag}</span>
-                  <span className="font-semibold text-sm">{toCode}</span>
-                  <ChevronDown className="w-3 h-3 text-surface-400" />
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-surface-50 rounded-2xl p-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-surface-500">Total to pay</span>
-                <span className="font-bold text-surface-900">{fromCurrency?.symbol}{formatAmount(amount + (amount >= 5000 ? 0 : amount >= 1000 ? 3.99 : 5.99))}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-surface-500">Delivery</span>
-                <span className="font-medium text-emerald-600">1-2 business days</span>
-              </div>
-            </div>
-
-            <Link href="/send" className="btn-primary w-full justify-center btn-lg">
-              <Send className="w-4 h-4" /> Get Started — Send {toCode}
-            </Link>
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 # VectisX — Global Currency Intelligence & Exchange Platform
 
-**VectisX** is a modern, component-based React web application for real-time foreign exchange conversion, interactive historical rate visualization, custom rate alert tracking, and international transfer planning.
+**VectisX** is a modern, component-based React web application for real-time foreign exchange conversion, interactive historical rate visualization, multi-currency rate matrix comparison, and cloud rate alert tracking.
 
 - **Public GitHub Repository:** [https://github.com/akhtarabdulmannan-lgtm/Final_Project](https://github.com/akhtarabdulmannan-lgtm/Final_Project)
 - **GitHub Pages Deployment:** [https://akhtarabdulmannan-lgtm.github.io/Final_Project/](https://akhtarabdulmannan-lgtm.github.io/Final_Project/)
@@ -25,9 +25,8 @@ VectisX is structured into distinct, purpose-built screens connected via client-
    - Custom target rate triggers ("Above or equal to" / "Below or equal to") with live rate comparison.
    - Cloud persistence and user account sync powered by **Supabase** (`rate_alerts` table with Row-Level Security).
 
-4. **Live Multi-Currency Exchange Matrix & Transfer Planner (`/rates`, `/send`)**
-   - Filterable live rate table across global regions with inverse-rate toggle and watchlist currency pinning.
-   - Transparent international money transfer fee comparison and live transfer checkout persisted to Supabase.
+4. **Live Multi-Currency Exchange Matrix (`/rates`)**
+   - Filterable live rate table across global regions with inverse-rate toggle, live provider switcher, and watchlist currency pinning.
 
 ---
 
@@ -60,7 +59,7 @@ All exchange-rate and historical time-series requests are centralized in [`src/l
 Final_Project/
 ├── .github/workflows/deploy-pages.yml  # Automated GitHub Pages CI/CD deployment
 ├── src/
-│   ├── app/                            # Route screens (/, /charts, /alerts, /rates, /send, ...)
+│   ├── app/                            # Route screens (/, /charts, /alerts, /rates, ...)
 │   ├── components/
 │   │   ├── layout/                     # Header & Footer navigation components
 │   │   ├── sections/                   # Reusable CurrencyConverter widget

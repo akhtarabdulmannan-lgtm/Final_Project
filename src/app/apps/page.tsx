@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Smartphone, Star, ShieldCheck, Zap, Bell, Send, ArrowRight, QrCode } from 'lucide-react';
+import { Smartphone, Star, ShieldCheck, Zap, Bell, ArrowLeftRight, ArrowRight, QrCode } from 'lucide-react';
 
 export default function MobileAppsPage() {
   return (
@@ -16,7 +16,7 @@ export default function MobileAppsPage() {
                 VectisX in Your Pocket
               </h1>
               <p className="text-surface-300 text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Experience real-time currency conversions, instant international money transfers with fees from $0, and custom rate alert triggers from anywhere in the world.
+                Experience real-time currency conversions across 200+ currencies, interactive central-bank historical charts, and custom cloud rate alert triggers from anywhere in the world.
               </p>
 
               {/* Ratings Badges */}
@@ -99,11 +99,11 @@ export default function MobileAppsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="card p-6">
               <div className="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
-                <Send className="w-6 h-6" />
+                <ArrowLeftRight className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-surface-900 text-lg mb-2">Send Money Abroad</h3>
+              <h3 className="font-bold text-surface-900 text-lg mb-2">Instant Multi-Source Conversion</h3>
               <p className="text-xs text-surface-600 leading-relaxed">
-                Send to 190+ countries straight from your saved contacts list with biometric Face ID or fingerprint sign-off.
+                Convert 200+ world currencies, precious metals, and digital assets with institutional consensus accuracy and offline rate caching.
               </p>
             </div>
 

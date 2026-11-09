@@ -9,7 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/rates',
     '/charts',
     '/alerts',
-    '/send',
     '/historical',
     '/tables',
     '/tools/iban',

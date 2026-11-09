@@ -41,10 +41,10 @@ export default function HomePage() {
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-tight">
                 Global Currency <br className="hidden sm:inline" />
-                <span className="gradient-text">Intelligence & Transfers</span>
+                <span className="gradient-text">Intelligence & Analytics</span>
               </h1>
               <p className="text-lg text-surface-300 max-w-xl mx-auto lg:mx-0">
-                Check real-time rates for 220+ currencies, send money to 190+ countries with low transparent fees, and manage foreign exchange risk with enterprise grade precision.
+                Compare real-time institutional consensus rates across 200+ world currencies, inspect official central-bank historical trends, and automate cloud rate alerts with zero markup.
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-surface-300">
@@ -187,16 +187,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3-Step Send Flow Section */}
+      {/* 3-Step Currency Intelligence Workflow */}
       <section className="section-padding bg-surface-50 border-y border-surface-200">
         <div className="container-vx">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="badge-teal">Transparent Transfers</span>
+            <span className="badge-teal">Institutional FX Workflow</span>
             <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-surface-900 mt-2">
-              Send Money Internationally in 3 Simple Steps
+              Master Currency Markets in 3 Simple Steps
             </h2>
             <p className="text-surface-600 mt-3 text-base">
-              Bank-grade reliability with zero hidden fees. Track every dollar from dispatch to delivery.
+              Multi-source consensus data combining live global market feeds with official central-bank benchmarks.
             </p>
           </div>
 
@@ -205,9 +205,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-2xl bg-brand-500 text-white flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-brand-500/30">
                 1
               </div>
-              <h3 className="text-xl font-bold text-surface-900 mb-2">Enter Amount & Corridor</h3>
+              <h3 className="text-xl font-bold text-surface-900 mb-2">Compare Live Consensus Rates</h3>
               <p className="text-sm text-surface-600 leading-relaxed">
-                Choose sender country and destination. View live guaranteed send rate, transparent transaction fee, and exact recipient payout upfront.
+                Select any currency pair and compare real-time institutional consensus rates alongside ECB, SBP, Currency-API, and Open Exchange Rates feeds.
               </p>
             </div>
 
@@ -215,9 +215,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-2xl bg-teal-500 text-white flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-teal-500/30">
                 2
               </div>
-              <h3 className="text-xl font-bold text-surface-900 mb-2">Add Recipient Details</h3>
+              <h3 className="text-xl font-bold text-surface-900 mb-2">Inspect Historical Trends</h3>
               <p className="text-sm text-surface-600 leading-relaxed">
-                Send directly to a bank account, mobile money wallet, or cash pickup location in 190+ countries with verified recipient routing.
+                Explore 1-week to 5-year interactive Recharts visualizations backed by official European Central Bank time-series and export CSV datasets.
               </p>
             </div>
 
@@ -225,28 +225,28 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-2xl bg-accent-500 text-white flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-accent-500/30">
                 3
               </div>
-              <h3 className="text-xl font-bold text-surface-900 mb-2">Fund, Send & Track</h3>
+              <h3 className="text-xl font-bold text-surface-900 mb-2">Automate Cloud Rate Alerts</h3>
               <p className="text-sm text-surface-600 leading-relaxed">
-                Pay by debit card, bank wire, or account balance. Monitor real-time status updates via SMS, email, and mobile push notifications.
+                Save custom target-rate triggers directly to your Supabase cloud watchlist and monitor live market distance in real time.
               </p>
             </div>
           </div>
 
-          {/* Promo Callout */}
+          {/* Alerts Callout */}
           <div className="mt-12 bg-gradient-to-r from-brand-600 to-teal-600 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase">
-                Welcome Promotion
+                Cloud Rate Watchlist
               </div>
               <h3 className="text-2xl font-bold font-heading">
-                Save $100 with promo code <span className="bg-white text-brand-900 px-2 py-0.5 rounded-lg font-mono">VXNEW100</span>
+                Never Miss Your Target Exchange Rate Again
               </h3>
               <p className="text-sm text-brand-100">
-                Enjoy $100 off fees when you send $3,000 or more on your first international transfer.
+                Create unlimited custom rate alerts synced to your VectisX cloud profile with live threshold tracking.
               </p>
             </div>
-            <Link href="/send" className="btn-dark whitespace-nowrap bg-white text-brand-900 hover:bg-surface-100 hover:text-brand-900 font-bold px-8 py-3.5">
-              Claim $100 Discount
+            <Link href="/alerts" className="btn-dark whitespace-nowrap bg-white text-brand-900 hover:bg-surface-100 hover:text-brand-900 font-bold px-8 py-3.5">
+              Create Free Rate Alert
             </Link>
           </div>
         </div>
@@ -578,9 +578,9 @@ export default function HomePage() {
                       <div className="text-[10px] text-surface-300">Target reached 2 mins ago</div>
                     </div>
                     <div className="p-3 bg-white/10 rounded-2xl border border-white/10">
-                      <div className="text-[10px] text-surface-400">Send Money</div>
-                      <div className="text-sm font-bold text-white">$1,500.00 &rarr; €1,280.10</div>
-                      <div className="text-[10px] text-emerald-400">Delivered in 8 minutes</div>
+                      <div className="text-[10px] text-surface-400">Consensus Mid-Market</div>
+                      <div className="text-sm font-bold text-white">1 EUR &rarr; 309.06 PKR</div>
+                      <div className="text-[10px] text-emerald-400">ECB + SBP Verified</div>
                     </div>
                   </div>
                   <div className="w-12 h-1 bg-surface-700 rounded-full mx-auto" />

@@ -116,8 +116,8 @@ export default function RegisterPage() {
               </p>
               {autoActivated && (
                 <div className="pt-2 flex gap-2 justify-center">
-                  <Link href="/send" className="btn-primary btn-sm">
-                    Send Money <ArrowRight className="w-3.5 h-3.5" />
+                  <Link href="/converter" className="btn-primary btn-sm">
+                    Live Converter <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link href="/alerts" className="btn-secondary btn-sm">
                     Rate Alerts

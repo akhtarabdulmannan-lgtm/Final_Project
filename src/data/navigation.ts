@@ -2,15 +2,6 @@ import { NavItem } from '@/types';
 
 export const personalNav: NavItem[] = [
   {
-    label: 'Send',
-    href: '/send',
-    children: [
-      { label: 'Send Money', href: '/send', description: 'Transfer money to 190+ countries' },
-      { label: 'Track Transfer', href: '/send/track', description: 'Check your transfer status' },
-      { label: 'Fees & Pricing', href: '/send/fees', description: 'Transparent fee calculator' },
-    ],
-  },
-  {
     label: 'Convert',
     href: '/converter',
     children: [
@@ -25,12 +16,16 @@ export const personalNav: NavItem[] = [
     href: '/charts',
   },
   {
+    label: 'Rates',
+    href: '/rates',
+  },
+  {
     label: 'Alerts',
     href: '/alerts',
   },
   {
     label: 'Tools',
-    href: '/tools',
+    href: '/tools/iban',
     children: [
       { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
       { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
@@ -40,15 +35,6 @@ export const personalNav: NavItem[] = [
 ];
 
 export const businessNav: NavItem[] = [
-  {
-    label: 'Payments',
-    href: '/business/payments',
-    children: [
-      { label: 'Global Payments', href: '/business/payments', description: 'Send to 190+ countries' },
-      { label: 'Batch Payments', href: '/business/batch', description: 'Pay multiple recipients' },
-      { label: 'Scheduled Payments', href: '/business/scheduled', description: 'Automate recurring payments' },
-    ],
-  },
   {
     label: 'FX Risk',
     href: '/business/fx-risk',
@@ -68,12 +54,12 @@ export const businessNav: NavItem[] = [
   },
   {
     label: 'API',
-    href: '/api',
+    href: '/api-platform',
     children: [
-      { label: 'API Overview', href: '/api', description: 'Currency data API' },
-      { label: 'Pricing', href: '/api/pricing', description: 'Plans from \\$599/yr' },
-      { label: 'Documentation', href: '/api/docs', description: 'Full API reference' },
-      { label: 'Partner Program', href: '/api/partners', description: 'ISV & referral programs' },
+      { label: 'API Overview', href: '/api-platform', description: 'Currency data API' },
+      { label: 'Pricing', href: '/api-platform/pricing', description: 'Enterprise data plans' },
+      { label: 'Documentation', href: '/api-platform/docs', description: 'Full API reference' },
+      { label: 'Partner Program', href: '/api-platform/partners', description: 'ISV & referral programs' },
     ],
   },
 ];
@@ -81,27 +67,25 @@ export const businessNav: NavItem[] = [
 export const footerLinks = {
   product: [
     { label: 'Currency Converter', href: '/converter' },
-    { label: 'Send Money', href: '/send' },
     { label: 'Live Rates', href: '/rates' },
     { label: 'Charts', href: '/charts' },
     { label: 'Rate Alerts', href: '/alerts' },
     { label: 'Historical Rates', href: '/historical' },
+    { label: 'Currency Tables', href: '/tables' },
     { label: 'IBAN Calculator', href: '/tools/iban' },
     { label: 'Mobile Apps', href: '/apps' },
   ],
   business: [
-    { label: 'Business Account', href: '/business' },
-    { label: 'Global Payments', href: '/business/payments' },
-    { label: 'Batch Payments', href: '/business/batch' },
+    { label: 'Business Overview', href: '/business' },
     { label: 'FX Risk Management', href: '/business/fx-risk' },
     { label: 'Integrations', href: '/business/integrations' },
     { label: 'Team Roles', href: '/business/team' },
   ],
   developers: [
-    { label: 'API Overview', href: '/api' },
-    { label: 'API Pricing', href: '/api/pricing' },
-    { label: 'Documentation', href: '/api/docs' },
-    { label: 'Partner Program', href: '/api/partners' },
+    { label: 'API Overview', href: '/api-platform' },
+    { label: 'API Pricing', href: '/api-platform/pricing' },
+    { label: 'Documentation', href: '/api-platform/docs' },
+    { label: 'Partner Program', href: '/api-platform/partners' },
   ],
   company: [
     { label: 'About VectisX', href: '/about' },

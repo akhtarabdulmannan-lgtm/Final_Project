@@ -17,8 +17,8 @@ const faqs = [
     answer: 'Our live converter rates are updated every 60 seconds during live market trading hours, pulling from over 100 liquidity providers and central bank feeds via our proprietary Rate Blender technology.'
   },
   {
-    question: 'Can I send money at the exact rate displayed on the converter?',
-    answer: 'Yes! When you initiate a money transfer through VectisX, you lock in a guaranteed exchange rate with no surprise markup fees. You will see the exact total to pay and recipient payout before confirming.'
+    question: 'Why do VectisX rates match institutional benchmarks closely?',
+    answer: 'VectisX blends live global market REST feeds with official central-bank interbank tables (including the European Central Bank and State Bank of Pakistan), giving you institutional consensus mid-market accuracy.'
   },
   {
     question: 'Why do bank rates differ from the VectisX rate?',

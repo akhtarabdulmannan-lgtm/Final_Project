@@ -211,11 +211,11 @@ export default function Header() {
                         <Bell className="w-3.5 h-3.5" /> My Rate Alerts
                       </Link>
                       <Link
-                        href="/send"
+                        href="/rates"
                         onClick={() => setUserMenuOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-surface-700 hover:bg-surface-50 hover:text-brand-500 rounded-xl"
                       >
-                        <ArrowRight className="w-3.5 h-3.5" /> Send Money
+                        <ArrowRight className="w-3.5 h-3.5" /> Live Rate Tables
                       </Link>
                       <button
                         onClick={handleSignOut}

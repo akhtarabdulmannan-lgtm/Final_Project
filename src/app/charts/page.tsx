@@ -171,8 +171,11 @@ export default function ChartsPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Link href="/send" className="btn-primary w-full justify-center text-xs py-3">
-                Send {toCode} Now
+              <Link
+                href={`/converter/${fromCode.toLowerCase()}-to-${toCode.toLowerCase()}`}
+                className="btn-primary w-full justify-center text-xs py-3"
+              >
+                Convert {fromCode}/{toCode}
               </Link>
             </div>
           </div>
@@ -329,12 +332,12 @@ export default function ChartsPage() {
             </div>
 
             <div className="card p-5 bg-gradient-to-br from-brand-900 to-brand-950 text-white space-y-3">
-              <h4 className="font-bold text-sm">Transferring {fromCode}?</h4>
+              <h4 className="font-bold text-sm">Comparing {fromCode} Markets?</h4>
               <p className="text-xs text-surface-300">
-                Lock in this rate before markets shift. Fast delivery to 190+ countries with $0 fees on transfers of $5,000+.
+                Inspect regional exchange matrices, pin favorite currencies to your watchlist, and switch between live central-bank and market feeds.
               </p>
-              <Link href="/send" className="btn-teal btn-sm w-full justify-center">
-                Send Money Abroad
+              <Link href="/rates" className="btn-teal btn-sm w-full justify-center">
+                Explore Live Rate Matrix
               </Link>
             </div>
           </div>
