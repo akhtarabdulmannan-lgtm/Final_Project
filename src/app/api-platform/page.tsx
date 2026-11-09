@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { 
-  Code2, CheckCircle2, Zap, ShieldCheck, ArrowRight, 
-  Terminal, Database, RefreshCw, Cpu, Layers, ExternalLink
-} from 'lucide-react';
+import { ArrowRight, Copy, ExternalLink } from 'lucide-react';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import CountUpValue from '@/components/ui/CountUpValue';
+import ActionButton from '@/components/ui/ActionButton';
+import { wait } from '@/lib/utils';
 
 export default function ApiPlatformPage() {
   const sdks = [
@@ -14,44 +15,50 @@ export default function ApiPlatformPage() {
     { lang: 'PHP', install: 'composer require vectisx/currency-api', desc: 'PSR-18 HTTP client compliance, Laravel & Symfony service providers.' },
   ];
 
+  const handleCopyCommand = async (cmd: string) => {
+    await navigator.clipboard?.writeText(cmd);
+    await wait(200);
+  };
+
   return (
-    <div className="min-h-screen bg-surface-50">
+    <div className="min-h-screen bg-bg">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-950 via-brand-900 to-brand-800 text-white py-16 sm:py-24">
+      <section className="bg-surface border-b border-line py-14 sm:py-20">
         <div className="container-vx">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
-              <span className="badge-teal">VectisX Currency Data API</span>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-tight">
-                Enterprise Currency Data at Millisecond Speeds
-              </h1>
-              <p className="text-surface-300 text-base leading-relaxed">
-                Connect directly to our proprietary Rate Blender engine. 220+ global currencies, precious metals, selected cryptocurrencies, and central bank benchmark feeds updated as often as every 60 seconds.
+              <span className="badge-neutral">VectisX Currency Data API</span>
+              <h1>Enterprise Currency Data at Millisecond Speeds</h1>
+              <p className="text-ink-500">
+                Connect directly to our proprietary Rate Blender engine. 220+ global currencies, precious metals, selected cryptocurrencies, and central bank benchmark feeds updated continuously.
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Link href="/api-platform/pricing" className="btn-teal btn-lg">
-                  View API Plans & Pricing <ArrowRight className="w-4 h-4 ml-1" />
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Link href="/api-platform/pricing" className="btn-primary btn-lg">
+                  <span>View API Plans &amp; Pricing</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
-                <Link href="/api-platform/docs" className="btn-ghost text-white border border-white/20 hover:bg-white/10 btn-lg">
+                <Link href="/api-platform/docs" className="btn-secondary btn-lg">
                   Interactive API Docs
                 </Link>
               </div>
 
-              <div className="flex items-center gap-6 pt-4 text-xs text-surface-400">
+              <div className="flex flex-wrap items-center gap-4 pt-2 text-caption text-ink-500 tabular-nums">
                 <span>99.99% Uptime SLA</span>
-                <span>• Sub-40ms Latency</span>
-                <span>• ISO 4217 Standard</span>
+                <span aria-hidden="true">•</span>
+                <span>Sub-40ms Latency</span>
+                <span aria-hidden="true">•</span>
+                <span>ISO 4217 Standard</span>
               </div>
             </div>
 
             {/* Code Sample */}
-            <div className="lg:col-span-6 bg-surface-900 border border-white/10 rounded-3xl p-6 font-mono text-xs shadow-2xl overflow-x-auto text-surface-200">
-              <div className="flex items-center justify-between pb-3 border-b border-surface-800 text-surface-400 text-[11px]">
+            <div className="lg:col-span-6 bg-surface-invert border border-line-invert rounded-2xl p-6 text-[13px] leading-[20px] overflow-x-auto text-ink-invert tabular-nums">
+              <div className="flex items-center justify-between pb-3 border-b border-line-invert text-ink-invert-muted">
                 <span>GET /v1/convert_from</span>
-                <span className="text-emerald-400">200 OK (28ms)</span>
+                <span className="text-ink-invert font-medium">200 OK (28ms)</span>
               </div>
-              <pre className="py-4 text-emerald-400">
+              <pre className="py-4 text-ink-invert overflow-x-auto">
 {`// Initialize VectisX FX Client
 import { VectisXClient } from '@vectisx/currency-sdk';
 
@@ -65,11 +72,11 @@ const rates = await vx.convertFrom({
   amount: 1000
 });`}
               </pre>
-              <div className="pt-3 border-t border-surface-800 text-surface-300">
-                <span className="text-surface-500 block mb-1">// Normalized Response</span>
-                <pre className="text-surface-300">
+              <div className="pt-3 border-t border-line-invert text-ink-invert-muted">
+                <span className="block mb-1">// Normalized Response</span>
+                <pre className="text-ink-invert overflow-x-auto">
 {`{
-  "timestamp": "2026-11-08T22:59:00Z",
+  "timestamp": "2026-11-09T12:00:00Z",
   "from": "USD",
   "amount": 1000.00,
   "to": [
@@ -86,112 +93,123 @@ const rates = await vx.convertFrom({
         </div>
       </section>
 
-      {/* Proprietary Rate Blender Section */}
-      <section className="section-padding bg-white border-b border-surface-200">
+      {/* Rate Blender Section */}
+      <section className="section-padding bg-bg border-b border-line">
         <div className="container-vx">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-6 space-y-4">
-              <span className="badge-brand">Algorithmic Precision</span>
-              <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-surface-900 tracking-tight">
-                The Proprietary VectisX Rate Blender™
-              </h2>
-              <p className="text-surface-600 text-sm leading-relaxed">
-                Raw data from financial brokers frequently contains anomalies, erratic spikes, and latency gaps. Our proprietary Rate Blender algorithms continuously aggregate rates from over 100 global liquidity providers, central banks, and market makers.
+            <ScrollReveal className="lg:col-span-6 space-y-4">
+              <span className="badge-neutral">Algorithmic Precision</span>
+              <h2>The Proprietary VectisX Rate Blender™</h2>
+              <p className="text-ink-500">
+                Raw data from financial brokers frequently contains anomalies, erratic spikes, and latency gaps. Our Rate Blender algorithms continuously aggregate rates from over 100 global liquidity providers and central banks.
               </p>
-              <p className="text-surface-600 text-sm leading-relaxed">
-                The engine applies statistical outlier detection, cross-validation, and weighted volume averaging in real time to produce clean, tamper-proof, and certified mid-market rates for mission-critical ERPs and consumer applications.
+              <p className="text-ink-500">
+                The engine applies statistical outlier detection, cross-validation, and weighted volume averaging in real time to produce clean, tamper-proof mid-market rates for ERPs and applications.
               </p>
 
               <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="p-4 rounded-2xl bg-surface-50 border border-surface-100">
-                  <div className="text-2xl font-extrabold text-brand-600 font-mono">100+</div>
-                  <div className="text-xs text-surface-500 mt-1">Simultaneous Liquidity Feeds</div>
+                <div className="p-4 rounded-2xl bg-surface border border-line">
+                  <div className="text-[28px] font-heading font-semibold text-ink">
+                    <CountUpValue value={100} suffix="+" duration={400} />
+                  </div>
+                  <div className="text-caption text-ink-500 mt-1">Simultaneous Liquidity Feeds</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-surface-50 border border-surface-100">
-                  <div className="text-2xl font-extrabold text-teal-600 font-mono">0.001%</div>
-                  <div className="text-xs text-surface-500 mt-1">Anomaly Outlier Rejection</div>
+                <div className="p-4 rounded-2xl bg-surface border border-line">
+                  <div className="text-[28px] font-heading font-semibold text-ink tabular-nums">
+                    0.001%
+                  </div>
+                  <div className="text-caption text-ink-500 mt-1">Anomaly Outlier Rejection</div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div className="lg:col-span-6 bg-surface-50 p-8 rounded-3xl border border-surface-200 space-y-4">
-              <h3 className="font-bold text-surface-900 text-base mb-4">Rate Blender Filtering Pipeline</h3>
-              <div className="space-y-3">
-                <div className="p-3 bg-white rounded-xl shadow-sm border border-surface-200 text-xs flex items-center justify-between">
-                  <span className="font-semibold text-surface-700">1. Liquidity Ingestion (100+ Global Providers)</span>
-                  <span className="text-emerald-600 font-bold">15,000 ticks/sec</span>
+            <ScrollReveal delay={100} className="lg:col-span-6 bg-surface p-8 rounded-2xl border border-line space-y-4">
+              <h3>Rate Blender Filtering Pipeline</h3>
+              <div className="space-y-3 text-[14px]">
+                <div className="p-3.5 bg-surface-subtle rounded-xl border border-line flex items-center justify-between gap-2">
+                  <span className="font-medium text-ink">1. Liquidity Ingestion (100+ Global Providers)</span>
+                  <span className="font-semibold text-ink tabular-nums">15,000 ticks/sec</span>
                 </div>
-                <div className="p-3 bg-white rounded-xl shadow-sm border border-surface-200 text-xs flex items-center justify-between">
-                  <span className="font-semibold text-surface-700">2. Real-Time Outlier & Spike Filtering</span>
-                  <span className="text-brand-500 font-bold">Latency &lt;2ms</span>
+                <div className="p-3.5 bg-surface-subtle rounded-xl border border-line flex items-center justify-between gap-2">
+                  <span className="font-medium text-ink">2. Real-Time Outlier &amp; Spike Filtering</span>
+                  <span className="font-semibold text-ink tabular-nums">Latency &lt;2ms</span>
                 </div>
-                <div className="p-3 bg-white rounded-xl shadow-sm border border-surface-200 text-xs flex items-center justify-between">
-                  <span className="font-semibold text-surface-700">3. Weighted Volume Averaging</span>
-                  <span className="text-teal-600 font-bold">Active</span>
+                <div className="p-3.5 bg-surface-subtle rounded-xl border border-line flex items-center justify-between gap-2">
+                  <span className="font-medium text-ink">3. Weighted Volume Averaging</span>
+                  <span className="font-semibold text-ink">Active</span>
                 </div>
-                <div className="p-3 bg-brand-500 text-white rounded-xl shadow-md text-xs flex items-center justify-between">
-                  <span className="font-bold">4. Certified Mid-Market Output Stream</span>
-                  <span className="font-mono font-bold">99.999% Accurate</span>
+                <div className="p-3.5 bg-surface-invert text-ink-invert rounded-xl flex items-center justify-between gap-2">
+                  <span className="font-semibold">4. Certified Mid-Market Output Stream</span>
+                  <span className="font-semibold tabular-nums">99.999% Accurate</span>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Official SDKs */}
-      <section className="section-padding bg-surface-50 border-b border-surface-200">
+      <section className="section-padding bg-surface border-b border-line">
         <div className="container-vx">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="badge-brand">Developer Tooling</span>
-            <h2 className="text-3xl font-heading font-bold text-surface-900 mt-2">
-              Official SDKs & Libraries
-            </h2>
-            <p className="text-sm text-surface-500 mt-1">
-              Start querying real-time rates in minutes with our battle-tested open-source libraries.
+          <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+            <span className="badge-neutral">Developer Tooling</span>
+            <h2>Official SDKs &amp; Libraries</h2>
+            <p className="text-ink-500 mx-auto">
+              Start querying real-time rates in minutes with our open-source libraries.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {sdks.map(s => (
-              <div key={s.lang} className="card p-6 bg-white space-y-3 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-surface-900 text-lg font-heading">{s.lang} SDK</h3>
-                  <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">Official</span>
+            {sdks.map((s, idx) => (
+              <ScrollReveal key={s.lang} delay={idx * 50}>
+                <div className="card p-6 bg-surface space-y-3 h-full">
+                  <div className="flex items-center justify-between">
+                    <h3>{s.lang} SDK</h3>
+                    <span className="badge-neutral">Official</span>
+                  </div>
+                  <p className="text-[15px] leading-[24px] text-ink-500">{s.desc}</p>
+                  <div className="p-3 rounded-xl bg-surface-invert text-ink-invert text-[13px] flex items-center justify-between gap-2">
+                    <code className="overflow-x-auto">{s.install}</code>
+                    <ActionButton
+                      variant="invert"
+                      onAction={() => handleCopyCommand(s.install)}
+                      successLabel="Copied"
+                      className="btn-sm flex-shrink-0"
+                      aria-label={`Copy ${s.lang} install command`}
+                    >
+                      <span className="inline-flex items-center gap-1">
+                        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>Copy</span>
+                      </span>
+                    </ActionButton>
+                  </div>
                 </div>
-                <p className="text-xs text-surface-600 leading-relaxed">{s.desc}</p>
-                <div className="p-3 rounded-xl bg-surface-900 text-surface-100 font-mono text-xs flex items-center justify-between">
-                  <code>{s.install}</code>
-                  <span className="text-surface-400 text-[10px]">copy</span>
-                </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
-          <div className="mt-8 text-center flex justify-center gap-4 text-xs font-semibold">
-            <Link href="/api-platform/docs" className="text-brand-500 hover:underline flex items-center gap-1">
-              Swagger 3.0 / OpenAPI Specification <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
-            <span className="text-surface-300">|</span>
-            <Link href="https://github.com" target="_blank" className="text-brand-500 hover:underline flex items-center gap-1">
-              GitHub Repository <ExternalLink className="w-3.5 h-3.5" />
+          <div className="mt-8 text-center flex flex-wrap justify-center gap-4 text-[14px] font-medium">
+            <Link href="/api-platform/docs" className="text-ink hover:underline inline-flex items-center gap-1.5 min-h-[44px] px-2">
+              <span>Swagger 3.0 / OpenAPI Specification</span>
+              <ExternalLink className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Pricing CTA */}
-      <section className="section-padding bg-white">
+      <section className="section-padding bg-bg">
         <div className="container-vx">
-          <div className="card p-8 sm:p-12 bg-gradient-to-r from-brand-900 to-brand-950 text-white rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-2xl sm:text-3xl font-bold font-heading">Find the right plan for your application</h3>
-              <p className="text-xs text-surface-300 mt-2">
+          <div className="card-invert p-8 sm:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-1">
+              <h2 className="text-ink-invert">Find the right plan for your application</h2>
+              <p className="text-ink-invert-muted tabular-nums">
                 Flexible tiers starting from $599/year. Free developer sandboxes available.
               </p>
             </div>
-            <Link href="/api-platform/pricing" className="btn-teal btn-lg whitespace-nowrap">
-              Compare API Plans <ArrowRight className="w-4 h-4 ml-1" />
+            <Link href="/api-platform/pricing" className="btn-invert btn-lg whitespace-nowrap">
+              <span>Compare API Plans</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
         </div>

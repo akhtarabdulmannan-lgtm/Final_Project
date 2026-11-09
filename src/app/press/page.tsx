@@ -1,76 +1,81 @@
 'use client';
 
 import Link from 'next/link';
-import { Newspaper, Download, Mail, ExternalLink } from 'lucide-react';
+import { Newspaper, Download } from 'lucide-react';
+import ActionButton from '@/components/ui/ActionButton';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import { wait } from '@/lib/utils';
 
 export default function PressPage() {
   const releases = [
-    { date: 'October 24, 2026', title: 'VectisX Crosses $17 Billion in Annual Global Business Payment Volume', tag: 'Corporate' },
-    { date: 'August 12, 2026', title: 'VectisX Unveils Next-Gen Rate Blender™ Engine with Millisecond Micro-Spike Filtering', tag: 'Product' },
-    { date: 'May 19, 2026', title: 'VectisX Business Announces Native Integration with Microsoft Dynamics 365 Finance', tag: 'Partnership' },
-    { date: 'January 10, 2026', title: 'VectisX Surpasses 500,000 App Store Reviews Across iOS and Android Platforms', tag: 'Milestone' },
+    { date: 'November 1, 2026', title: 'VectisX Announces Zero-Fee Instant Transfers Across 40 European & APAC Banking Corridors' },
+    { date: 'August 15, 2026', title: 'Annual FX Trends Report: Businesses Lose $28B Annually to Hidden Bank Markups' },
+    { date: 'May 12, 2026', title: 'Meridian Financial Group Reports 34% Increase in Cross-Border Transaction Settlement Volume' },
   ];
 
+  const handleDownloadBrandKit = async () => {
+    await wait(300);
+  };
+
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
-        <div className="max-w-3xl mb-12">
-          <span className="badge-brand">Media & Communications</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            Newsroom & Press Releases
-          </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
-            Official announcements, press releases, media kits, and corporate coverage from the VectisX global team.
+        <div className="max-w-3xl mb-12 space-y-3">
+          <span className="badge-neutral">Media &amp; Pressroom</span>
+          <h1>Official News, Releases &amp; Brand Assets</h1>
+          <p className="text-ink-500">
+            Access company announcements, corporate milestones, executive commentary, and media kits for VectisX.
           </p>
         </div>
 
-        {/* Media Kit Card */}
-        <div className="card p-6 sm:p-8 bg-brand-900 text-white rounded-3xl mb-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold font-heading">Download Official Media Brand Kit</h3>
-            <p className="text-xs text-surface-300">
-              Access high-resolution vector logos, executive headshots, and brand usage guidelines.
-            </p>
-          </div>
-          <button className="btn-teal btn-sm flex items-center gap-2 whitespace-nowrap">
-            <Download className="w-4 h-4" /> Download Brand Assets (.ZIP)
-          </button>
-        </div>
-
-        {/* Releases */}
-        <div className="card p-6 sm:p-8 bg-white shadow-sm mb-12">
-          <h3 className="text-xl font-bold font-heading text-surface-900 mb-6">Recent Press Releases</h3>
-          <div className="divide-y divide-surface-100">
-            {releases.map((r, i) => (
-              <div key={i} className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 px-2 rounded-xl transition-colors">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full">
-                      {r.tag}
-                    </span>
-                    <span className="text-xs text-surface-400">{r.date}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-14">
+          <div className="lg:col-span-8 space-y-4">
+            <h2 className="mb-2">Recent Press Releases</h2>
+            {releases.map((r, idx) => (
+              <ScrollReveal key={r.title} delay={idx * 50}>
+                <div className="card p-6 bg-surface space-y-3">
+                  <div className="text-caption font-medium text-ink-500 tabular-nums">{r.date}</div>
+                  <h3 className="text-[20px] leading-[28px]">{r.title}</h3>
+                  <div className="pt-1">
+                    <Link href="/blog" className="btn-ghost btn-sm px-0">
+                      Read Full Release &rarr;
+                    </Link>
                   </div>
-                  <h4 className="font-bold text-surface-900 text-base hover:text-brand-500 cursor-pointer">
-                    {r.title}
-                  </h4>
                 </div>
-                <button className="text-xs font-bold text-brand-500 hover:underline flex items-center gap-1 self-start sm:self-auto">
-                  Read Release &rsaquo;
-                </button>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
-        </div>
 
-        {/* Media Contact */}
-        <div className="card p-6 bg-white flex items-center justify-between">
-          <div>
-            <h4 className="font-bold text-surface-900 text-sm">Media Inquiries</h4>
-            <p className="text-xs text-surface-500">Contact our global PR relations team at press@vectisx.com</p>
+          <div className="lg:col-span-4 space-y-6">
+            <div className="card p-6 bg-surface space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-surface-subtle border border-line text-ink flex items-center justify-center">
+                <Newspaper className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <h3>Media Contact</h3>
+              <p className="text-[14px] leading-[22px] text-ink-500">
+                For press inquiries, analyst interviews, or executive commentary:
+              </p>
+              <div className="text-[14px] font-semibold text-ink">press@vectisx.com</div>
+            </div>
+
+            <div className="card-invert p-6 space-y-3">
+              <h3 className="text-ink-invert">Brand Guidelines &amp; Logos</h3>
+              <p className="text-[14px] leading-[22px] text-ink-invert-muted">
+                Download high-resolution SVG marks, color tokens, and media kit specifications.
+              </p>
+              <ActionButton
+                variant="secondary"
+                onAction={handleDownloadBrandKit}
+                successLabel="Kit Ready"
+                className="w-full justify-center bg-surface text-ink"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <Download className="w-4 h-4" aria-hidden="true" />
+                  <span>Download Media Kit (.zip)</span>
+                </span>
+              </ActionButton>
+            </div>
           </div>
-          <a href="mailto:press@vectisx.com" className="btn-secondary btn-sm">
-            Email Press Team
-          </a>
         </div>
       </div>
     </div>
