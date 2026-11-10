@@ -21,7 +21,6 @@ const Alerts = lazy(() => import('@/routes/alerts'));
 const Tools = lazy(() => import('@/routes/tools'));
 const ToolsIban = lazy(() => import('@/routes/tools_iban'));
 const ToolsEmailUpdates = lazy(() => import('@/routes/tools_email-updates'));
-const Apps = lazy(() => import('@/routes/apps'));
 const Business = lazy(() => import('@/routes/business'));
 const BusinessFxRisk = lazy(() => import('@/routes/business_fx-risk'));
 const BusinessTeam = lazy(() => import('@/routes/business_team'));
@@ -63,7 +62,6 @@ const TITLES: Record<string, string> = {
   '/tools': 'Financial Tools',
   '/tools/iban': 'IBAN Calculator',
   '/tools/email-updates': 'Rate Email Updates',
-  '/apps': 'Mobile Apps',
   '/business': 'Business',
   '/business/fx-risk': 'FX Risk Management',
   '/business/team': 'Team Roles',
@@ -139,7 +137,6 @@ export default function App() {
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/iban" element={<ToolsIban />} />
             <Route path="/tools/email-updates" element={<ToolsEmailUpdates />} />
-            <Route path="/apps" element={<Apps />} />
             <Route path="/business" element={<Business />} />
             <Route path="/business/fx-risk" element={<BusinessFxRisk />} />
             <Route path="/business/team" element={<BusinessTeam />} />

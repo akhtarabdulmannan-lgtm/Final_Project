@@ -26,7 +26,6 @@ export const personalNav: NavItem[] = [
       { label: 'All Financial Tools', href: '/tools', description: 'Calculators, tables, and utilities' },
       { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
       { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
-      { label: 'Mobile Apps', href: '/apps', description: 'iOS & Android apps' },
     ],
   },
 ];
@@ -69,7 +68,6 @@ export const footerLinks = {
     { label: 'Rate Alerts', href: '/alerts' },
     { label: 'Historical Rates', href: '/historical' },
     { label: 'IBAN Calculator', href: '/tools/iban' },
-    { label: 'Mobile Apps', href: '/apps' },
   ],
   business: [
     { label: 'Business Account', href: '/business' },

@@ -2,7 +2,6 @@ import Link from '@/router/Link';
 import {
   ArrowRight,
   ShieldCheck,
-  Smartphone,
   CheckCircle2,
   Star,
 } from 'lucide-react';
@@ -565,87 +564,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Mobile Apps Section */}
-      <section className="section-padding bg-surface border-b border-line">
-        <div className="container-vx">
-          <ScrollReveal>
-            <div className="bg-surface-invert text-ink-invert rounded-2xl border border-line-invert p-8 sm:p-12">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-6">
-                  <span className="badge-invert">Anytime, Anywhere</span>
-                  <h2 className="text-ink-invert">
-                    Carry Global Currency Intelligence in Your Pocket
-                  </h2>
-                  <p className="text-ink-invert-muted">
-                    Track live exchange rates, set custom trigger alerts, and send international transfers starting at $0 fee with biometric authorization.
-                  </p>
-
-                  <div className="flex flex-wrap gap-6 pt-2">
-                    <div className="flex items-center gap-3">
-                      <div className="text-[28px] leading-[34px] font-heading font-semibold text-ink-invert tabular-nums">
-                        4.8★
-                      </div>
-                      <div className="text-caption text-ink-invert-muted">
-                        <strong className="text-ink-invert font-medium">iOS App Store</strong>
-                        <br />
-                        118k+ verified reviews
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-[28px] leading-[34px] font-heading font-semibold text-ink-invert tabular-nums">
-                        4.8★
-                      </div>
-                      <div className="text-caption text-ink-invert-muted">
-                        <strong className="text-ink-invert font-medium">Google Play Store</strong>
-                        <br />
-                        380k+ verified reviews
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex flex-wrap gap-3">
-                    <Link href="/apps" className="btn-invert">
-                      <Smartphone className="w-4 h-4" aria-hidden="true" />
-                      <span>Get the Free Apps</span>
-                    </Link>
-                    <Link
-                      href="/tools/iban"
-                      className="btn-ghost text-ink-invert border border-line-invert hover:bg-[#1A1F26] hover:text-ink-invert"
-                    >
-                      Try Free Tools &amp; Calculators
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-5 flex justify-center">
-                  <div className="w-64 rounded-2xl border border-line-invert bg-[#1A1F26] p-5 space-y-3">
-                    <div className="text-caption text-ink-invert-muted">Mobile Rate Preview</div>
-                    <div className="p-3.5 bg-surface-invert rounded-xl border border-line-invert">
-                      <div className="text-caption text-ink-invert-muted">Live Rate Trigger</div>
-                      <div className="text-[16px] font-semibold text-ink-invert tabular-nums">
-                        USD / EUR @ 0.8550
-                      </div>
-                      <div className="text-caption text-ink-invert-muted mt-0.5">
-                        Target reached 2 mins ago
-                      </div>
-                    </div>
-                    <div className="p-3.5 bg-surface-invert rounded-xl border border-line-invert">
-                      <div className="text-caption text-ink-invert-muted">Converted Amount</div>
-                      <div className="text-[16px] font-semibold text-ink-invert tabular-nums">
-                        $1,500.00 &rarr; €1,280.10
-                      </div>
-                      <div className="text-caption text-ink-invert-muted mt-0.5">
-                        At the API mid-market rate
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
       {/* A-Z Honest Map Directory */}
       <section className="section-padding bg-bg">
         <div className="container-vx">
@@ -658,7 +576,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 text-[14px]">
             {[
-              ['A', 'Alerts, Accounts, API, Apps', '/alerts'],
+              ['A', 'Alerts, Accounts, API', '/alerts'],
               ['B', 'Business, Bank Data', '/business'],
               ['C', 'Converter, Charts, Tables', '/converter'],
               ['D', 'Daily Rates, Data API', '/rates'],

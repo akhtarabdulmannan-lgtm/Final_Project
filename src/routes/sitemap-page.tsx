@@ -16,7 +16,6 @@ export default function SitemapVisualPage() {
         { label: 'Currency Tables', href: '/tables' },
         { label: 'IBAN Validator', href: '/tools/iban' },
         { label: 'Daily Email Updates', href: '/tools/email-updates' },
-        { label: 'Mobile Apps', href: '/apps' },
       ],
     },
     {

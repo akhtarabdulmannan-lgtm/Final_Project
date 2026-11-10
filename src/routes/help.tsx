@@ -16,19 +16,19 @@ const generalFaqs = [
       'Corporate accounts require Certificate of Incorporation, proof of business address within 90 days, and ID verification for directors holding 25% or more equity.',
   },
   {
-    question: 'How do I cancel or amend an international transfer?',
+    question: 'Which exchange rate does the converter use?',
     answer:
-      'If the transfer has not yet cleared on local rails, you can cancel it directly from your dashboard or contact our 24/7 support desk.',
+      'Live mid-market rates from open.er-api.com, falling back to the European Central Bank feed via Frankfurter. Rates are cached for 15 minutes and marked "Offline rates" when the provider cannot be reached.',
   },
   {
-    question: 'What are the transfer limits for personal accounts?',
+    question: 'How many currencies can I convert between?',
     answer:
-      'Standard verified personal accounts can transfer up to $50,000 USD per day or $200,000 USD per month. Limit increases are available upon review.',
+      '64 currencies are supported across the converter, cross-rate tables, charts and alerts. Historical charts use ECB reference data and cover windows from one day to ten years.',
   },
 ];
 
 const categories = [
-  { title: 'Personal Money Transfers', articles: 18, desc: 'Sending limits, delivery speeds, and tracking corridors.', href: '/send' },
+  { title: 'Rate Alerts & Notifications', articles: 18, desc: 'Setting target rates, alert delivery, and notification preferences.', href: '/alerts' },
   { title: 'Multi-Currency Account', articles: 12, desc: 'Depositing, holding, and instant conversion between 18 currencies.', href: '/register' },
   { title: 'Business & Treasury Solutions', articles: 24, desc: 'Batch payouts, forward contracts, and ERP connectors.', href: '/business' },
   { title: 'Developer & API Integration', articles: 16, desc: 'API keys, rate limits, webhooks, and SDK troubleshooting.', href: '/api-platform/docs' },
