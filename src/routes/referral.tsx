@@ -39,7 +39,7 @@ export default function ReferralPage() {
           <span className="badge-gain">VectisX Referral Program</span>
           <h1>Give $50, Get $50 for Every Friend You Invite</h1>
           <p className="text-ink-500 mx-auto">
-            Share VectisX transparent mid-market exchange rates with friends and earn rewards when they complete their first international money transfer.
+            Share VectisX with friends who track currency pairs, and unlock extra saved-rate slots on your own account when they start using it.
           </p>
         </div>
 

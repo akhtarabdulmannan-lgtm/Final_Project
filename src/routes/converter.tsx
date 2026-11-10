@@ -19,12 +19,12 @@ const faqs = [
   {
     question: 'How often are VectisX exchange rates updated?',
     answer:
-      'Our live converter rates refresh continuously during global market trading hours, aggregating feeds from over 100 liquidity providers and central bank sources via our Rate Blender engine.',
+      'Rates are fetched from open.er-api.com, a public reference-rate API, with the European Central Bank feed as a fallback. Both publish one reference rate per business day, so the figures are mid-market rather than a live dealing price.',
   },
   {
-    question: 'Can I send money at the exact rate displayed on the converter?',
+    question: 'How often do the rates on the converter update?',
     answer:
-      'Yes. When you initiate a money transfer through VectisX, you lock in a transparent exchange rate and explicit flat fee before confirming.',
+      'The app fetches a fresh snapshot when it loads and caches it for fifteen minutes. The badge above the rates names the provider and the date it published them.',
   },
   {
     question: 'Why do bank rates differ from the VectisX rate?',

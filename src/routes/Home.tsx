@@ -46,10 +46,10 @@ export default function HomePage() {
                 </span>
               </div>
               <h1>
-                Global Currency Intelligence &amp; Transfers
+                Global Currency Intelligence
               </h1>
               <p className="text-ink-500 mx-auto lg:mx-0">
-                Check real-time rates for 220+ currencies, send money to 190+ countries with low transparent fees, and manage foreign exchange risk with institutional precision.
+                Check live mid-market rates for 200+ currencies, chart how a pair has moved over time, and set an alert for the level you are waiting on — all from one screen.
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-2 text-[14px] text-ink-700">
                 <div className="flex items-center gap-2">
