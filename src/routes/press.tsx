@@ -6,7 +6,7 @@ import { wait } from '@/lib/utils';
 
 export default function PressPage() {
   const releases = [
-    { date: 'November 1, 2026', title: 'VectisX Announces Zero-Fee Instant Transfers Across 40 European & APAC Banking Corridors' },
+    { date: 'November 1, 2026', title: 'VectisX Opens Its Rate Engine: 64 Currencies on Public Data Feeds' },
     { date: 'August 15, 2026', title: 'Annual FX Trends Report: Businesses Lose $28B Annually to Hidden Bank Markups' },
     { date: 'May 12, 2026', title: 'Meridian Financial Group Reports 34% Increase in Cross-Border Transaction Settlement Volume' },
   ];
