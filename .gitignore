@@ -22,3 +22,6 @@ yarn-error.log*
 
 # Vercel
 .vercel
+
+# Local test harness (not part of the app)
+.testing/
