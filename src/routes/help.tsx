@@ -31,7 +31,6 @@ const categories = [
   { title: 'Rate Alerts & Notifications', articles: 18, desc: 'Setting target rates, alert delivery, and notification preferences.', href: '/alerts' },
   { title: 'Multi-Currency Account', articles: 12, desc: 'Depositing, holding, and instant conversion between 18 currencies.', href: '/register' },
   { title: 'Business & Treasury Solutions', articles: 24, desc: 'Batch payouts, forward contracts, and ERP connectors.', href: '/business' },
-  { title: 'Developer & API Integration', articles: 16, desc: 'API keys, rate limits, webhooks, and SDK troubleshooting.', href: '/api-platform/docs' },
   { title: 'Security & Verification', articles: 9, desc: 'KYC identity verification, 2FA, and fraud prevention.', href: '/security' },
 ];
 

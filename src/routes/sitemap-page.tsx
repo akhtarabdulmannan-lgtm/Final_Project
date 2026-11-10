@@ -28,15 +28,6 @@ export default function SitemapVisualPage() {
       ],
     },
     {
-      title: 'Developer API & Data',
-      links: [
-        { label: 'API Overview', href: '/api-platform' },
-        { label: 'API Pricing', href: '/api-platform/pricing' },
-        { label: 'API Documentation', href: '/api-platform/docs' },
-        { label: 'Platform Partners', href: '/api-platform/partners' },
-      ],
-    },
-    {
       title: 'Company & Legal',
       links: [
         { label: 'About VectisX', href: '/about' },

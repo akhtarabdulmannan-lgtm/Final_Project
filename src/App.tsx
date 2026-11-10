@@ -25,10 +25,6 @@ const Business = lazy(() => import('@/routes/business'));
 const BusinessFxRisk = lazy(() => import('@/routes/business_fx-risk'));
 const BusinessTeam = lazy(() => import('@/routes/business_team'));
 const BusinessIntegrations = lazy(() => import('@/routes/business_integrations'));
-const ApiPlatform = lazy(() => import('@/routes/api-platform'));
-const ApiDocs = lazy(() => import('@/routes/api-platform_docs'));
-const ApiPricing = lazy(() => import('@/routes/api-platform_pricing'));
-const ApiPartners = lazy(() => import('@/routes/api-platform_partners'));
 const About = lazy(() => import('@/routes/about'));
 const Careers = lazy(() => import('@/routes/careers'));
 const Press = lazy(() => import('@/routes/press'));
@@ -66,10 +62,6 @@ const TITLES: Record<string, string> = {
   '/business/fx-risk': 'FX Risk Management',
   '/business/team': 'Team Roles',
   '/business/integrations': 'Integrations',
-  '/api-platform': 'Currency Data API',
-  '/api-platform/docs': 'API Documentation',
-  '/api-platform/pricing': 'API Pricing',
-  '/api-platform/partners': 'Partner Program',
   '/about': 'About',
   '/careers': 'Careers',
   '/press': 'Press',
@@ -141,10 +133,6 @@ export default function App() {
             <Route path="/business/fx-risk" element={<BusinessFxRisk />} />
             <Route path="/business/team" element={<BusinessTeam />} />
             <Route path="/business/integrations" element={<BusinessIntegrations />} />
-            <Route path="/api-platform" element={<ApiPlatform />} />
-            <Route path="/api-platform/docs" element={<ApiDocs />} />
-            <Route path="/api-platform/pricing" element={<ApiPricing />} />
-            <Route path="/api-platform/partners" element={<ApiPartners />} />
             <Route path="/about" element={<About />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/press" element={<Press />} />

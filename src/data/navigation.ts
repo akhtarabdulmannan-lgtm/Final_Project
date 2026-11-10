@@ -48,16 +48,6 @@ export const businessNav: NavItem[] = [
     label: 'Integrations',
     href: '/business/integrations',
   },
-  {
-    label: 'API',
-    href: '/api-platform',
-    children: [
-      { label: 'API Overview', href: '/api-platform', description: 'Currency data API' },
-      { label: 'Pricing', href: '/api-platform/pricing', description: 'Plans from $599/yr' },
-      { label: 'Documentation', href: '/api-platform/docs', description: 'Full API reference' },
-      { label: 'Partner Program', href: '/api-platform/partners', description: 'ISV & referral programs' },
-    ],
-  },
 ];
 
 export const footerLinks = {
@@ -74,12 +64,6 @@ export const footerLinks = {
     { label: 'FX Risk Management', href: '/business/fx-risk' },
     { label: 'Integrations', href: '/business/integrations' },
     { label: 'Team Roles', href: '/business/team' },
-  ],
-  developers: [
-    { label: 'API Overview', href: '/api-platform' },
-    { label: 'API Pricing', href: '/api-platform/pricing' },
-    { label: 'Documentation', href: '/api-platform/docs' },
-    { label: 'Partner Program', href: '/api-platform/partners' },
   ],
   company: [
     { label: 'About VectisX', href: '/about' },

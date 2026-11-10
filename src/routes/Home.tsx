@@ -272,8 +272,8 @@ export default function HomePage() {
                   Both providers are free, public JSON APIs. If neither can be reached, the app says so and shows a clearly labelled saved snapshot.
                 </p>
               </div>
-              <Link href="/api-platform" className="btn-invert whitespace-nowrap">
-                How the data works
+              <Link href="/historical" className="btn-invert whitespace-nowrap">
+                See the history
               </Link>
             </div>
           </ScrollReveal>
@@ -494,76 +494,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Developer API Section */}
-      <section className="section-padding bg-bg border-b border-line">
-        <div className="container-vx">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <ScrollReveal className="lg:col-span-6 space-y-6">
-              <span className="badge-neutral">Developer Platform</span>
-              <h2>VectisX Currency Data API</h2>
-              <p className="text-ink-500">
-                The same public feeds this site runs on — open.er-api.com and the European Central Bank — documented so you can call them yourself. 64 currencies, precious metals, and selected digital assets appear in the interface.
-              </p>
-
-              <div className="space-y-3">
-                {[
-                  'Single endpoint: GET /v1/convert_from with normalized JSON payloads',
-                  'SDKs ready for Java, Node.js, PHP, and Python with full OpenAPI spec',
-                  'Historical records dating back to 1998, volatility indices & monthly averages',
-                  'Transparent tiers: Core ($599/yr), Intermediate ($1,799/yr), Prime ($4,499/yr)',
-                ].map((line) => (
-                  <div key={line} className="flex items-start gap-3 text-[15px] leading-[24px] text-ink-700">
-                    <CheckCircle2 className="w-5 h-5 text-ink flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    <span>{line}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-2 flex flex-wrap gap-3">
-                <Link href="/api-platform" className="btn-primary">
-                  Explore API Docs &amp; SDKs &rarr;
-                </Link>
-                <Link href="/api-platform/pricing" className="btn-secondary">
-                  View API Pricing
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={100} className="lg:col-span-6 bg-surface-invert text-ink-invert p-6 rounded-2xl border border-line-invert text-[13px] leading-[20px] overflow-x-auto tabular-nums">
-              <div className="flex items-center justify-between pb-3 border-b border-line-invert text-ink-invert-muted">
-                <span>cURL Request</span>
-                <span className="text-ink-invert font-medium">200 OK · 24ms</span>
-              </div>
-              <pre className="py-4 text-ink-invert overflow-x-auto">
-{`curl -X GET "https://api.vectisx.com/v1/convert_from?from=USD&to=EUR&amount=1000" \\
-  -H "Authorization: Bearer vx_live_secret_key"`}
-              </pre>
-              <div className="pt-3 border-t border-line-invert text-ink-invert-muted">
-                <span className="block mb-1">// JSON Response payload</span>
-                <pre className="text-ink-invert overflow-x-auto">
-{`{
-  "from": "USD",
-  "amount": 1000.00,
-  "timestamp": "2026-11-09T12:00:00Z",
-  "to": [
-    {
-      "quotecurrency": "EUR",
-      "mid": 0.8534,
-      "bid": 0.8532,
-      "ask": 0.8536,
-      "high24h": 0.8550,
-      "low24h": 0.8512,
-      "change24h_pct": "+0.28"
-    }
-  ]
-}`}
-                </pre>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
       {/* A-Z Honest Map Directory */}
       <section className="section-padding bg-bg">
         <div className="container-vx">
@@ -587,8 +517,8 @@ export default function HomePage() {
               ['I', 'IBAN Calculator, Integrations', '/tools/iban'],
               ['L', 'Limit Orders, Live Rates', '/rates'],
               ['M', 'Multi-Currency, Mid-Market', '/register'],
-              ['O', 'Options, Open Data', '/api-platform'],
-              ['P', 'Pairs, Partner Program', '/api-platform/partners'],
+              ['O', 'Options, Open Data', '/rates'],
+              ['P', 'Pairs, Partner Program', '/partners'],
               ['R', 'Rate Alerts, Referral', '/referral'],
               ['S', 'Saved Snapshots, Security', '/security'],
               ['T', 'Tools, Tables, Trends', '/tools'],

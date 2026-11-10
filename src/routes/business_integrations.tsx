@@ -71,8 +71,8 @@ export default function BusinessIntegrationsPage() {
               Our REST API and webhooks let you integrate proprietary accounting software in days.
             </p>
           </div>
-          <Link href="/api-platform" className="btn-invert whitespace-nowrap">
-            <span>View API Documentation</span>
+          <Link href="/contact" className="btn-invert whitespace-nowrap">
+            <span>Talk to the team</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>
