@@ -1,0 +1,476 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Surface Tokens */
+    --bg: #F6F7F9;
+    --surface: #FFFFFF;
+    --surface-subtle: #EEF1F5;
+    --surface-invert: #111418;
+
+    /* Ink / Text Tokens */
+    --ink: #0D1117;
+    --ink-700: #242B35;
+    --ink-500: #4B5565;
+    --ink-invert: #FFFFFF;
+    --ink-invert-muted: #C2CAD6;
+
+    /* Border & Structural Line Tokens */
+    --line: #E1E5EC;
+    --line-strong: #C5CDD9;
+    --line-invert: #282E38;
+
+    /* Primary Interactive Accent Tokens */
+    --accent: #111418;
+    --accent-hover: #252B33;
+    --accent-subtle: #EAECEF;
+    --accent-fg: #FFFFFF;
+
+    /* Semantic Delta Tokens (Green / Red reserved for rate deltas & live status) */
+    --gain: #116E3B;
+    --gain-bg: #E6F4EC;
+    --gain-border: #BCE2CC;
+    --loss: #B42318;
+    --loss-bg: #FDECEC;
+    --loss-border: #F5C2BE;
+
+    /* Focus & Motion Tokens */
+    --focus-ring: #111418;
+    --ease-fintech: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /*
+   * Dark-theme token structure prepared for future opt-in via [data-theme="dark"]
+   * (Dark mode is intentionally disabled in this release.)
+   *
+   * [data-theme="dark"] {
+   *   --bg: #0D1117;
+   *   --surface: #141922;
+   *   --surface-subtle: #1D2430;
+   *   --surface-invert: #090C10;
+   *   --ink: #F3F5F8;
+   *   --ink-700: #D0D7E2;
+   *   --ink-500: #9AA5B5;
+   *   --line: #27303F;
+   *   --line-strong: #39455A;
+   *   --accent: #F3F5F8;
+   *   --accent-hover: #DCE2EC;
+   *   --accent-fg: #0D1117;
+   *   --gain: #4ADE80;
+   *   --gain-bg: #122E1E;
+   *   --loss: #F87171;
+   *   --loss-bg: #361618;
+   * }
+   */
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-inter), sans-serif;
+    background-color: var(--bg);
+    color: var(--ink-700);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink-700);
+    font-family: var(--font-inter), sans-serif;
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 400;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-inter-tight), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  h1 {
+    font-size: 36px;
+    line-height: 40px;
+  }
+
+  h2 {
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  h3 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 56px;
+      line-height: 60px;
+    }
+
+    h2 {
+      font-size: 40px;
+      line-height: 44px;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 26px;
+    max-width: 65ch;
+  }
+
+  table {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  label {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    color: var(--ink-700);
+  }
+
+  button, input, select, textarea {
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .bg-surface-invert a:focus-visible,
+  .bg-surface-invert button:focus-visible,
+  .bg-surface-invert input:focus-visible,
+  .bg-surface-invert select:focus-visible,
+  .bg-surface-invert textarea:focus-visible,
+  .card-invert a:focus-visible,
+  .card-invert button:focus-visible,
+  .card-invert input:focus-visible,
+  .card-invert select:focus-visible,
+  .card-invert textarea:focus-visible,
+  footer a:focus-visible,
+  footer button:focus-visible,
+  footer input:focus-visible {
+    outline: 2px solid var(--ink-invert);
+    outline-offset: 2px;
+  }
+
+  .recharts-text,
+  .recharts-tooltip-wrapper {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .container-vx {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-14 md:py-20;
+  }
+
+  .text-caption {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .prose-measure {
+    max-width: 65ch;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[15px] font-medium min-h-[44px] transition-[background-color,border-color,color,opacity] duration-150 ease-fintech disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--accent);
+    color: var(--accent-fg);
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[15px] font-medium min-h-[44px] transition-[background-color,border-color,color,opacity] duration-150 ease-fintech disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-subtle);
+    border-color: var(--ink);
+  }
+
+  .btn-invert {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[15px] font-medium min-h-[44px] transition-[background-color,border-color,color,opacity] duration-150 ease-fintech disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--ink-invert);
+    color: var(--ink);
+    border: 1px solid var(--ink-invert);
+  }
+  .btn-invert:hover:not(:disabled) {
+    background-color: var(--surface-subtle);
+    border-color: var(--surface-subtle);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-[14px] font-medium min-h-[44px] transition-[background-color,border-color,color] duration-150 ease-fintech;
+    color: var(--ink-700);
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    background-color: var(--surface-subtle);
+    color: var(--ink);
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-[13px] min-h-[44px];
+  }
+
+  .btn-lg {
+    @apply px-7 py-3 text-[16px] min-h-[48px];
+  }
+
+  .card {
+    @apply rounded-2xl p-6;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 150ms var(--ease-fintech);
+  }
+  .card:hover,
+  .card:focus-within {
+    border-color: var(--line-strong);
+  }
+
+  .card-interactive {
+    @apply rounded-2xl p-6 block;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 150ms var(--ease-fintech);
+  }
+  .card-interactive:hover,
+  .card-interactive:focus-visible {
+    border-color: var(--ink);
+  }
+
+  .card-flat {
+    @apply rounded-2xl p-6;
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--line);
+    transition: border-color 150ms var(--ease-fintech);
+  }
+
+  .card-invert {
+    @apply rounded-2xl p-6;
+    background-color: var(--surface-invert);
+    color: var(--ink-invert);
+    border: 1px solid var(--line-invert);
+  }
+
+  .input-field {
+    @apply w-full rounded-xl px-4 py-2.5 text-[15px] min-h-[44px] outline-none transition-[border-color,background-color] duration-150 ease-fintech;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .input-field::placeholder {
+    color: var(--ink-500);
+  }
+  .input-field:focus {
+    border-color: var(--ink);
+  }
+
+  .select-field {
+    @apply w-full rounded-xl px-4 py-2.5 text-[15px] min-h-[44px] outline-none transition-[border-color,background-color] duration-150 ease-fintech cursor-pointer;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .select-field:focus {
+    border-color: var(--ink);
+  }
+
+  .badge-neutral {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] leading-[18px] font-medium;
+    background-color: var(--surface-subtle);
+    color: var(--ink-700);
+    border: 1px solid var(--line);
+  }
+
+  .badge-invert {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] leading-[18px] font-medium;
+    background-color: #202630;
+    color: var(--ink-invert);
+    border: 1px solid var(--line-invert);
+  }
+
+  .badge-gain {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] leading-[18px] font-medium tabular-nums;
+    background-color: var(--gain-bg);
+    color: var(--gain);
+    border: 1px solid var(--gain-border);
+  }
+
+  .badge-loss {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] leading-[18px] font-medium tabular-nums;
+    background-color: var(--loss-bg);
+    color: var(--loss);
+    border: 1px solid var(--loss-border);
+  }
+
+  .divider {
+    border-top: 1px solid var(--line);
+  }
+
+  /* 4C.1: Live rate background flash (600ms, never on initial render) */
+  @keyframes rateFlashGain {
+    0% { background-color: var(--gain-bg); }
+    70% { background-color: var(--gain-bg); }
+    100% { background-color: transparent; }
+  }
+
+  @keyframes rateFlashLoss {
+    0% { background-color: var(--loss-bg); }
+    70% { background-color: var(--loss-bg); }
+    100% { background-color: transparent; }
+  }
+
+  .rate-flash-gain {
+    animation: rateFlashGain 600ms var(--ease-fintech) forwards;
+    border-radius: 6px;
+  }
+
+  .rate-flash-loss {
+    animation: rateFlashLoss 600ms var(--ease-fintech) forwards;
+    border-radius: 6px;
+  }
+
+  /* 4C.2: Live updated 6px --gain dot pulse (2s opacity pulse) */
+  @keyframes liveDotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .live-dot-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: var(--gain);
+    animation: liveDotPulse 2s var(--ease-fintech) infinite;
+    flex-shrink: 0;
+  }
+
+  /* 4C.7: Skeleton neutral --line shimmer (1.2s, transform-only) */
+  @keyframes skeletonShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--line);
+    border-radius: 8px;
+  }
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-color: rgba(255, 255, 255, 0.45);
+    opacity: 0.7;
+    animation: skeletonShimmer 1.2s var(--ease-fintech) infinite;
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *:not(.animate-spin),
+  *:not(.animate-spin)::before,
+  *:not(.animate-spin)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skeleton-shimmer::after {
+    display: none !important;
+  }
+
+  .live-dot-pulse {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Self-hosted fonts
+   Previously injected by the framework's font loader; declared here instead so
+   the build stays a plain static bundle. Files live in /public/fonts.
+--------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-tight-latin-600-normal.woff2') format('woff2');
+}
+
+:root {
+  --font-inter: 'Inter';
+  --font-inter-tight: 'Inter Tight';
+}

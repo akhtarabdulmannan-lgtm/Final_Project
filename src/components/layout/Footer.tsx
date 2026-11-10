@@ -1,7 +1,5 @@
-'use client';
-
 import { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/router/Link';
 import { Zap, Mail, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
 import { footerLinks } from '@/data/navigation';
 import ActionButton from '@/components/ui/ActionButton';
