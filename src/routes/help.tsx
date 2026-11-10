@@ -6,9 +6,9 @@ import ScrollReveal from '@/components/ui/ScrollReveal';
 
 const generalFaqs = [
   {
-    question: 'How do I open an account with VectisX?',
+    question: 'Do I need an account to use VectisX?',
     answer:
-      'Signing up takes under two minutes. Select Register, enter your email, verify your identity with government-issued photo ID, and your account is activated.',
+      'No. Every converter, chart, table and rate alert works without signing in. An account is only useful if you want your email subscriptions tied to it.',
   },
   {
     question: 'What documents are required for business account verification?',
@@ -29,7 +29,7 @@ const generalFaqs = [
 
 const categories = [
   { title: 'Rate Alerts & Notifications', articles: 18, desc: 'Setting target rates, alert delivery, and notification preferences.', href: '/alerts' },
-  { title: 'Multi-Currency Account', articles: 12, desc: 'Depositing, holding, and instant conversion between 18 currencies.', href: '/register' },
+  { title: 'Converting & Charts', articles: 12, desc: 'Supported currencies, historical windows, and how to read the inverse rate.', href: '/converter' },
   { title: 'Security & Verification', articles: 9, desc: 'KYC identity verification, 2FA, and fraud prevention.', href: '/security' },
 ];
 

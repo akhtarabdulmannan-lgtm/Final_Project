@@ -8,7 +8,6 @@ import {
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import StepConnector from '@/components/ui/StepConnector';
-import CountUpValue from '@/components/ui/CountUpValue';
 import LiveRateValue from '@/components/ui/LiveRateValue';
 import LiveUpdatedBadge from '@/components/ui/LiveUpdatedBadge';
 import DeltaChip from '@/components/ui/DeltaChip';
@@ -24,13 +23,12 @@ export default function HomePage() {
 
   const previewCurrencies = currencies.slice(1, 11);
 
-  const vaultBalances = [
-    { code: 'USD', name: 'US Dollar', flag: '🇺🇸', prefix: '$', amount: 24580.0 },
-    { code: 'EUR', name: 'Euro', flag: '🇪🇺', prefix: '€', amount: 18240.5 },
-    { code: 'GBP', name: 'British Pound', flag: '🇬🇧', prefix: '£', amount: 12410.2 },
-    { code: 'AUD', name: 'Australian Dollar', flag: '🇦🇺', prefix: 'A$', amount: 15800.0 },
-    { code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', prefix: 'C$', amount: 9350.0 },
-  ];
+  // These were hardcoded negative wallet balances implying an account this site
+  // does not offer. They now mirror the live rate feed instead.
+  const referenceRates = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'].map((code) => {
+    const meta = currencies.find((c) => c.code === code)!;
+    return { ...meta, rate: fx.rate('USD', code) };
+  });
 
   return (
     <div className="flex flex-col min-h-screen bg-bg">
@@ -125,15 +123,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Multi-Currency Account */}
+      {/* Live Conversion */}
       <section className="section-padding bg-surface border-b border-line">
         <div className="container-vx">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <ScrollReveal className="lg:col-span-6 space-y-6">
-              <span className="badge-neutral">Multi-Currency Account</span>
-              <h2>Hold, Convert, and Send with Zero Friction</h2>
+              <span className="badge-neutral">Live Conversion</span>
+              <h2>Convert 64 Currencies at the Real Mid-Market Rate</h2>
               <p className="text-ink-500">
-                Hold balances in USD, GBP, EUR, AUD, CAD and more in one universal account. Convert between 18 major currencies in milliseconds at genuine mid-market rates, and send funds from pre-funded balances anytime.
+                Pick from 64 currencies and convert at the rate the market is actually quoting. The inverse rate is shown alongside every conversion, so you can see both directions at once.
               </p>
 
               <div className="space-y-4 pt-2">
@@ -142,9 +140,9 @@ export default function HomePage() {
                     1
                   </div>
                   <div>
-                    <h3 className="text-[18px] leading-[24px] text-ink">Hold 18+ Currencies</h3>
+                    <h3 className="text-[18px] leading-[24px] text-ink">64 Currencies Supported</h3>
                     <p className="text-[15px] leading-[22px] text-ink-500 mt-1">
-                      Safely keep funds in global reserve currencies without international bank account opening fees.
+                      From the majors to the currencies you actually travel with — all from the same live feed.
                     </p>
                   </div>
                 </div>
@@ -156,7 +154,7 @@ export default function HomePage() {
                   <div>
                     <h3 className="text-[18px] leading-[24px] text-ink">Instant Conversion</h3>
                     <p className="text-[15px] leading-[22px] text-ink-500 mt-1">
-                      Switch between currencies in real time whenever exchange rates reach your target threshold.
+                      Every figure updates the moment a new rate arrives, with no page reload and no invented numbers.
                     </p>
                   </div>
                 </div>
@@ -166,9 +164,9 @@ export default function HomePage() {
                     3
                   </div>
                   <div>
-                    <h3 className="text-[18px] leading-[24px] text-ink">Send from Pre-Funded Balances</h3>
+                    <h3 className="text-[18px] leading-[24px] text-ink">Chart It or Watch It</h3>
                     <p className="text-[15px] leading-[22px] text-ink-500 mt-1">
-                      Avoid debit and credit card merchant fees by transferring directly from local wallet balances.
+                      Follow a pair on a historical chart, or set a rate alert and let the site tell you when it moves.
                     </p>
                   </div>
                 </div>
@@ -176,7 +174,7 @@ export default function HomePage() {
 
               <div className="pt-2">
                 <Link href="/register" className="btn-primary">
-                  <span>Open a Multi-Currency Account Free</span>
+                  <span>Start Converting Free</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
               </div>
@@ -184,7 +182,7 @@ export default function HomePage() {
 
             <ScrollReveal delay={100} className="lg:col-span-6 bg-bg p-6 sm:p-10 rounded-2xl border border-line">
               <div className="space-y-3">
-                {vaultBalances.map((item) => (
+                {referenceRates.map((item) => (
                   <div
                     key={item.code}
                     className="card p-4 flex items-center justify-between gap-4"
@@ -193,19 +191,14 @@ export default function HomePage() {
                       <span className="text-[24px]" aria-hidden="true">{item.flag}</span>
                       <div className="min-w-0">
                         <div className="font-semibold text-ink text-[15px]">{item.name}</div>
-                        <div className="text-caption text-ink-500">{item.code} Balance</div>
+                        <div className="text-caption text-ink-500">{item.code} Reference Rate</div>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-semibold text-ink text-[16px]">
-                        <CountUpValue
-                          value={item.amount}
-                          prefix={item.prefix}
-                          decimals={2}
-                          duration={400}
-                        />
+                      <div className="font-semibold text-ink text-[16px] tabular-nums">
+                        {formatRate(item.rate)}
                       </div>
-                      <div className="text-caption text-ink-500">Active Vault</div>
+                      <div className="text-caption text-ink-500">1 USD</div>
                     </div>
                   </div>
                 ))}
@@ -401,7 +394,7 @@ export default function HomePage() {
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
             <h2>The VectisX A–Z Honest Directory</h2>
             <p className="text-ink-500 mx-auto">
-              Every tool, service, payment corridor, and integration available across our ecosystem.
+              Every converter, chart and tool available across the site.
             </p>
           </div>
 
