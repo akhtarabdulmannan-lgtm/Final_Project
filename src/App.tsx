@@ -19,12 +19,7 @@ const Historical = lazy(() => import('@/routes/historical'));
 const Tables = lazy(() => import('@/routes/tables'));
 const Alerts = lazy(() => import('@/routes/alerts'));
 const Tools = lazy(() => import('@/routes/tools'));
-const ToolsIban = lazy(() => import('@/routes/tools_iban'));
 const ToolsEmailUpdates = lazy(() => import('@/routes/tools_email-updates'));
-const Business = lazy(() => import('@/routes/business'));
-const BusinessFxRisk = lazy(() => import('@/routes/business_fx-risk'));
-const BusinessTeam = lazy(() => import('@/routes/business_team'));
-const BusinessIntegrations = lazy(() => import('@/routes/business_integrations'));
 const About = lazy(() => import('@/routes/about'));
 const Careers = lazy(() => import('@/routes/careers'));
 const Press = lazy(() => import('@/routes/press'));
@@ -56,12 +51,7 @@ const TITLES: Record<string, string> = {
   '/tables': 'Currency Tables',
   '/alerts': 'Rate Alerts',
   '/tools': 'Financial Tools',
-  '/tools/iban': 'IBAN Calculator',
   '/tools/email-updates': 'Rate Email Updates',
-  '/business': 'Business',
-  '/business/fx-risk': 'FX Risk Management',
-  '/business/team': 'Team Roles',
-  '/business/integrations': 'Integrations',
   '/about': 'About',
   '/careers': 'Careers',
   '/press': 'Press',
@@ -127,12 +117,7 @@ export default function App() {
             <Route path="/tables" element={<Tables />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/tools" element={<Tools />} />
-            <Route path="/tools/iban" element={<ToolsIban />} />
             <Route path="/tools/email-updates" element={<ToolsEmailUpdates />} />
-            <Route path="/business" element={<Business />} />
-            <Route path="/business/fx-risk" element={<BusinessFxRisk />} />
-            <Route path="/business/team" element={<BusinessTeam />} />
-            <Route path="/business/integrations" element={<BusinessIntegrations />} />
             <Route path="/about" element={<About />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/press" element={<Press />} />
