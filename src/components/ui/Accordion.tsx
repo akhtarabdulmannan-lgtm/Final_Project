@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 interface AccordionItem {
@@ -18,57 +18,36 @@ export default function Accordion({ items, className }: AccordionProps) {
 
   return (
     <div className={`space-y-3 ${className || ''}`}>
-      {items.map((item, index) => (
-        <AccordionPanel
-          key={index}
-          item={item}
-          isOpen={openIndex === index}
-          onToggle={() => setOpenIndex(openIndex === index ? null : index)}
-        />
-      ))}
-    </div>
-  );
-}
-
-function AccordionPanel({
-  item,
-  isOpen,
-  onToggle,
-}: {
-  item: AccordionItem;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
-    }
-  }, [isOpen]);
-
-  return (
-    <div className="rounded-2xl border border-surface-200 bg-white overflow-hidden transition-shadow hover:shadow-sm">
-      <button
-        onClick={onToggle}
-        className="flex items-center justify-between w-full px-6 py-4 text-left"
-      >
-        <span className="text-sm font-semibold text-surface-900 pr-4">{item.question}</span>
-        <ChevronDown
-          className={`w-5 h-5 text-surface-400 flex-shrink-0 transition-transform duration-300 ${
-            isOpen ? 'rotate-180 text-brand-500' : ''
-          }`}
-        />
-      </button>
-      <div
-        className="overflow-hidden transition-all duration-300 ease-out"
-        style={{ maxHeight: isOpen ? height : 0 }}
-      >
-        <div ref={contentRef} className="px-6 pb-4 text-sm text-surface-600 leading-relaxed">
-          {item.answer}
-        </div>
-      </div>
+      {items.map((item, index) => {
+        const isOpen = openIndex === index;
+        return (
+          <details
+            key={index}
+            open={isOpen}
+            className="group rounded-2xl border border-line bg-surface overflow-hidden transition-[border-color] duration-150 ease-fintech hover:border-line-strong"
+          >
+            <summary
+              onClick={(e) => {
+                e.preventDefault();
+                setOpenIndex(isOpen ? null : index);
+              }}
+              aria-expanded={isOpen}
+              className="flex items-center justify-between w-full px-6 py-4 min-h-[48px] text-left cursor-pointer list-none [&::-webkit-details-marker]:hidden"
+            >
+              <span className="text-[16px] leading-[24px] font-medium text-ink pr-4">
+                {item.question}
+              </span>
+              <ChevronDown
+                className="w-5 h-5 text-ink-500 flex-shrink-0 transition-transform duration-200 ease-fintech group-open:rotate-180 group-open:text-ink"
+                aria-hidden="true"
+              />
+            </summary>
+            <div className="px-6 pb-5 text-[16px] leading-[26px] text-ink-500 prose-measure">
+              {item.answer}
+            </div>
+          </details>
+        );
+      })}
     </div>
   );
 }

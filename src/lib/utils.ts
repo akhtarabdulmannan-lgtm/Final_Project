@@ -1,6 +1,4 @@
-import { clsx, type ClassValue } from 'clsx';
-
-export function cn(...inputs: (string | undefined | null | false)[]) {
+export function cn(...inputs: (string | undefined | null | false)[]): string {
   return inputs.filter(Boolean).join(' ');
 }
 
@@ -25,7 +23,7 @@ export function truncate(text: string, length: number): string {
 }
 
 export function generateId(): string {
-  return Math.random().toString(36).substr(2, 9);
+  return Math.random().toString(36).slice(2, 11);
 }
 
 export function wait(ms: number): Promise<void> {

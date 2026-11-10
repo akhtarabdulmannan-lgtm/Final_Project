@@ -1,73 +1,96 @@
 'use client';
 
 import Link from 'next/link';
-import { Terminal, Code2, Copy, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import StepConnector from '@/components/ui/StepConnector';
 
 export default function ApiDocsPage() {
-  const [activeTab, setActiveTab] = useState<'convert' | 'historic' | 'monthly' | 'period'>('convert');
+  const [activeTab, setActiveTab] = useState<'convert' | 'historic' | 'monthly'>('convert');
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
-        {/* Header */}
-        <div className="max-w-3xl mb-12">
-          <span className="badge-brand">Developer Hub</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            VectisX API Documentation & Reference
-          </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
-            Integrate certified mid-market foreign exchange rates, historical archives back to 1998, and central bank benchmarks into your web applications, ERPs, and automated workflows.
+        <div className="max-w-3xl mb-12 space-y-3">
+          <span className="badge-neutral">Developer Hub</span>
+          <h1>VectisX API Documentation &amp; Reference</h1>
+          <p className="text-ink-500">
+            Integrate certified mid-market foreign exchange rates, historical archives back to 1998, and central bank benchmarks into your applications and ERPs.
           </p>
         </div>
 
-        {/* Quickstart */}
-        <div className="card p-6 sm:p-8 bg-white mb-8 shadow-sm">
-          <h2 className="text-xl font-bold font-heading text-surface-900 mb-4">Quickstart in 3 Steps</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-            <div className="p-4 rounded-2xl bg-surface-50 border border-surface-200">
-              <strong className="text-brand-600 block mb-1">Step 1: Obtain API Key</strong>
-              Sign up for a developer account and copy your secret key from the console.
-            </div>
-            <div className="p-4 rounded-2xl bg-surface-50 border border-surface-200">
-              <strong className="text-teal-600 block mb-1">Step 2: Add Auth Header</strong>
-              Pass <code className="bg-surface-200 px-1 py-0.5 rounded text-xs">Authorization: Bearer YOUR_KEY</code> with every HTTP request.
-            </div>
-            <div className="p-4 rounded-2xl bg-surface-50 border border-surface-200">
-              <strong className="text-accent-600 block mb-1">Step 3: Query Endpoint</strong>
-              Call <code className="bg-surface-200 px-1 py-0.5 rounded text-xs">GET /v1/convert_from</code> to receive real-time JSON responses.
-            </div>
+        {/* Quickstart in 3 Steps */}
+        <div className="card p-6 sm:p-8 bg-surface mb-8">
+          <h2 className="mb-6">Quickstart in 3 Steps</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+            <StepConnector className="hidden md:block absolute top-6 left-[16.666%] right-[16.666%] h-px bg-line-strong pointer-events-none" />
+            {[
+              {
+                step: 'Step 1: Obtain API Key',
+                body: 'Sign up for a developer account and copy your secret key from the console.',
+              },
+              {
+                step: 'Step 2: Add Auth Header',
+                body: 'Pass Authorization: Bearer YOUR_KEY with every HTTP request.',
+              },
+              {
+                step: 'Step 3: Query Endpoint',
+                body: 'Call GET /v1/convert_from to receive real-time JSON responses.',
+              },
+            ].map((item, idx) => (
+              <ScrollReveal key={item.step} delay={idx * 50} className="relative z-10">
+                <div className="p-5 rounded-xl bg-surface-subtle border border-line h-full space-y-1.5">
+                  <strong className="text-ink font-semibold block text-[15px]">{item.step}</strong>
+                  <p className="text-[14px] leading-[22px] text-ink-500">{item.body}</p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
 
         {/* Interactive Endpoint Explorer */}
-        <div className="card p-6 sm:p-8 bg-white mb-12 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between pb-6 border-b border-surface-100 gap-4">
+        <div className="card p-6 sm:p-8 bg-surface mb-10">
+          <div className="flex flex-wrap items-center justify-between pb-6 border-b border-line gap-4">
             <div>
-              <span className="text-xs font-bold text-surface-400 uppercase">Core Endpoints</span>
-              <h3 className="text-2xl font-bold font-heading text-surface-900">REST API Specifications</h3>
+              <span className="text-caption font-medium text-ink-500 uppercase">Core Endpoints</span>
+              <h2 className="mt-1">REST API Specifications</h2>
             </div>
-            <div className="flex gap-2">
-              <button 
+            <div className="flex flex-wrap gap-2" role="tablist" aria-label="API endpoints">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'convert'}
                 onClick={() => setActiveTab('convert')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'convert' ? 'bg-brand-500 text-white' : 'bg-surface-100 text-surface-700 hover:bg-surface-200'
+                className={`px-4 min-h-[44px] rounded-xl text-[13px] font-medium transition-colors duration-150 ${
+                  activeTab === 'convert'
+                    ? 'bg-primary text-primary-fg'
+                    : 'bg-surface-subtle text-ink-700 hover:text-ink border border-line'
                 }`}
               >
                 GET /v1/convert_from
               </button>
-              <button 
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'historic'}
                 onClick={() => setActiveTab('historic')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'historic' ? 'bg-brand-500 text-white' : 'bg-surface-100 text-surface-700 hover:bg-surface-200'
+                className={`px-4 min-h-[44px] rounded-xl text-[13px] font-medium transition-colors duration-150 ${
+                  activeTab === 'historic'
+                    ? 'bg-primary text-primary-fg'
+                    : 'bg-surface-subtle text-ink-700 hover:text-ink border border-line'
                 }`}
               >
                 GET /v1/historic_rate
               </button>
-              <button 
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'monthly'}
                 onClick={() => setActiveTab('monthly')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'monthly' ? 'bg-brand-500 text-white' : 'bg-surface-100 text-surface-700 hover:bg-surface-200'
+                className={`px-4 min-h-[44px] rounded-xl text-[13px] font-medium transition-colors duration-150 ${
+                  activeTab === 'monthly'
+                    ? 'bg-primary text-primary-fg'
+                    : 'bg-surface-subtle text-ink-700 hover:text-ink border border-line'
                 }`}
               >
                 GET /v1/monthly_average
@@ -78,54 +101,52 @@ export default function ApiDocsPage() {
           <div className="pt-6">
             {activeTab === 'convert' && (
               <div className="space-y-6">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-mono font-bold">
-                    GET https://api.vectisx.com/v1/convert_from
-                  </div>
-                  <p className="text-xs text-surface-600 mt-2">
+                <div className="space-y-2">
+                  <div className="badge-gain">GET https://api.vectisx.com/v1/convert_from</div>
+                  <p className="text-ink-500">
                     Calculates conversion rates from a base currency into one or multiple target quote currencies using certified mid-market rates.
                   </p>
                 </div>
 
                 <div className="overflow-x-auto">
-                  <h4 className="text-xs font-bold text-surface-900 uppercase tracking-wider mb-2">Query Parameters</h4>
-                  <table className="w-full text-left text-xs border-collapse">
+                  <h3 className="text-[18px] leading-[24px] mb-3">Query Parameters</h3>
+                  <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-surface-50 text-surface-500 uppercase border-b border-surface-200">
-                        <th className="py-2.5 px-3 font-bold">Parameter</th>
-                        <th className="py-2.5 px-3 font-bold">Type</th>
-                        <th className="py-2.5 px-3 font-bold">Required</th>
-                        <th className="py-2.5 px-3 font-bold">Description</th>
+                      <tr className="bg-surface-subtle text-caption text-ink-500 uppercase border-b border-line">
+                        <th className="py-3 px-4 font-medium">Parameter</th>
+                        <th className="py-3 px-4 font-medium">Type</th>
+                        <th className="py-3 px-4 font-medium">Required</th>
+                        <th className="py-3 px-4 font-medium">Description</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-surface-100 font-mono">
+                    <tbody className="divide-y divide-line">
                       <tr>
-                        <td className="py-2.5 px-3 font-bold text-brand-600">from</td>
-                        <td className="py-2.5 px-3 text-surface-500">string</td>
-                        <td className="py-2.5 px-3 text-emerald-600 font-bold">Yes</td>
-                        <td className="py-2.5 px-3 font-sans text-surface-700">3-letter ISO 4217 currency code (e.g. USD, EUR)</td>
+                        <td className="py-3 px-4 font-semibold text-ink">from</td>
+                        <td className="py-3 px-4 text-ink-500">string</td>
+                        <td className="py-3 px-4 text-gain font-semibold">Yes</td>
+                        <td className="py-3 px-4 text-ink-700">3-letter ISO 4217 currency code (e.g. USD, EUR)</td>
                       </tr>
                       <tr>
-                        <td className="py-2.5 px-3 font-bold text-brand-600">to</td>
-                        <td className="py-2.5 px-3 text-surface-500">string</td>
-                        <td className="py-2.5 px-3 text-surface-400">Optional</td>
-                        <td className="py-2.5 px-3 font-sans text-surface-700">Comma-separated target currencies (e.g. EUR,GBP,JPY)</td>
+                        <td className="py-3 px-4 font-semibold text-ink">to</td>
+                        <td className="py-3 px-4 text-ink-500">string</td>
+                        <td className="py-3 px-4 text-ink-500">Optional</td>
+                        <td className="py-3 px-4 text-ink-700">Comma-separated target currencies (e.g. EUR,GBP,JPY)</td>
                       </tr>
                       <tr>
-                        <td className="py-2.5 px-3 font-bold text-brand-600">amount</td>
-                        <td className="py-2.5 px-3 text-surface-500">number</td>
-                        <td className="py-2.5 px-3 text-surface-400">Optional</td>
-                        <td className="py-2.5 px-3 font-sans text-surface-700">Numeric amount to convert (defaults to 1.00)</td>
+                        <td className="py-3 px-4 font-semibold text-ink">amount</td>
+                        <td className="py-3 px-4 text-ink-500">number</td>
+                        <td className="py-3 px-4 text-ink-500">Optional</td>
+                        <td className="py-3 px-4 text-ink-700">Numeric amount to convert (defaults to 1.00)</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
 
-                <div className="bg-surface-900 text-surface-100 p-6 rounded-2xl font-mono text-xs shadow-lg">
-                  <span className="text-surface-400 block mb-2">// 200 OK Response Payload</span>
-                  <pre className="text-emerald-400 overflow-x-auto">
+                <div className="bg-surface-invert text-ink-invert p-6 rounded-2xl border border-line-invert text-[13px] leading-[20px] tabular-nums">
+                  <span className="text-ink-invert-muted block mb-2">// 200 OK Response Payload</span>
+                  <pre className="text-ink-invert overflow-x-auto">
 {`{
-  "timestamp": "2026-11-08T22:59:00Z",
+  "timestamp": "2026-11-09T12:00:00Z",
   "from": "USD",
   "amount": 1000.0,
   "to": [
@@ -145,34 +166,33 @@ export default function ApiDocsPage() {
 
             {activeTab === 'historic' && (
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-mono font-bold">
-                  GET https://api.vectisx.com/v1/historic_rate
-                </div>
-                <p className="text-xs text-surface-600">Query daily closing FX exchange rates for any historical date back to January 1, 1998.</p>
-                <div className="bg-surface-900 text-surface-100 p-6 rounded-2xl font-mono text-xs">
-                  <pre className="text-emerald-400">{`// GET /v1/historic_rate?date=2024-01-15&from=USD&to=EUR`}</pre>
+                <div className="badge-gain">GET https://api.vectisx.com/v1/historic_rate</div>
+                <p className="text-ink-500">
+                  Query daily closing FX exchange rates for any historical date back to January 1, 1998.
+                </p>
+                <div className="bg-surface-invert text-ink-invert p-6 rounded-2xl border border-line-invert text-[13px] overflow-x-auto tabular-nums">
+                  <pre>{`GET /v1/historic_rate?date=2024-01-15&from=USD&to=EUR`}</pre>
                 </div>
               </div>
             )}
 
             {activeTab === 'monthly' && (
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-mono font-bold">
-                  GET https://api.vectisx.com/v1/monthly_average
-                </div>
-                <p className="text-xs text-surface-600">Compute audit-compliant monthly weighted average rates for corporate accounting and tax filing.</p>
-                <div className="bg-surface-900 text-surface-100 p-6 rounded-2xl font-mono text-xs">
-                  <pre className="text-emerald-400">{`// GET /v1/monthly_average?year=2024&month=10&from=USD&to=EUR`}</pre>
+                <div className="badge-gain">GET https://api.vectisx.com/v1/monthly_average</div>
+                <p className="text-ink-500">
+                  Compute audit-compliant monthly weighted average rates for corporate accounting and tax filing.
+                </p>
+                <div className="bg-surface-invert text-ink-invert p-6 rounded-2xl border border-line-invert text-[13px] overflow-x-auto tabular-nums">
+                  <pre>{`GET /v1/monthly_average?year=2024&month=10&from=USD&to=EUR`}</pre>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Swagger / PDF link */}
-        <div className="flex flex-wrap justify-between items-center text-xs text-surface-500">
+        <div className="flex flex-wrap justify-between items-center gap-4 text-[14px] text-ink-500">
           <span>Complete specification follows OpenAPI 3.0.3 standards.</span>
-          <Link href="/api-platform/pricing" className="text-brand-500 font-bold hover:underline">
+          <Link href="/api-platform/pricing" className="text-ink font-medium hover:underline inline-flex items-center min-h-[44px]">
             Upgrade your plan for unlimited requests &rarr;
           </Link>
         </div>

@@ -32,6 +32,7 @@ export const personalNav: NavItem[] = [
     label: 'Tools',
     href: '/tools',
     children: [
+      { label: 'All Financial Tools', href: '/tools', description: 'Calculators, tables, and utilities' },
       { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
       { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
       { label: 'Mobile Apps', href: '/apps', description: 'iOS & Android apps' },
@@ -68,12 +69,12 @@ export const businessNav: NavItem[] = [
   },
   {
     label: 'API',
-    href: '/api',
+    href: '/api-platform',
     children: [
-      { label: 'API Overview', href: '/api', description: 'Currency data API' },
-      { label: 'Pricing', href: '/api/pricing', description: 'Plans from \\$599/yr' },
-      { label: 'Documentation', href: '/api/docs', description: 'Full API reference' },
-      { label: 'Partner Program', href: '/api/partners', description: 'ISV & referral programs' },
+      { label: 'API Overview', href: '/api-platform', description: 'Currency data API' },
+      { label: 'Pricing', href: '/api-platform/pricing', description: 'Plans from $599/yr' },
+      { label: 'Documentation', href: '/api-platform/docs', description: 'Full API reference' },
+      { label: 'Partner Program', href: '/api-platform/partners', description: 'ISV & referral programs' },
     ],
   },
 ];
@@ -98,10 +99,10 @@ export const footerLinks = {
     { label: 'Team Roles', href: '/business/team' },
   ],
   developers: [
-    { label: 'API Overview', href: '/api' },
-    { label: 'API Pricing', href: '/api/pricing' },
-    { label: 'Documentation', href: '/api/docs' },
-    { label: 'Partner Program', href: '/api/partners' },
+    { label: 'API Overview', href: '/api-platform' },
+    { label: 'API Pricing', href: '/api-platform/pricing' },
+    { label: 'Documentation', href: '/api-platform/docs' },
+    { label: 'Partner Program', href: '/api-platform/partners' },
   ],
   company: [
     { label: 'About VectisX', href: '/about' },

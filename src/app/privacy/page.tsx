@@ -2,30 +2,36 @@
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx max-w-4xl">
-        <div className="card p-8 sm:p-12 bg-white space-y-6 text-sm text-surface-700 leading-relaxed">
-          <h1 className="text-3xl font-heading font-extrabold text-surface-900">Privacy Policy</h1>
-          <p className="text-xs text-surface-400">Last updated: November 8, 2026</p>
+        <div className="card p-8 sm:p-12 bg-surface space-y-6">
+          <div className="space-y-2">
+            <h1>Privacy Policy</h1>
+            <p className="text-caption text-ink-500">Last updated: November 9, 2026</p>
+          </div>
+
+          <p>
+            VectisX Financial Inc. (&ldquo;VectisX&rdquo;, &ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) respects your privacy and is committed to protecting the personal and financial information you share with us. This Privacy Policy describes how we collect, process, store, and safeguard your information in compliance with GDPR, CCPA, and international financial privacy regulations.
+          </p>
 
           <section className="space-y-2">
-            <h2 className="text-lg font-bold text-surface-900">1. Information We Collect</h2>
+            <h2>1. Information We Collect</h2>
             <p>
-              We collect information necessary to facilitate international financial transfers and comply with global anti-money laundering regulations, including legal full name, date of birth, residential address, tax ID, and government-issued identification documents.
+              When you register for a personal or business money transfer account, we collect identifying information required by Know Your Customer (KYC) and Anti-Money Laundering (AML) laws, including full legal name, date of birth, government-issued identification, residential address, and beneficiary bank routing parameters.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-lg font-bold text-surface-900">2. How We Protect Your Financial Data</h2>
+            <h2>2. Encryption &amp; Data Protection</h2>
             <p>
-              VectisX employs AES-256 encryption at rest and TLS 1.3 in transit. Our infrastructure is independently assessed annually under SOC 2 Type II assurance standards. We never sell personal or transaction data to third-party advertisers.
+              All personally identifiable financial records are encrypted at rest via AES-256 and in transit using TLS 1.3 security protocols. VectisX never sells or rents customer data to third-party advertisers.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-lg font-bold text-surface-900">3. Regulatory Disclosures</h2>
+            <h2>3. Your Privacy Rights</h2>
             <p>
-              In accordance with FinCEN and international banking compliance, certain cross-border transactions surpassing statutory thresholds are reported to relevant financial regulatory bodies.
+              Under applicable legislation, you hold the right to access, rectify, export, or request erasure of personal data held by VectisX, subject to mandatory statutory banking record retention periods.
             </p>
           </section>
         </div>
