@@ -5,9 +5,10 @@ watching the pairs you care about. Rates come from public REST APIs at runtime â
 on the converter is hardcoded.
 
 **Live app (GitHub Pages):** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
+**Mirror (Vercel):** https://vectisx.vercel.app
 
-> If that URL 404s on first visit, the Pages workflow is still deploying â€” see
-> [Deployment](#deployment).
+> The Pages URL needs the one-time Pages setting described in [Deployment](#deployment)
+> before it serves anything. The Vercel mirror builds from `main` and needs no setup.
 
 ---
 
