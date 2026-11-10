@@ -14,27 +14,7 @@ export default function SitemapVisualPage() {
         { label: 'FX Tools Suite', href: '/tools' },
         { label: 'Historical Rates Lookup', href: '/historical' },
         { label: 'Currency Tables', href: '/tables' },
-        { label: 'IBAN Validator', href: '/tools/iban' },
         { label: 'Daily Email Updates', href: '/tools/email-updates' },
-        { label: 'Mobile Apps', href: '/apps' },
-      ],
-    },
-    {
-      title: 'Business & Treasury',
-      links: [
-        { label: 'Business Overview', href: '/business' },
-        { label: 'FX Risk Management', href: '/business/fx-risk' },
-        { label: 'Multi-User Roles', href: '/business/team' },
-        { label: 'ERP Integrations', href: '/business/integrations' },
-      ],
-    },
-    {
-      title: 'Developer API & Data',
-      links: [
-        { label: 'API Overview', href: '/api-platform' },
-        { label: 'API Pricing', href: '/api-platform/pricing' },
-        { label: 'API Documentation', href: '/api-platform/docs' },
-        { label: 'Platform Partners', href: '/api-platform/partners' },
       ],
     },
     {

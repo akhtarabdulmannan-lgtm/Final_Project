@@ -13,7 +13,7 @@ export default function Footer() {
   const socialItems = [
     { name: 'VectisX on X (Twitter)', href: '/press', Icon: Twitter },
     { name: 'VectisX on LinkedIn', href: '/about', Icon: Linkedin },
-    { name: 'VectisX on GitHub', href: '/api-platform/docs', Icon: Github },
+    { name: 'VectisX on GitHub', href: '/about', Icon: Github },
     { name: 'VectisX Video Briefings', href: '/blog', Icon: Youtube },
   ];
 
@@ -40,7 +40,7 @@ export default function Footer() {
   return (
     <footer className="bg-surface-invert text-ink-invert border-t border-line-invert">
       <div className="container-vx section-padding pb-12">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5 min-h-[44px] mb-3">
@@ -75,44 +75,6 @@ export default function Footer() {
             </p>
             <ul className="space-y-1">
               {footerLinks.product.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="inline-flex items-center min-h-[44px] py-1 text-[14px] text-ink-invert-muted hover:text-ink-invert transition-colors duration-150"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Business */}
-          <nav aria-label="Business">
-            <p className="text-[14px] leading-[20px] font-medium mb-4 text-ink-invert">
-              Business
-            </p>
-            <ul className="space-y-1">
-              {footerLinks.business.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="inline-flex items-center min-h-[44px] py-1 text-[14px] text-ink-invert-muted hover:text-ink-invert transition-colors duration-150"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Developers */}
-          <nav aria-label="Developers">
-            <p className="text-[14px] leading-[20px] font-medium mb-4 text-ink-invert">
-              Developers
-            </p>
-            <ul className="space-y-1">
-              {footerLinks.developers.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

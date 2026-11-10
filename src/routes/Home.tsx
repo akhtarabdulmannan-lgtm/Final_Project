@@ -2,7 +2,6 @@ import Link from '@/router/Link';
 import {
   ArrowRight,
   ShieldCheck,
-  Smartphone,
   CheckCircle2,
   Star,
 } from 'lucide-react';
@@ -273,8 +272,8 @@ export default function HomePage() {
                   Both providers are free, public JSON APIs. If neither can be reached, the app says so and shows a clearly labelled saved snapshot.
                 </p>
               </div>
-              <Link href="/api-platform" className="btn-invert whitespace-nowrap">
-                How the data works
+              <Link href="/historical" className="btn-invert whitespace-nowrap">
+                See the history
               </Link>
             </div>
           </ScrollReveal>
@@ -395,256 +394,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Business Features */}
-      <section className="section-padding bg-surface-invert text-ink-invert">
-        <div className="container-vx">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <ScrollReveal className="lg:col-span-6 space-y-6">
-              <span className="badge-invert">VectisX Business Account</span>
-              <h2 className="text-ink-invert">Institutional Cross-Border Infrastructure</h2>
-              <p className="text-ink-invert-muted">
-                Scale your global operations with multi-currency corporate accounts, bulk payouts, forward contracts, and seamless ERP sync without setup or monthly maintenance fees.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {[
-                  {
-                    title: 'Bulk Conversion',
-                    desc: 'Price a whole list of currency exposures in one pass and export the converted figures as CSV.',
-                  },
-                  {
-                    title: 'Forward Contracts',
-                    desc: 'Lock in current FX rates for delivery up to 24 months in the future to hedge against volatility.',
-                  },
-                  {
-                    title: 'Role-Based Approvals',
-                    desc: 'Custom tiered permissions across Creator, Verifier, and Approver roles with audit trails.',
-                  },
-                  {
-                    title: 'ERP Integrations',
-                    desc: 'Native connectors for Microsoft Dynamics 365, Sage Intacct, and custom REST API hooks.',
-                  },
-                ].map((item) => (
-                  <div key={item.title} className="p-4 rounded-2xl bg-[#1A1F26] border border-line-invert">
-                    <h3 className="text-[18px] leading-[24px] text-ink-invert">{item.title}</h3>
-                    <p className="text-[14px] leading-[22px] text-ink-invert-muted mt-1">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-4 flex flex-wrap gap-3">
-                <Link href="/business" className="btn-invert">
-                  <span>Explore Business Account</span>
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="btn-ghost text-ink-invert border border-line-invert hover:bg-[#1A1F26] hover:text-ink-invert"
-                >
-                  Contact Sales Desk
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={100} className="lg:col-span-6 bg-[#1A1F26] p-8 rounded-2xl border border-line-invert space-y-6">
-              <h3 className="text-ink-invert">Institutional Scale</h3>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={17000} suffix="+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Active Business Clients</div>
-                </div>
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={17} prefix="$" suffix="B+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Annual FX Payment Volume</div>
-                </div>
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={190} suffix="+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Destination Countries</div>
-                </div>
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={30} suffix="+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Years Continuous FX Excellence</div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-line-invert">
-                <span className="text-caption text-ink-invert-muted block mb-3 font-medium uppercase tracking-wider">
-                  Trusted by Industry Leaders
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {['ShopFlow', 'CloudBooks', 'VistaCore', 'PayStream', 'GlobalTech', 'NexaPay'].map((client) => (
-                    <span
-                      key={client}
-                      className="px-3 py-1.5 rounded-lg bg-surface-invert border border-line-invert text-caption font-medium text-ink-invert"
-                    >
-                      {client}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Developer API Section */}
-      <section className="section-padding bg-bg border-b border-line">
-        <div className="container-vx">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <ScrollReveal className="lg:col-span-6 space-y-6">
-              <span className="badge-neutral">Developer Platform</span>
-              <h2>VectisX Currency Data API</h2>
-              <p className="text-ink-500">
-                The same public feeds this site runs on — open.er-api.com and the European Central Bank — documented so you can call them yourself. 64 currencies, precious metals, and selected digital assets appear in the interface.
-              </p>
-
-              <div className="space-y-3">
-                {[
-                  'Single endpoint: GET /v1/convert_from with normalized JSON payloads',
-                  'SDKs ready for Java, Node.js, PHP, and Python with full OpenAPI spec',
-                  'Historical records dating back to 1998, volatility indices & monthly averages',
-                  'Transparent tiers: Core ($599/yr), Intermediate ($1,799/yr), Prime ($4,499/yr)',
-                ].map((line) => (
-                  <div key={line} className="flex items-start gap-3 text-[15px] leading-[24px] text-ink-700">
-                    <CheckCircle2 className="w-5 h-5 text-ink flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    <span>{line}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-2 flex flex-wrap gap-3">
-                <Link href="/api-platform" className="btn-primary">
-                  Explore API Docs &amp; SDKs &rarr;
-                </Link>
-                <Link href="/api-platform/pricing" className="btn-secondary">
-                  View API Pricing
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={100} className="lg:col-span-6 bg-surface-invert text-ink-invert p-6 rounded-2xl border border-line-invert text-[13px] leading-[20px] overflow-x-auto tabular-nums">
-              <div className="flex items-center justify-between pb-3 border-b border-line-invert text-ink-invert-muted">
-                <span>cURL Request</span>
-                <span className="text-ink-invert font-medium">200 OK · 24ms</span>
-              </div>
-              <pre className="py-4 text-ink-invert overflow-x-auto">
-{`curl -X GET "https://api.vectisx.com/v1/convert_from?from=USD&to=EUR&amount=1000" \\
-  -H "Authorization: Bearer vx_live_secret_key"`}
-              </pre>
-              <div className="pt-3 border-t border-line-invert text-ink-invert-muted">
-                <span className="block mb-1">// JSON Response payload</span>
-                <pre className="text-ink-invert overflow-x-auto">
-{`{
-  "from": "USD",
-  "amount": 1000.00,
-  "timestamp": "2026-11-09T12:00:00Z",
-  "to": [
-    {
-      "quotecurrency": "EUR",
-      "mid": 0.8534,
-      "bid": 0.8532,
-      "ask": 0.8536,
-      "high24h": 0.8550,
-      "low24h": 0.8512,
-      "change24h_pct": "+0.28"
-    }
-  ]
-}`}
-                </pre>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile Apps Section */}
-      <section className="section-padding bg-surface border-b border-line">
-        <div className="container-vx">
-          <ScrollReveal>
-            <div className="bg-surface-invert text-ink-invert rounded-2xl border border-line-invert p-8 sm:p-12">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-6">
-                  <span className="badge-invert">Anytime, Anywhere</span>
-                  <h2 className="text-ink-invert">
-                    Carry Global Currency Intelligence in Your Pocket
-                  </h2>
-                  <p className="text-ink-invert-muted">
-                    Track live exchange rates, set custom trigger alerts, and send international transfers starting at $0 fee with biometric authorization.
-                  </p>
-
-                  <div className="flex flex-wrap gap-6 pt-2">
-                    <div className="flex items-center gap-3">
-                      <div className="text-[28px] leading-[34px] font-heading font-semibold text-ink-invert tabular-nums">
-                        4.8★
-                      </div>
-                      <div className="text-caption text-ink-invert-muted">
-                        <strong className="text-ink-invert font-medium">iOS App Store</strong>
-                        <br />
-                        118k+ verified reviews
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-[28px] leading-[34px] font-heading font-semibold text-ink-invert tabular-nums">
-                        4.8★
-                      </div>
-                      <div className="text-caption text-ink-invert-muted">
-                        <strong className="text-ink-invert font-medium">Google Play Store</strong>
-                        <br />
-                        380k+ verified reviews
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex flex-wrap gap-3">
-                    <Link href="/apps" className="btn-invert">
-                      <Smartphone className="w-4 h-4" aria-hidden="true" />
-                      <span>Get the Free Apps</span>
-                    </Link>
-                    <Link
-                      href="/tools/iban"
-                      className="btn-ghost text-ink-invert border border-line-invert hover:bg-[#1A1F26] hover:text-ink-invert"
-                    >
-                      Try Free Tools &amp; Calculators
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-5 flex justify-center">
-                  <div className="w-64 rounded-2xl border border-line-invert bg-[#1A1F26] p-5 space-y-3">
-                    <div className="text-caption text-ink-invert-muted">Mobile Rate Preview</div>
-                    <div className="p-3.5 bg-surface-invert rounded-xl border border-line-invert">
-                      <div className="text-caption text-ink-invert-muted">Live Rate Trigger</div>
-                      <div className="text-[16px] font-semibold text-ink-invert tabular-nums">
-                        USD / EUR @ 0.8550
-                      </div>
-                      <div className="text-caption text-ink-invert-muted mt-0.5">
-                        Target reached 2 mins ago
-                      </div>
-                    </div>
-                    <div className="p-3.5 bg-surface-invert rounded-xl border border-line-invert">
-                      <div className="text-caption text-ink-invert-muted">Converted Amount</div>
-                      <div className="text-[16px] font-semibold text-ink-invert tabular-nums">
-                        $1,500.00 &rarr; €1,280.10
-                      </div>
-                      <div className="text-caption text-ink-invert-muted mt-0.5">
-                        At the API mid-market rate
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
 
       {/* A-Z Honest Map Directory */}
       <section className="section-padding bg-bg">
@@ -658,23 +407,23 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 text-[14px]">
             {[
-              ['A', 'Alerts, Accounts, API, Apps', '/alerts'],
-              ['B', 'Business, Bank Data', '/business'],
+              ['A', 'Alerts, Accounts, API', '/alerts'],
+              ['B', 'Bank Data, Base Rates', '/rates'],
               ['C', 'Converter, Charts, Tables', '/converter'],
               ['D', 'Daily Rates, Data API', '/rates'],
               ['E', 'Email Updates, ERP Sync', '/tools/email-updates'],
-              ['F', 'Forward Contracts, FX Risk', '/business/fx-risk'],
+              ['F', 'Forward Rates, FX History', '/historical'],
               ['G', 'Guaranteed Rates, Graphs', '/charts'],
               ['H', 'Historical Rates, Help', '/historical'],
-              ['I', 'IBAN Calculator, Integrations', '/tools/iban'],
+              ['I', 'Indices, Inverse Rates', '/tables'],
               ['L', 'Limit Orders, Live Rates', '/rates'],
               ['M', 'Multi-Currency, Mid-Market', '/register'],
-              ['O', 'Options, Open Data', '/api-platform'],
-              ['P', 'Pairs, Partner Program', '/api-platform/partners'],
+              ['O', 'Options, Open Data', '/rates'],
+              ['P', 'Pairs, Partner Program', '/partners'],
               ['R', 'Rate Alerts, Referral', '/referral'],
               ['S', 'Saved Snapshots, Security', '/security'],
               ['T', 'Tools, Tables, Trends', '/tools'],
-              ['U', 'User Roles, Permissions', '/business/team'],
+              ['U', 'USD Pairs, Utilities', '/converter'],
               ['V', 'Volatility & Macro Blog', '/blog'],
             ].map(([letter, label, href], index) => (
               <ScrollReveal key={letter} delay={index * 25}>

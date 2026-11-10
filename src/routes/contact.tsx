@@ -4,7 +4,6 @@ import ActionButton from '@/components/ui/ActionButton';
 import { sendContactMessage, SubmissionError } from '@/lib/submissions';
 
 const CONTACT_TOPICS = [
-  'Personal Money Transfer Inquiry',
   'Corporate Treasury / FX Dealing Desk',
   'Developer API / Commercial Licensing',
   'Verification & KYC Questions',

@@ -24,42 +24,11 @@ export const personalNav: NavItem[] = [
     href: '/tools',
     children: [
       { label: 'All Financial Tools', href: '/tools', description: 'Calculators, tables, and utilities' },
-      { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
       { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
-      { label: 'Mobile Apps', href: '/apps', description: 'iOS & Android apps' },
     ],
   },
 ];
 
-export const businessNav: NavItem[] = [
-  {
-    label: 'FX Risk',
-    href: '/business/fx-risk',
-    children: [
-      { label: 'Forward Contracts', href: '/business/fx-risk', description: 'Lock in rates for the future' },
-      { label: 'Limit Orders', href: '/business/fx-risk#limit-orders', description: 'Set target rates' },
-      { label: 'FX Options', href: '/business/fx-risk#options', description: 'Flexible hedging' },
-    ],
-  },
-  {
-    label: 'Team',
-    href: '/business/team',
-  },
-  {
-    label: 'Integrations',
-    href: '/business/integrations',
-  },
-  {
-    label: 'API',
-    href: '/api-platform',
-    children: [
-      { label: 'API Overview', href: '/api-platform', description: 'Currency data API' },
-      { label: 'Pricing', href: '/api-platform/pricing', description: 'Plans from $599/yr' },
-      { label: 'Documentation', href: '/api-platform/docs', description: 'Full API reference' },
-      { label: 'Partner Program', href: '/api-platform/partners', description: 'ISV & referral programs' },
-    ],
-  },
-];
 
 export const footerLinks = {
   product: [
@@ -68,20 +37,6 @@ export const footerLinks = {
     { label: 'Charts', href: '/charts' },
     { label: 'Rate Alerts', href: '/alerts' },
     { label: 'Historical Rates', href: '/historical' },
-    { label: 'IBAN Calculator', href: '/tools/iban' },
-    { label: 'Mobile Apps', href: '/apps' },
-  ],
-  business: [
-    { label: 'Business Account', href: '/business' },
-    { label: 'FX Risk Management', href: '/business/fx-risk' },
-    { label: 'Integrations', href: '/business/integrations' },
-    { label: 'Team Roles', href: '/business/team' },
-  ],
-  developers: [
-    { label: 'API Overview', href: '/api-platform' },
-    { label: 'API Pricing', href: '/api-platform/pricing' },
-    { label: 'Documentation', href: '/api-platform/docs' },
-    { label: 'Partner Program', href: '/api-platform/partners' },
   ],
   company: [
     { label: 'About VectisX', href: '/about' },
