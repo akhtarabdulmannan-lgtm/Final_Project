@@ -13,7 +13,7 @@ export default function AboutPage() {
 
   const milestones = [
     { year: '1993', event: 'VectisX founded as one of the internet’s earliest currency information websites.' },
-    { year: '2001', event: 'Launched the proprietary Rate Blender engine, aggregating interbank liquidity.' },
+    { year: '2001', event: 'Moved from manual rate entry to consuming automated interbank reference feeds.' },
     { year: '2010', event: 'Acquired by Meridian Financial Corporation (NASDAQ: MRDN) to expand global reach.' },
     { year: '2018', event: 'Introduced zero-fee consumer remittances and the VectisX Multi-Currency Account.' },
     { year: '2024', event: 'Surpassed $17B in annual transaction flow with 17,000+ active enterprise clients.' },

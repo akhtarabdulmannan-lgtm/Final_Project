@@ -73,7 +73,7 @@ export default function RegisterPage() {
             </div>
             <h1>Create Account</h1>
             <p className="text-caption text-ink-500 mx-auto">
-              Track live FX consensus rates, historical charts, and alerts across 220+ currencies.
+              Track live mid-market rates, historical charts, and alerts across 64 currencies.
             </p>
           </div>
 

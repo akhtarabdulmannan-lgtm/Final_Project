@@ -13,10 +13,10 @@ export default function ApiPricingPage() {
       features: [
         'Daily frequency updates (EOD)',
         '1 Base Currency anchor',
-        '220+ Currencies & Metals',
+        '64 currencies, including metals',
         'Standard Email Developer Support',
         'JSON REST API Format',
-        'Standard Rate Blender Filtering',
+        'Standard reference-rate feed',
       ],
       highlighted: false,
       cta: 'Choose Core',
@@ -30,7 +30,7 @@ export default function ApiPricingPage() {
       features: [
         'Hourly frequency updates',
         '5 Base Currency anchors',
-        '220+ Currencies, Metals & Selected Crypto',
+        '64 currencies, metals and selected crypto',
         'Historical Rates back to 1998',
         'Monthly Averages & Volatility Indices',
         'Priority Technical Support',
@@ -88,7 +88,7 @@ export default function ApiPricingPage() {
           <span className="badge-neutral">Commercial API Licensing</span>
           <h1>Predictable, Transparent API Pricing</h1>
           <p className="text-ink-500 mx-auto">
-            Choose the update frequency and query quota tailored for your application. All plans include full SDK access and Rate Blender filtering.
+            This is a coursework project, so nothing here is billable. The rates are free public data; the plans below are illustrative and describe how a commercial wrapper of these feeds might be priced.
           </p>
         </div>
 
