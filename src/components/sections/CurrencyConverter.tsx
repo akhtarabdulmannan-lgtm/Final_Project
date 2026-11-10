@@ -1,19 +1,17 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowLeftRight, TrendingUp, Bell, Send, ChevronDown, Search, X, RefreshCw } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, Bell, ChevronDown, Search, X, RefreshCw } from 'lucide-react';
 import { currencies, getCurrency, searchCurrencies } from '@/data/currencies';
-import { getTickedRate, formatRate, formatAmount, get24hChange, getTransferFee } from '@/lib/rates';
-import { useLiveTick } from '@/hooks';
+import { formatAmount, formatRate } from '@/lib/rates';
+import { useLiveRates } from '@/lib/fx/RateProvider';
 import { wait } from '@/lib/utils';
-import Link from 'next/link';
+import Link from '@/router/Link';
 import LiveRateValue from '@/components/ui/LiveRateValue';
 import LiveUpdatedBadge from '@/components/ui/LiveUpdatedBadge';
 import DeltaChip from '@/components/ui/DeltaChip';
 import ActionButton from '@/components/ui/ActionButton';
 import { Skeleton } from '@/components/ui/Skeleton';
 
-type Tab = 'convert' | 'send' | 'charts' | 'alerts';
+type Tab = 'convert' | 'charts' | 'alerts';
 
 interface CurrencyConverterProps {
   defaultFrom?: string;
@@ -45,13 +43,11 @@ export default function CurrencyConverter({
   const [alertStatus, setAlertStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [alertCreated, setAlertCreated] = useState(false);
 
-  const { tick, utcTime, triggerRefresh } = useLiveTick(7000);
-
-  const rate = getTickedRate(fromCode, toCode, tick);
+  const { rate: getLiveRate, change: getChange, status: rateStatus, refresh, updatedAt } = useLiveRates();
+  const rate = getLiveRate(fromCode, toCode);
   const result = amount * rate;
-  const inverseRate = 1 / rate;
-  const change = get24hChange(fromCode, toCode);
-  const transferFee = getTransferFee(amount);
+  const inverseRate = rate ? 1 / rate : 0;
+  const change = getChange(fromCode, toCode);
   const fromCurrency = getCurrency(fromCode);
   const toCurrency = getCurrency(toCode);
   const pairKey = `${fromCode}-${toCode}`;
@@ -62,29 +58,22 @@ export default function CurrencyConverter({
     setToCode(fromCode);
   }, [fromCode, toCode]);
 
+  // Rates for every pair arrive in one request, so switching currency is
+  // instant; the short delay only lets the skeleton animation be perceived.
   const handleCurrencyChange = async (side: 'from' | 'to', code: string) => {
     setPickerOpen(null);
     setIsRefreshing(true);
     if (side === 'from') setFromCode(code);
     else setToCode(code);
-    try {
-      await fetch(`/api/rates?from=${side === 'from' ? code : fromCode}&to=${side === 'to' ? code : toCode}&amount=${amount}`);
-    } catch {
-      /* fallback to deterministic local rate */
-    }
-    await wait(220);
+    await wait(180);
     setIsRefreshing(false);
   };
 
+  // Re-reads the live table from the API (RateProvider owns the request).
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
-    try {
-      await fetch(`/api/rates?from=${fromCode}&to=${toCode}&amount=${amount}`);
-    } catch {
-      /* ignore */
-    }
-    await wait(220);
-    triggerRefresh();
+    refresh();
+    await wait(400);
     setIsRefreshing(false);
   };
 
@@ -111,7 +100,6 @@ export default function CurrencyConverter({
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'convert', label: 'Convert', icon: <ArrowLeftRight className="w-4 h-4" aria-hidden="true" /> },
-    { key: 'send', label: 'Send', icon: <Send className="w-4 h-4" aria-hidden="true" /> },
     { key: 'charts', label: 'Charts', icon: <TrendingUp className="w-4 h-4" aria-hidden="true" /> },
     { key: 'alerts', label: 'Alerts', icon: <Bell className="w-4 h-4" aria-hidden="true" /> },
   ];
@@ -147,7 +135,7 @@ export default function CurrencyConverter({
       {activeTab === 'convert' && (
         <div className="p-5 sm:p-6 space-y-4">
           <div className="flex items-center justify-between gap-2">
-            <LiveUpdatedBadge utcTime={utcTime} />
+            <LiveUpdatedBadge utcTime={updatedAt} />
             <ActionButton
               variant="ghost"
               onAction={handleManualRefresh}
@@ -174,8 +162,16 @@ export default function CurrencyConverter({
               <input
                 id="converter-amount"
                 type="number"
+                min="0"
+                max="1000000000"
+                step="any"
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value) || 0)}
+                onChange={(e) => {
+                  // A negative or non-finite amount used to convert silently
+                  // into a negative result; clamp it at zero instead.
+                  const next = Number(e.target.value);
+                  setAmount(Number.isFinite(next) && next > 0 ? next : 0);
+                }}
                 className="input-field pl-10 text-[18px] font-semibold tabular-nums"
                 placeholder="0.00"
               />
@@ -295,120 +291,13 @@ export default function CurrencyConverter({
             >
               View Full Chart
             </Link>
-            <Link href="/send" className="btn-secondary flex-1 justify-center">
-              Send {toCode}
+            <Link
+              href={`/alerts?pair=${fromCode.toLowerCase()}-${toCode.toLowerCase()}`}
+              className="btn-secondary flex-1 justify-center"
+            >
+              Set rate alert
             </Link>
           </div>
-        </div>
-      )}
-
-      {/* Send Tab */}
-      {activeTab === 'send' && (
-        <div className="p-5 sm:p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <LiveUpdatedBadge utcTime={utcTime} />
-            <span className="badge-neutral">Guaranteed rate</span>
-          </div>
-
-          <div>
-            <label htmlFor="send-amount-input" className="mb-1.5 block">
-              You send
-            </label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-500 font-medium tabular-nums">
-                  {fromCurrency?.symbol}
-                </span>
-                <input
-                  id="send-amount-input"
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value) || 0)}
-                  className="input-field pl-10 text-[18px] font-semibold tabular-nums"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setPickerOpen('from');
-                  setPickerSearch('');
-                }}
-                aria-label={`Change send currency ${fromCode}`}
-                className="input-field w-28 flex items-center gap-1.5 justify-center"
-              >
-                <span aria-hidden="true">{fromCurrency?.flag}</span>
-                <span className="font-semibold text-[14px]">{fromCode}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-ink-500" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between px-1 text-caption text-ink-500 tabular-nums">
-            <span>
-              Send rate:{' '}
-              <LiveRateValue value={rate} pairKey={pairKey} formatted={formatRate(rate)} className="font-medium text-ink" />
-            </span>
-            <span>Fee: {transferFee === 0 ? 'FREE' : `$${transferFee.toFixed(2)}`}</span>
-          </div>
-
-          <div>
-            <label htmlFor="receive-amount-input" className="mb-1.5 block">
-              Recipient gets
-            </label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-500 font-medium tabular-nums">
-                  {toCurrency?.symbol}
-                </span>
-                <input
-                  id="receive-amount-input"
-                  type="number"
-                  value={Number(result.toFixed(2))}
-                  readOnly
-                  className="input-field pl-10 text-[18px] font-semibold bg-surface-subtle tabular-nums"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setPickerOpen('to');
-                  setPickerSearch('');
-                }}
-                aria-label={`Change recipient currency ${toCode}`}
-                className="input-field w-28 flex items-center gap-1.5 justify-center"
-              >
-                <span aria-hidden="true">{toCurrency?.flag}</span>
-                <span className="font-semibold text-[14px]">{toCode}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-ink-500" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-
-          {isRefreshing ? (
-            <div className="bg-surface-subtle rounded-2xl border border-line p-4 space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </div>
-          ) : (
-            <div className="bg-surface-subtle rounded-2xl border border-line p-4 space-y-2">
-              <div className="flex justify-between text-[14px]">
-                <span className="text-ink-500">Total to pay</span>
-                <span className="font-semibold text-ink tabular-nums">
-                  {fromCurrency?.symbol}
-                  {formatAmount(amount + transferFee)}
-                </span>
-              </div>
-              <div className="flex justify-between text-[14px]">
-                <span className="text-ink-500">Estimated delivery</span>
-                <span className="font-medium text-ink">1–2 business days</span>
-              </div>
-            </div>
-          )}
-
-          <Link href="/send" className="btn-primary w-full justify-center btn-lg">
-            <Send className="w-4 h-4" aria-hidden="true" />
-            <span>Get Started — Send {toCode}</span>
-          </Link>
         </div>
       )}
 
@@ -557,6 +446,11 @@ export default function CurrencyConverter({
               </div>
             </div>
             <div className="overflow-y-auto flex-1 p-2">
+              {filteredCurrencies.length === 0 && (
+                <p className="px-4 py-8 text-center text-[14px] text-ink-500" role="status">
+                  No currencies match “{pickerSearch.trim()}”. Try a different name or code.
+                </p>
+              )}
               {filteredCurrencies.map((c) => {
                 const isSelected = (pickerOpen === 'from' ? fromCode : toCode) === c.code;
                 return (

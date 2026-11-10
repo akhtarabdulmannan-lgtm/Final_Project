@@ -1,15 +1,14 @@
-'use client';
-
 import { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/router/Link';
 import { Zap, Mail, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
 import { footerLinks } from '@/data/navigation';
 import ActionButton from '@/components/ui/ActionButton';
-import { wait } from '@/lib/utils';
+import { subscribeToNewsletter, SubmissionError } from '@/lib/submissions';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [subscribeError, setSubscribeError] = useState<string | null>(null);
 
   const socialItems = [
     { name: 'VectisX on X (Twitter)', href: '/press', Icon: Twitter },
@@ -21,13 +20,21 @@ export default function Footer() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || subscribeStatus === 'loading') return;
+    setSubscribeError(null);
     setSubscribeStatus('loading');
-    await wait(350);
-    setSubscribeStatus('success');
-    setEmail('');
-    window.setTimeout(() => {
+    try {
+      await subscribeToNewsletter({ email, frequency: 'daily' });
+      setSubscribeStatus('success');
+      setEmail('');
+      window.setTimeout(() => {
+        setSubscribeStatus('idle');
+      }, 800);
+    } catch (error) {
       setSubscribeStatus('idle');
-    }, 800);
+      setSubscribeError(
+        error instanceof SubmissionError ? error.message : "We couldn't save your subscription. Please try again.",
+      );
+    }
   };
 
   return (
@@ -45,7 +52,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-[14px] leading-[22px] text-ink-invert-muted mb-6 max-w-xs">
-              Global Currency Intelligence. Trusted by millions for live rates, money transfers, and currency data since 1993.
+              Currency conversion and exchange-rate charts built on open public data. Rates are fetched live from central-bank and reference-rate APIs.
             </p>
             <div className="flex items-center gap-2">
               {socialItems.map(({ name, href, Icon }) => (
@@ -192,6 +199,11 @@ export default function Footer() {
               </ActionButton>
             </div>
           </form>
+          {subscribeError && (
+            <p role="alert" className="text-[13px] text-loss mt-2">
+              {subscribeError}
+            </p>
+          )}
         </div>
       </div>
 
@@ -216,9 +228,9 @@ export default function Footer() {
             </p>
           </div>
           <p className="text-caption text-ink-invert-muted mt-4 max-w-4xl">
-            VectisX provides currency data and international money transfer services. Exchange rates shown are mid-market rates
-            and are not intended to be used as transaction rates. Transfer fees and delivery times vary by corridor.
-            VectisX is registered with FinCEN as a Money Services Business and licensed as a money transmitter in applicable US states.
+            VectisX is an educational currency-conversion project. Exchange rates are shown for information only, are not
+            transaction rates, and may be delayed by the provider that publishes them. This site does not offer money transfer,
+            payment, or financial advice services.
             SOC 2 Type II certified. Past performance does not guarantee future results.
           </p>
         </div>

@@ -1,10 +1,9 @@
-'use client';
-
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/router/Link';
 import { Menu, X, ChevronDown, ArrowRight, Globe, User, Zap } from 'lucide-react';
 import { personalNav, businessNav } from '@/data/navigation';
 import { useStickyHeader } from '@/hooks';
+import { useAuthSession, sessionEmail } from '@/hooks/useAuthSession';
 import { NavItem, UserMode } from '@/types';
 
 export default function Header() {
@@ -13,6 +12,8 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [topBarFocused, setTopBarFocused] = useState(false);
   const isSticky = useStickyHeader(24);
+  const { session, isResolving, signOut } = useAuthSession();
+  const email = sessionEmail(session);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const nav = mode === 'personal' ? personalNav : businessNav;
 
@@ -218,13 +219,38 @@ export default function Header() {
 
               {/* Right actions */}
               <div className="flex items-center gap-2">
-                <Link href="/login" className="hidden sm:inline-flex btn-ghost">
-                  <User className="w-4 h-4" aria-hidden="true" />
-                  <span>Log in</span>
-                </Link>
-                <Link href="/register" className="hidden sm:inline-flex btn-primary btn-sm">
-                  Register
-                </Link>
+                {isResolving ? (
+                  <span className="hidden sm:inline-block h-9 w-24" aria-hidden="true" />
+                ) : email ? (
+                  <>
+                    <span
+                      className="hidden sm:inline-flex items-center gap-2 btn-ghost max-w-[220px]"
+                      title={email}
+                    >
+                      <User className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                      <span className="truncate">{email}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void signOut();
+                      }}
+                      className="hidden sm:inline-flex btn-secondary btn-sm"
+                    >
+                      Log out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" className="hidden sm:inline-flex btn-ghost">
+                      <User className="w-4 h-4" aria-hidden="true" />
+                      <span>Log in</span>
+                    </Link>
+                    <Link href="/register" className="hidden sm:inline-flex btn-primary btn-sm">
+                      Register
+                    </Link>
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={() => setMobileOpen(true)}
@@ -315,20 +341,38 @@ export default function Header() {
 
             {/* Mobile CTA */}
             <div className="p-4 border-t border-line space-y-2">
-              <Link
-                href="/register"
-                className="btn-primary w-full justify-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Register Free
-              </Link>
-              <Link
-                href="/login"
-                className="btn-secondary w-full justify-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Log in
-              </Link>
+              {email ? (
+                <>
+                  <p className="text-caption text-ink-500 truncate">Signed in as {email}</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      void signOut();
+                    }}
+                    className="btn-secondary w-full justify-center"
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/register"
+                    className="btn-primary w-full justify-center"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Register Free
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="btn-secondary w-full justify-center"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Log in
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

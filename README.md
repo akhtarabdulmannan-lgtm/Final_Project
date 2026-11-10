@@ -1,131 +1,169 @@
-# VectisX — Global Currency Intelligence & International Money Transfers
+# VectisX — Currency Converter & Exchange Rate Dashboard
 
-> **VectisX** is an enterprise-grade global currency exchange, money transfer, and financial data platform inspired by **Xe.com**'s platform architecture, features, workflows, and visual structure—rebuilt from the ground up with 100% custom branding, bespoke styling, and high-performance engineering.
+A React + Vite web app for converting currencies, charting exchange-rate history, and
+watching the pairs you care about. Rates come from public REST APIs at runtime — nothing
+on the converter is hardcoded.
 
----
+**Live app (GitHub Pages):** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
+**Mirror (Vercel):** https://vectisx.vercel.app
 
-## 🌟 Platform Overview & Core Pillars
-
-VectisX is organized around four core consumer product pillars, alongside institutional business treasury infrastructure and high-throughput developer data APIs:
-
-### 1. 💱 Send Money (`/send`)
-- **3-Step Send Flow:**
-  1. *Enter Amount:* Guaranteed live send rates, flat fees starting at **$0**, and transparent recipient payout calculation.
-  2. *Choose Recipient:* Multi-corridor support across **190+ countries** with bank-account, mobile wallet, and cash pickup routing.
-  3. *Send & Track:* Real-time settlement status notifications via email and SMS.
-- **Corridor Matrix:** Dedicated corridors for India, Mexico, UK, Eurozone, Philippines, Canada, Australia, Pakistan, and more.
-- **Welcome Promotion:** Save **$100** using promo code `VXNEW100` on initial transfers of $3,000+.
-- **Fee Transparency:** Clear fee comparison table highlighting bank-beating savings up to 8x vs traditional retail banks.
-
-### 2. 🔄 Currency Converter (`/converter`, `/converter/[pair]`)
-- **Live Mid-Market Rates:** Instant conversion across **220+ global currencies**, precious metals (Gold, Silver), and selected digital currencies.
-- **Dynamic Currency Pair Landing Pages:** Programmatic routing (e.g. `/converter/usd-to-eur`, `/converter/gbp-to-usd`) with responsive interactive trend charts and 24h high/low statistics.
-- **Mid-Market Guarantee:** Real-time interbank rates without hidden retail markups.
-
-### 3. 📈 Interactive Currency Charts (`/charts`)
-- **Time Horizons:** 1D, 1W, 1M, 3M, 6M, 1Y, 5Y, and 10Y interactive historical trend visualizer.
-- **Data Visualizer:** Built on Recharts with custom SVG gradients, tooltips, and responsive layout.
-- **Export & Share:** Export historical CSV datasets directly for analysis.
-
-### 4. 🔔 Rate Alerts (`/alerts`)
-- **24/7 Automated Triggers:** Set custom threshold triggers (e.g. "Notify when USD/EUR rises above 0.8550").
-- **Multi-Channel Notification:** Instant email and mobile push notifications when interbank markets reach your target.
-- **100% Free:** No subscription fees or limits on custom rate triggers.
+> The Pages URL needs the one-time Pages setting described in [Deployment](#deployment)
+> before it serves anything. The Vercel mirror builds from `main` and needs no setup.
 
 ---
 
-## 💼 VectisX Business Account (`/business`)
+## Screens
 
-Designed for commercial enterprises, high-growth startups, and multinational treasuries:
+The app has four main screens, each with a distinct job:
 
-- **Institutional Multi-Currency Vault:** Hold, convert, and disburse in USD, EUR, GBP, AUD, CAD, and 18+ currencies with zero monthly account fees.
-- **Global Payments (`/business/payments`):** Settle overseas vendor invoices and subsidiary payments to 190+ countries in 145+ currencies.
-- **Batch & Payroll Disbursements (`/business/batch`):** Single CSV/Excel file upload to pay thousands of international contractors and remote employees in local currencies.
-- **Scheduled Payments (`/business/scheduled`):** Automated recurring payments for cross-border software retainers and supplier contracts.
-- **FX Risk Management (`/business/fx-risk`):**
-  - **Forward Contracts:** Lock in binding exchange rates for up to 24 months to protect profit margins against currency swings.
-  - **Limit Orders:** Set target exchange rates that execute automatically when market spikes occur.
-  - **FX Exposure Calculator:** Interactive EBITDA risk estimator.
-- **Role-Based Permissions (`/business/team`):** Segregation of duties across Administrator, Approver, Creator, and Auditor roles with dual-signoff enforcement.
-- **ERP Integrations (`/business/integrations`):** Native bidirectional sync for Microsoft Dynamics 365, Sage Intacct, Oracle NetSuite, and SAP.
-- **Scale:** Trusted by **17,000+ businesses** processing **$17B+** in annual volume.
+| Screen | Route | What it does |
+| --- | --- | --- |
+| **Converter** | `#/converter` | Converts an amount between 200+ currencies using the live mid-market rate, shows the inverse rate, and links to a dedicated pair page for each currency combination. |
+| **Charts** | `#/charts` | Interactive area chart of the selected pair over 1D–10Y, with CSV export and share-link copying. Built on Recharts. |
+| **Rate Alerts** | `#/alerts` | Sets a target rate for a pair and direction, then compares it against the live feed. |
+| **Live Rate Tables** | `#/rates`, `#/tables` | Sortable table of every supported currency and a cross-rate matrix for bulk comparison. |
+
+Supporting pages (business, API docs, help, legal, blog, auth) round out the site.
 
 ---
 
-## ⚡ Developer Platform: Currency Data API (`/api-platform`)
+## Tech stack
 
-- **Core Endpoint:** `GET /v1/convert_from` (accessible via `/api/rates`) returning normalized JSON payloads.
-- **Proprietary Rate Blender™:** Statistical anomaly detection aggregating 100+ liquidity providers with real-time spike rejection.
-- **Pricing Tiers (`/api-platform/pricing`):**
-  - *Core ($599/yr):* 10k requests/mo, daily EOD updates, 1 base currency.
-  - *Intermediate ($1,799/yr):* 50k requests/mo, hourly updates, 5 base currencies, historical records back to 1998.
-  - *Prime ($4,499/yr):* 200k requests/mo, 15-minute updates, unlimited bases, central bank feeds.
-  - *Enterprise (Custom):* Live minutely streaming feeds, 99.99% SLA, custom margins.
-- **Official SDKs:** Ready-to-use packages for Java, Node.js, PHP, and Python.
-- **Partner Program (`/api-platform/partners`):** Co-branded solutions, ISV revenue shares, and system integrator alliances.
+| Concern | Choice |
+| --- | --- |
+| Framework | **React 18** + **Vite 5** (TypeScript) |
+| Routing | **react-router-dom** v6 (`HashRouter`) |
+| Styling | **Tailwind CSS 3** with a custom design-token layer in `src/styles/globals.css` |
+| Functionality libraries | **Recharts** (charts), **lucide-react** (icons), **@supabase/supabase-js** (auth screens) |
+| Data | Public REST APIs, fetched in the browser |
 
 ---
 
-## 🛠️ Specialized Financial Tools
+## The API integration
 
-- **IBAN Calculator & Validator (`/tools/iban`):** Validate international bank account numbers, check digits, and country routing structures.
-- **Daily Market Analysis Newsletter (`/tools/email-updates`):** Curated daily macroeconomic briefings for 350,000+ subscribers.
-- **Cross-Rate Matrix Tables (`/tables`):** Multi-lateral cross-rate table comparing the top 10 global currencies.
-- **Historical Data Archives (`/historical`):** Daily closing prices and monthly averages dating back to 1998.
-- **Mobile Apps (`/apps`):** iOS (4.8★, 118k reviews) and Android (4.8★, 380k reviews).
+Two free, public, CORS-enabled JSON APIs are used. No API key is required.
+
+1. **open.er-api.com** — `GET https://open.er-api.com/v6/latest/USD`
+   Primary source for current rates (~160 currencies, daily reference data).
+2. **api.frankfurter.dev** — `GET https://api.frankfurter.dev/v1/latest?base=USD`
+   Fallback for current rates, and the source for historical series:
+   `GET https://api.frankfurter.dev/v1/2026-01-01..2026-06-01?base=USD&symbols=EUR`
+
+The client lives in `src/lib/fx/client.ts` and `src/lib/fx/history.ts`. Each call:
+
+- uses `fetch` with `async/await` and an `AbortController` timeout (9s / 12s),
+- validates the JSON shape before trusting it,
+- throws a typed `FxApiError` carrying a user-safe message plus technical detail,
+- falls back to the second provider, then to a 15-minute `localStorage` cache.
+
+`src/lib/fx/RateProvider.tsx` owns the request and exposes three states to the UI:
+
+- **loading** — skeleton placeholders and a "Fetching live rates…" badge,
+- **ready** — a banner naming the provider and its update date,
+- **error** — a dismissible notice explaining what failed, with a **Retry** button and
+  a collapsible technical-details block.
+
+If both providers are unreachable, the app keeps working from a clearly labelled bundled
+snapshot (`src/lib/rates.ts`) and says so in the header — it never silently presents stale
+numbers as live.
 
 ---
 
-## 🛡️ Trust, Security & Regulation (`/security`, `/licenses`)
+## Running the project
 
-- **Corporate Parent:** Wholly owned subsidiary of Meridian Financial Corporation (NASDAQ: MRDN).
-- **FinCEN Registered:** Money Services Business (MSB Registration #310001849204).
-- **State-Licensed:** Licensed money transmitter across California, New York, Texas, Florida, Illinois, and nationwide.
-- **SOC 2 Type II:** Independently audited annual security and data confidentiality certification.
-- **Tier-1 Safeguarding:** Client funds are segregated in safeguarded accounts at JPMorgan Chase and Barclays.
+Requires **Node.js 18+**.
 
----
-
-## 💻 Tech Stack & Architecture
-
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript 5.6
-- **Styling:** Tailwind CSS 3.4 with custom design tokens
-- **Data Visualization:** Recharts 2.12
-- **Icons:** Lucide React
-- **SEO & Performance:** Full static pre-rendering (44 pre-rendered static routes), dynamic metadata generation, XML Sitemap (`/sitemap.xml`), and `robots.txt`.
-
----
-
-## 🚀 Setup & Local Development
-
-### 1. Prerequisites
-- **Node.js** v18.17+ (v20+ recommended)
-- **npm** or **pnpm**
-
-### 2. Installation
 ```bash
-# Clone the repository
+# 1. Clone
 git clone https://github.com/akhtarabdulmannan-lgtm/Final_Project.git
 cd Final_Project
+```
 
-# Install dependencies
+### 2. Install dependencies
+
+```bash
 npm install
 ```
 
-### 3. Run Development Server
+### 3. Start the development server
+
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 4. Build for Production
+Open the URL it prints (usually <http://localhost:5173>). The app reloads on save.
+
+### 4. Production build
+
 ```bash
-npm run build
-npm start
+npm run build     # type-checks, builds to dist/, writes the 404 fallback
+npm run preview   # serve the production build locally
 ```
+
+### Optional: sign-in screens
+
+The converter, charts and alerts need no configuration. The login/register/reset screens
+use Supabase and stay disabled unless credentials are present. Copy `.env.example` to
+`.env` and fill in:
+
+```bash
+VITE_SUPABASE_URL=https://<project>.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon-key>
+```
+
+Both values are public by design; access is controlled by Supabase row-level security.
 
 ---
 
-## 📄 License
-© 2026 VectisX Financial Inc. A subsidiary of Meridian Financial Corporation. All rights reserved.
+## Deployment
+
+`.github/workflows/deploy.yml` builds on every push to `main` and publishes `dist/` to
+GitHub Pages using the official Pages actions. To enable it once per repository:
+
+1. **Settings → Pages → Build and deployment → Source: GitHub Actions**
+2. Push to `main` (or run the workflow manually from the Actions tab).
+
+`vite.config.ts` sets `base: '/Final_Project/'` for production builds so assets resolve
+under the repository subpath, and the deploy step copies `index.html` to `404.html` so a
+hard refresh on any deep link still boots the app.
+
+---
+
+## Project structure
+
+```
+src/
+├── App.tsx                 # route table + layout shell
+├── main.tsx                # React entry point (HashRouter)
+├── routes/                 # one file per screen
+├── components/
+│   ├── layout/             # Header, Footer
+│   ├── sections/           # CurrencyConverter card
+│   ├── ui/                 # buttons, skeletons, badges, charts chrome
+│   └── feedback/           # loading / error / source banner
+├── lib/
+│   ├── fx/                 # API client, history, RateProvider hook
+│   ├── rates.ts            # offline fallback table + formatting helpers
+│   ├── supabase.ts         # auth client (optional)
+│   └── utils.ts
+├── data/                   # currencies, navigation, blog copy
+├── router/                 # Link + hook shims over react-router
+└── styles/globals.css      # Tailwind layers + design tokens + fonts
+```
+
+## Quality checks
+
+```bash
+npm run typecheck    # tsc --noEmit
+npm run check:links  # fails if any internal link points at a missing route
+npm run build        # both of the above, then a production build
+```
+
+`scripts/check-links.mjs` compares every `href="/…"` in the source against the route table
+in `App.tsx`; it currently verifies 74 links across 39 routes.
+
+## Credits
+
+Rate data: [open.er-api.com](https://www.exchangerate-api.com/) and
+[Frankfurter](https://frankfurter.dev/) (European Central Bank reference rates).
+UI inspiration: Xe.com. Not affiliated with either; this is a coursework project.

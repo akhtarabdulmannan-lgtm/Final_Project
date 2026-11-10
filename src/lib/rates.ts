@@ -1,4 +1,17 @@
-// Deterministic rate engine with optional live micro-tick support for client updates
+/**
+ * Offline fallback rate table.
+ *
+ * IMPORTANT: these numbers are a **bundled snapshot**, not live market data.
+ * Normal operation fetches live rates from a public REST API (see
+ * `src/lib/fx/client.ts`); this table is only used when that request fails
+ * (offline, blocked by an extension, or provider outage) so the app can still
+ * render. `RateProvider` marks this state as "Offline" in the header.
+ *
+ * Every helper below takes the live rate map as an optional last argument;
+ * when it is present the live value wins and this table is never read.
+ */
+
+export const SNAPSHOT_DATE = '31 Jan 2026';
 
 const BASE_RATES: Record<string, number> = {
   USD: 1.0, EUR: 0.8534, GBP: 0.7312, JPY: 149.52, AUD: 1.5243, CAD: 1.3621,
@@ -16,78 +29,52 @@ const BASE_RATES: Record<string, number> = {
   XAU: 0.000488, XAG: 0.0412, BTC: 0.0000234, ETH: 0.000412,
 };
 
-export function getRate(from: string, to: string): number {
+export type RateMap = Record<string, number>;
+
+/** A rate expressed against `base`, resolved from live data when available. */
+export function getRate(from: string, to: string, live?: RateMap | null): number {
   if (from === to) return 1.0;
-  const fromRate = BASE_RATES[from] || 1;
-  const toRate = BASE_RATES[to] || 1;
+  const fromRate = live?.[from] ?? BASE_RATES[from] ?? 1;
+  const toRate = live?.[to] ?? BASE_RATES[to] ?? 1;
+  if (!fromRate) return 1;
   return toRate / fromRate;
 }
 
-export function getTickedRate(from: string, to: string, tick: number): number {
-  const base = getRate(from, to);
-  if (tick <= 0 || from === to) return base;
-  const seed = (from + to).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + tick * 37;
-  const deltaRatio = (seededRandom(seed) - 0.5) * 0.003; // ±0.15% micro tick
-  return base * (1 + deltaRatio);
+export function convert(amount: number, from: string, to: string, live?: RateMap | null): number {
+  return amount * getRate(from, to, live);
 }
 
-export function convert(amount: number, from: string, to: string): number {
-  return amount * getRate(from, to);
-}
-
-function seededRandom(seed: number): number {
-  const x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-}
-
-export function get24hChange(from: string, to: string): number {
+/**
+ * Recent movement for a pair.
+ *
+ * The rate API only publishes a daily snapshot, so we compare against the
+ * previous snapshot the browser saw. When that is unavailable we report 0 —
+ * an honest "no change data" rather than an invented number.
+ */
+export function get24hChange(from: string, to: string, live?: RateMap | null, previous?: RateMap | null): number {
   if (from === to) return 0;
-  const seed = (from + to).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return (seededRandom(seed) - 0.5) * 4;
+  if (!live || !previous) return 0;
+  const current = getRate(from, to, live);
+  const prior = getRate(from, to, previous);
+  if (!prior) return 0;
+  return ((current - prior) / prior) * 100;
 }
 
-export function get24hHigh(from: string, to: string): number {
-  const rate = getRate(from, to);
-  const seed = (from + to + 'high').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return rate * (1 + seededRandom(seed) * 0.015);
+/**
+ * Daily change over the reported period. The providers give one rate per day,
+ * so the "high"/"low" band is derived from the real daily move rather than a
+ * fabricated intraday range.
+ */
+export function get24hHigh(from: string, to: string, live?: RateMap | null, previous?: RateMap | null): number {
+  const rate = getRate(from, to, live);
+  const prior = previous && live ? getRate(from, to, previous) : rate;
+  return Math.max(rate, prior);
 }
 
-export function get24hLow(from: string, to: string): number {
-  const rate = getRate(from, to);
-  const seed = (from + to + 'low').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return rate * (1 - seededRandom(seed) * 0.015);
-}
-
-export function getHistoricalRates(from: string, to: string, days: number): { date: string; rate: number }[] {
-  const baseRate = getRate(from, to);
-  const data: { date: string; rate: number }[] = [];
-  // Fixed UTC anchor avoids SSR/client date drift across midnight boundaries
-  const anchor = new Date('2026-11-09T12:00:00Z');
-
-  for (let i = days; i >= 0; i--) {
-    const date = new Date(anchor);
-    date.setUTCDate(date.getUTCDate() - i);
-    const iso = date.toISOString().slice(0, 10);
-    const seed = (from + to + iso).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    const variation = (seededRandom(seed) - 0.5) * 0.1;
-    data.push({
-      date: iso,
-      rate: baseRate * (1 + variation),
-    });
-  }
-  return data;
-}
-
-export function getTransferFee(amount: number): number {
-  if (amount >= 5000) return 0;
-  if (amount >= 1000) return 3.99;
-  return 5.99;
-}
-
-export function getDeliveryTime(to: string): string {
-  const fast = ['USD', 'EUR', 'GBP', 'CAD', 'AUD'];
-  if (fast.includes(to)) return '1-2 business days';
-  return '2-4 business days';
+export function get24hLow(from: string, to: string, live?: RateMap | null, previous?: RateMap | null): number {
+  const rate = getRate(from, to, live);
+  const prior = previous && live ? getRate(from, to, previous) : rate;
+  return Math.min(rate, prior);
 }
 
 export function formatRate(rate: number): string {
@@ -108,3 +95,5 @@ export function formatAmount(amount: number): string {
 export function formatUtcTime(date: Date): string {
   return date.toISOString().slice(11, 19);
 }
+
+export const FALLBACK_RATES = BASE_RATES;
