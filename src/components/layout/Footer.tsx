@@ -43,7 +43,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-[14px] leading-[22px] text-ink-invert-muted mb-6 max-w-xs">
-              Global Currency Intelligence. Trusted by millions for live rates, money transfers, and currency data since 1993.
+              Currency conversion and exchange-rate charts built on open public data. Rates are fetched live from central-bank and reference-rate APIs.
             </p>
             <div className="flex items-center gap-2">
               {socialItems.map(({ name, href, Icon }) => (
@@ -214,9 +214,9 @@ export default function Footer() {
             </p>
           </div>
           <p className="text-caption text-ink-invert-muted mt-4 max-w-4xl">
-            VectisX provides currency data and international money transfer services. Exchange rates shown are mid-market rates
-            and are not intended to be used as transaction rates. Transfer fees and delivery times vary by corridor.
-            VectisX is registered with FinCEN as a Money Services Business and licensed as a money transmitter in applicable US states.
+            VectisX is an educational currency-conversion project. Exchange rates are shown for information only, are not
+            transaction rates, and may be delayed by the provider that publishes them. This site does not offer money transfer,
+            payment, or financial advice services.
             SOC 2 Type II certified. Past performance does not guarantee future results.
           </p>
         </div>

@@ -13,7 +13,7 @@ export default function MobileAppsPage() {
               <span className="badge-neutral">iOS &amp; Android App</span>
               <h1>VectisX in Your Pocket</h1>
               <p className="text-ink-500 mx-auto lg:mx-0">
-                Experience real-time currency conversions, instant international money transfers with fees from $0, and custom rate alert triggers from anywhere in the world.
+                Experience live currency conversion, interactive rate charts, and custom rate alerts from anywhere in the world.
               </p>
 
               {/* Ratings Badges */}
@@ -91,8 +91,8 @@ export default function MobileAppsPage() {
             {[
               {
                 Icon: Send,
-                title: 'Send Money Abroad',
-                desc: 'Send to 190+ countries straight from your saved contacts list with biometric Face ID or fingerprint sign-off.',
+                title: 'Offline Saved Rates',
+                desc: 'Keep the last rate snapshot on your device so conversions still work on a plane or a patchy connection.',
               },
               {
                 Icon: Bell,

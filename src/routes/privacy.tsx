@@ -15,7 +15,7 @@ export default function PrivacyPage() {
           <section className="space-y-2">
             <h2>1. Information We Collect</h2>
             <p>
-              When you register for a personal or business money transfer account, we collect identifying information required by Know Your Customer (KYC) and Anti-Money Laundering (AML) laws, including full legal name, date of birth, government-issued identification, residential address, and beneficiary bank routing parameters.
+              When you create an account, we store the email address you register with and, through Supabase, the minimum account metadata needed to sign you in. We do not collect identity documents, bank details, or payment information, because this site does not move money.
             </p>
           </section>
 
