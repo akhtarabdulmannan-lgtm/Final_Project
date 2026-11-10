@@ -2,11 +2,16 @@ import { useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import ActionButton from '@/components/ui/ActionButton';
-import { wait } from '@/lib/utils';
+import { submitPartnerApplication, SubmissionError } from '@/lib/submissions';
 
 export default function ApiPartnersPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [companyName, setCompanyName] = useState('');
+  const [businessEmail, setBusinessEmail] = useState('');
+  const [track, setTrack] = useState('ISV & SaaS Embedded Integration');
+  const [estimatedVolume, setEstimatedVolume] = useState('');
 
   const tracks = [
     {
@@ -44,13 +49,24 @@ export default function ApiPartnersPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitStatus === 'loading') return;
+
+    setSubmitError(null);
     setSubmitStatus('loading');
-    await wait(300);
-    setSubmitStatus('success');
-    window.setTimeout(() => {
-      setSubmitted(true);
+    try {
+      await submitPartnerApplication({ companyName, businessEmail, track, estimatedVolume });
+      setSubmitStatus('success');
+      window.setTimeout(() => {
+        setSubmitted(true);
+        setSubmitStatus('idle');
+      }, 800);
+    } catch (error) {
       setSubmitStatus('idle');
-    }, 800);
+      setSubmitError(
+        error instanceof SubmissionError
+          ? error.message
+          : "We couldn't send your application. Please try again.",
+      );
+    }
   };
 
   return (
@@ -107,6 +123,9 @@ export default function ApiPartnersPage() {
                   id="partner-company"
                   type="text"
                   required
+                  maxLength={200}
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="Acme Software Corp"
                   className="input-field"
                 />
@@ -119,6 +138,8 @@ export default function ApiPartnersPage() {
                   id="partner-email"
                   type="email"
                   required
+                  value={businessEmail}
+                  onChange={(e) => setBusinessEmail(e.target.value)}
                   placeholder="partners@acme.com"
                   className="input-field"
                 />
@@ -127,7 +148,12 @@ export default function ApiPartnersPage() {
                 <label htmlFor="partner-track" className="block mb-1.5">
                   Desired Partnership Track
                 </label>
-                <select id="partner-track" className="select-field text-[14px] font-medium">
+                <select
+                  id="partner-track"
+                  value={track}
+                  onChange={(e) => setTrack(e.target.value)}
+                  className="select-field text-[14px] font-medium"
+                >
                   <option>ISV &amp; SaaS Embedded Integration</option>
                   <option>IT Services &amp; System Integrator</option>
                   <option>Referral / Affiliate Network</option>
@@ -140,10 +166,19 @@ export default function ApiPartnersPage() {
                 <input
                   id="partner-volume"
                   type="text"
+                  maxLength={200}
+                  value={estimatedVolume}
+                  onChange={(e) => setEstimatedVolume(e.target.value)}
                   placeholder="e.g. 50,000 monthly active users"
                   className="input-field"
                 />
               </div>
+              {submitError && (
+                <p role="alert" className="text-[14px] text-loss">
+                  {submitError}
+                </p>
+              )}
+
               <ActionButton
                 type="submit"
                 status={submitStatus}

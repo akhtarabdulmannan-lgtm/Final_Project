@@ -162,8 +162,16 @@ export default function CurrencyConverter({
               <input
                 id="converter-amount"
                 type="number"
+                min="0"
+                max="1000000000"
+                step="any"
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value) || 0)}
+                onChange={(e) => {
+                  // A negative or non-finite amount used to convert silently
+                  // into a negative result; clamp it at zero instead.
+                  const next = Number(e.target.value);
+                  setAmount(Number.isFinite(next) && next > 0 ? next : 0);
+                }}
                 className="input-field pl-10 text-[18px] font-semibold tabular-nums"
                 placeholder="0.00"
               />
@@ -438,6 +446,11 @@ export default function CurrencyConverter({
               </div>
             </div>
             <div className="overflow-y-auto flex-1 p-2">
+              {filteredCurrencies.length === 0 && (
+                <p className="px-4 py-8 text-center text-[14px] text-ink-500" role="status">
+                  No currencies match “{pickerSearch.trim()}”. Try a different name or code.
+                </p>
+              )}
               {filteredCurrencies.map((c) => {
                 const isSelected = (pickerOpen === 'from' ? fromCode : toCode) === c.code;
                 return (

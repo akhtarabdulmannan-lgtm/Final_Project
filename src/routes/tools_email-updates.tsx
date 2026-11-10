@@ -2,24 +2,35 @@ import { useState } from 'react';
 import { Mail, CheckCircle2 } from 'lucide-react';
 import ActionButton from '@/components/ui/ActionButton';
 import DeltaChip from '@/components/ui/DeltaChip';
-import { wait } from '@/lib/utils';
+import { subscribeToNewsletter, SubmissionError } from '@/lib/submissions';
 
 export default function EmailUpdatesPage() {
   const [email, setEmail] = useState('');
   const [frequency, setFrequency] = useState('daily');
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || submitStatus === 'loading') return;
+
+    setSubmitError(null);
     setSubmitStatus('loading');
-    await wait(300);
-    setSubmitStatus('success');
-    window.setTimeout(() => {
-      setIsSubscribed(true);
+    try {
+      // Only reports success once the subscription is stored.
+      await subscribeToNewsletter({ email, frequency: frequency as 'daily' | 'weekly' });
+      setSubmitStatus('success');
+      window.setTimeout(() => {
+        setIsSubscribed(true);
+        setSubmitStatus('idle');
+      }, 800);
+    } catch (error) {
       setSubmitStatus('idle');
-    }, 800);
+      setSubmitError(
+        error instanceof SubmissionError ? error.message : "We couldn't save your subscription. Please try again.",
+      );
+    }
   };
 
   return (
@@ -64,7 +75,10 @@ export default function EmailUpdatesPage() {
                   id="newsletter-email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setSubmitError(null);
+                  }}
                   placeholder="name@company.com"
                   required
                   className="input-field"
@@ -102,6 +116,12 @@ export default function EmailUpdatesPage() {
                   </button>
                 </div>
               </div>
+
+              {submitError && (
+                <p role="alert" className="text-[14px] text-loss">
+                  {submitError}
+                </p>
+              )}
 
               <ActionButton
                 type="submit"

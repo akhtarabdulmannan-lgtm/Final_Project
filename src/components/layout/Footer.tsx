@@ -3,11 +3,12 @@ import Link from '@/router/Link';
 import { Zap, Mail, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
 import { footerLinks } from '@/data/navigation';
 import ActionButton from '@/components/ui/ActionButton';
-import { wait } from '@/lib/utils';
+import { subscribeToNewsletter, SubmissionError } from '@/lib/submissions';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [subscribeError, setSubscribeError] = useState<string | null>(null);
 
   const socialItems = [
     { name: 'VectisX on X (Twitter)', href: '/press', Icon: Twitter },
@@ -19,13 +20,21 @@ export default function Footer() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || subscribeStatus === 'loading') return;
+    setSubscribeError(null);
     setSubscribeStatus('loading');
-    await wait(350);
-    setSubscribeStatus('success');
-    setEmail('');
-    window.setTimeout(() => {
+    try {
+      await subscribeToNewsletter({ email, frequency: 'daily' });
+      setSubscribeStatus('success');
+      setEmail('');
+      window.setTimeout(() => {
+        setSubscribeStatus('idle');
+      }, 800);
+    } catch (error) {
       setSubscribeStatus('idle');
-    }, 800);
+      setSubscribeError(
+        error instanceof SubmissionError ? error.message : "We couldn't save your subscription. Please try again.",
+      );
+    }
   };
 
   return (
@@ -190,6 +199,11 @@ export default function Footer() {
               </ActionButton>
             </div>
           </form>
+          {subscribeError && (
+            <p role="alert" className="text-[13px] text-loss mt-2">
+              {subscribeError}
+            </p>
+          )}
         </div>
       </div>
 

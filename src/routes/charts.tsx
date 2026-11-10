@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from '@/router/Link';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { currencies } from '@/data/currencies';
@@ -20,7 +20,7 @@ export default function ChartsPage() {
   const [toCode, setToCode] = useState('EUR');
   const [range, setRange] = useState<'1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | '5Y' | '10Y'>('1M');
   const [swapCount, setSwapCount] = useState(0);
-  const [isLoadingChart, setIsLoadingChart] = useState(false);
+  const [shareError, setShareError] = useState<string | null>(null);
 
   const rangeDays: Record<string, number> = {
     '1D': 1,
@@ -42,15 +42,14 @@ export default function ChartsPage() {
   const history = useRateHistory(fromCode, toCode, rangeDays[range]);
   const chartData = history.points;
 
+  // Derived from the request itself. A separate flag previously got stranded
+  // when a cached response resolved without ever painting a loading state,
+  // which froze the chart on its skeleton permanently.
+  const isLoadingChart = history.status === 'loading';
+
   const triggerLoading = (updateFn: () => void) => {
-    // The skeleton is driven by the request itself, not a timer.
-    setIsLoadingChart(true);
     updateFn();
   };
-
-  useEffect(() => {
-    if (history.status !== 'loading') setIsLoadingChart(false);
-  }, [history.status]);
 
   const handleSwap = () => {
     setSwapCount((c) => c + 1);
@@ -74,7 +73,18 @@ export default function ChartsPage() {
 
   const handleShare = async () => {
     const shareUrl = window.location.href;
-    await navigator.clipboard?.writeText(shareUrl);
+    // Only claim success when the clipboard write really happened.
+    if (!navigator.clipboard?.writeText) {
+      setShareError('Copying to the clipboard is not available in this browser.');
+      throw new Error('clipboard unavailable');
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+    } catch {
+      setShareError('Could not copy the link. Select the URL from the address bar instead.');
+      throw new Error('clipboard write failed');
+    }
+    setShareError(null);
     await wait(250);
   };
 
@@ -261,6 +271,11 @@ export default function ChartsPage() {
                       </span>
                     </ActionButton>
                   </div>
+                  {shareError && (
+                    <p role="alert" className="mt-3 text-[13px] text-loss">
+                      {shareError}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
