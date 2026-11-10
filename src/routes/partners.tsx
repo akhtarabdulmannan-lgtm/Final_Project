@@ -56,9 +56,6 @@ export default function PartnersPage() {
               <span>Apply to Partner Program</span>
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
-            <Link href="/api-platform/partners" className="btn-secondary bg-transparent text-ink-invert border-line-invert hover:bg-[#1E242C]">
-              Developer Partners &rarr;
-            </Link>
           </div>
         </div>
       </div>

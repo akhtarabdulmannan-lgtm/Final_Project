@@ -33,7 +33,7 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     );
   }
 
-  // A same-page anchor (e.g. "/business/fx-risk#limit-orders") still goes
+  // A same-page anchor (e.g. "/help#faq") still goes
   // through the router, react-router scrolls to the hash for us.
   return (
     <RouterLink ref={ref} to={href} {...rest}>

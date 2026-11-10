@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from '@/router/Link';
 import { Menu, X, ChevronDown, ArrowRight, Globe, User, Zap } from 'lucide-react';
-import { personalNav, businessNav } from '@/data/navigation';
+import { personalNav } from '@/data/navigation';
 import { useStickyHeader } from '@/hooks';
 import { useAuthSession, sessionEmail } from '@/hooks/useAuthSession';
-import { NavItem, UserMode } from '@/types';
+import { NavItem } from '@/types';
 
 export default function Header() {
-  const [mode, setMode] = useState<UserMode>('personal');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [topBarFocused, setTopBarFocused] = useState(false);
@@ -15,7 +14,7 @@ export default function Header() {
   const { session, isResolving, signOut } = useAuthSession();
   const email = sessionEmail(session);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const nav = mode === 'personal' ? personalNav : businessNav;
+  const nav = personalNav;
 
   const hideTopUtilityRow = isSticky && !topBarFocused;
 
@@ -70,36 +69,6 @@ export default function Header() {
             }`}
           >
             <div className="container-vx h-full flex items-center justify-between gap-2">
-              <div
-                role="group"
-                aria-label="Account mode"
-                className="flex items-center gap-1"
-              >
-                <button
-                  type="button"
-                  onClick={() => setMode('personal')}
-                  aria-pressed={mode === 'personal'}
-                  className={`rounded-lg px-3 min-h-[44px] text-[13px] leading-[18px] font-medium transition-colors duration-150 ease-fintech ${
-                    mode === 'personal'
-                      ? 'text-ink bg-surface border border-line'
-                      : 'text-ink-500 hover:text-ink'
-                  }`}
-                >
-                  Personal
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode('business')}
-                  aria-pressed={mode === 'business'}
-                  className={`rounded-lg px-3 min-h-[44px] text-[13px] leading-[18px] font-medium transition-colors duration-150 ease-fintech ${
-                    mode === 'business'
-                      ? 'text-ink bg-surface border border-line'
-                      : 'text-ink-500 hover:text-ink'
-                  }`}
-                >
-                  Business
-                </button>
-              </div>
               <div className="hidden sm:flex items-center gap-1 text-[13px] leading-[18px] text-ink-500">
                 <Link
                   href="/help"
@@ -300,32 +269,6 @@ export default function Header() {
               >
                 <X className="w-5 h-5 text-ink" aria-hidden="true" />
               </button>
-            </div>
-
-            {/* Mode toggle mobile */}
-            <div className="p-4 border-b border-line">
-              <div className="flex rounded-xl bg-surface-subtle p-1 gap-1">
-                <button
-                  type="button"
-                  onClick={() => setMode('personal')}
-                  aria-pressed={mode === 'personal'}
-                  className={`flex-1 rounded-lg min-h-[44px] text-[14px] font-medium transition-colors duration-150 ${
-                    mode === 'personal' ? 'bg-surface text-ink border border-line' : 'text-ink-500'
-                  }`}
-                >
-                  Personal
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode('business')}
-                  aria-pressed={mode === 'business'}
-                  className={`flex-1 rounded-lg min-h-[44px] text-[14px] font-medium transition-colors duration-150 ${
-                    mode === 'business' ? 'bg-surface text-ink border border-line' : 'text-ink-500'
-                  }`}
-                >
-                  Business
-                </button>
-              </div>
             </div>
 
             {/* Mobile nav links */}
