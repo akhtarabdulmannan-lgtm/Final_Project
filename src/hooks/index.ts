@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { formatUtcTime } from '@/lib/rates';
 
@@ -97,25 +96,21 @@ export function useStickyHeader(threshold = 24) {
   return isSticky;
 }
 
-export function useLiveTick(intervalMs = 6000) {
-  const [tick, setTick] = useState(0);
-  const [utcTime, setUtcTime] = useState('12:00:00');
+/**
+ * Wall clock in UTC, ticking every second.
+ *
+ * The rate figures come from the API snapshot, so the header only needs a
+ * clock: it shows users when the data was retrieved relative to now.
+ */
+export function useUtcClock(intervalMs = 1000) {
+  const [utcTime, setUtcTime] = useState(() => formatUtcTime(new Date()));
 
   useEffect(() => {
-    setUtcTime(formatUtcTime(new Date()));
-    const id = window.setInterval(() => {
-      setTick((t) => t + 1);
-      setUtcTime(formatUtcTime(new Date()));
-    }, intervalMs);
+    const id = window.setInterval(() => setUtcTime(formatUtcTime(new Date())), intervalMs);
     return () => window.clearInterval(id);
   }, [intervalMs]);
 
-  const triggerRefresh = useCallback(() => {
-    setTick((t) => t + 1);
-    setUtcTime(formatUtcTime(new Date()));
-  }, []);
-
-  return { tick, utcTime, triggerRefresh };
+  return utcTime;
 }
 
 export function useMediaQuery(query: string) {
