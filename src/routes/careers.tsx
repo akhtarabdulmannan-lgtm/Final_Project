@@ -4,7 +4,7 @@ import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function CareersPage() {
   const jobs = [
-    { title: 'Senior Quantitative FX Engineer', team: 'Rate Blender Core', location: 'London / Remote', type: 'Full-time' },
+    { title: 'Senior Quantitative FX Engineer', team: 'Rate Data Platform', location: 'London / Remote', type: 'Full-time' },
     { title: 'Staff Frontend Engineer (Next.js / TypeScript)', team: 'Consumer Experience', location: 'New York / Hybrid', type: 'Full-time' },
     { title: 'Compliance & AML Operations Officer', team: 'Legal & Risk', location: 'Toronto / Hybrid', type: 'Full-time' },
     { title: 'Enterprise Treasury Solutions Architect', team: 'Corporate Sales', location: 'Singapore / Remote', type: 'Full-time' },

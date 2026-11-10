@@ -49,7 +49,7 @@ export default function HomePage() {
                 Global Currency Intelligence
               </h1>
               <p className="text-ink-500 mx-auto lg:mx-0">
-                Check live mid-market rates for 200+ currencies, chart how a pair has moved over time, and set an alert for the level you are waiting on — all from one screen.
+                Check live mid-market rates for the currencies you actually use, chart how a pair has moved over time, and set an alert for the level you are waiting on — all from one screen.
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-2 text-[14px] text-ink-700">
                 <div className="flex items-center gap-2">
@@ -503,7 +503,7 @@ export default function HomePage() {
               <span className="badge-neutral">Developer Platform</span>
               <h2>VectisX Currency Data API</h2>
               <p className="text-ink-500">
-                Connect your platforms to our proprietary Rate Blender engine. Aggregating 100+ global data sources with real-time anomaly filtering for 220+ currencies, precious metals, and selected digital assets.
+                The same public feeds this site runs on — open.er-api.com and the European Central Bank — documented so you can call them yourself. 64 currencies, precious metals, and selected digital assets appear in the interface.
               </p>
 
               <div className="space-y-3">

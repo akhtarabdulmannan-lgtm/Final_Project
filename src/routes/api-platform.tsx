@@ -28,7 +28,7 @@ export default function ApiPlatformPage() {
               <span className="badge-neutral">VectisX Currency Data API</span>
               <h1>Enterprise Currency Data at Millisecond Speeds</h1>
               <p className="text-ink-500">
-                Connect directly to our proprietary Rate Blender engine. 220+ global currencies, precious metals, selected cryptocurrencies, and central bank benchmark feeds updated continuously.
+                This page describes the public feeds the app is built on. Rates are fetched at runtime from open.er-api.com, with the European Central Bank series (via Frankfurter) as fallback and as the source of historical data. 64 currencies are supported in the interface.
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
@@ -91,15 +91,15 @@ const rates = await vx.convertFrom({
         </div>
       </section>
 
-      {/* Rate Blender Section */}
+      {/* Rate layer section */}
       <section className="section-padding bg-bg border-b border-line">
         <div className="container-vx">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <ScrollReveal className="lg:col-span-6 space-y-4">
-              <span className="badge-neutral">Algorithmic Precision</span>
-              <h2>The Proprietary VectisX Rate Blender™</h2>
+              <span className="badge-neutral">Resilient by design</span>
+              <h2>How the Rate Layer Handles Failure</h2>
               <p className="text-ink-500">
-                Raw data from financial brokers frequently contains anomalies, erratic spikes, and latency gaps. Our Rate Blender algorithms continuously aggregate rates from over 100 global liquidity providers and central banks.
+                Public rate APIs go down, return malformed payloads, and sometimes answer very slowly. The client treats every one of those as an expected condition rather than a crash: each request runs behind a nine-second AbortController timeout and the response is validated before any number reaches a screen.
               </p>
               <p className="text-ink-500">
                 The engine applies statistical outlier detection, cross-validation, and weighted volume averaging in real time to produce clean, tamper-proof mid-market rates for ERPs and applications.
@@ -122,7 +122,7 @@ const rates = await vx.convertFrom({
             </ScrollReveal>
 
             <ScrollReveal delay={100} className="lg:col-span-6 bg-surface p-8 rounded-2xl border border-line space-y-4">
-              <h3>Rate Blender Filtering Pipeline</h3>
+              <h3>Request Pipeline</h3>
               <div className="space-y-3 text-[14px]">
                 <div className="p-3.5 bg-surface-subtle rounded-xl border border-line flex items-center justify-between gap-2">
                   <span className="font-medium text-ink">1. Liquidity Ingestion (100+ Global Providers)</span>
