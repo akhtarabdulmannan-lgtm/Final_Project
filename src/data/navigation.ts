@@ -2,15 +2,6 @@ import { NavItem } from '@/types';
 
 export const personalNav: NavItem[] = [
   {
-    label: 'Send',
-    href: '/send',
-    children: [
-      { label: 'Send Money', href: '/send', description: 'Transfer money to 190+ countries' },
-      { label: 'Track Transfer', href: '/send/track', description: 'Check your transfer status' },
-      { label: 'Fees & Pricing', href: '/send/fees', description: 'Transparent fee calculator' },
-    ],
-  },
-  {
     label: 'Convert',
     href: '/converter',
     children: [
@@ -41,15 +32,6 @@ export const personalNav: NavItem[] = [
 ];
 
 export const businessNav: NavItem[] = [
-  {
-    label: 'Payments',
-    href: '/business/payments',
-    children: [
-      { label: 'Global Payments', href: '/business/payments', description: 'Send to 190+ countries' },
-      { label: 'Batch Payments', href: '/business/batch', description: 'Pay multiple recipients' },
-      { label: 'Scheduled Payments', href: '/business/scheduled', description: 'Automate recurring payments' },
-    ],
-  },
   {
     label: 'FX Risk',
     href: '/business/fx-risk',
@@ -82,7 +64,6 @@ export const businessNav: NavItem[] = [
 export const footerLinks = {
   product: [
     { label: 'Currency Converter', href: '/converter' },
-    { label: 'Send Money', href: '/send' },
     { label: 'Live Rates', href: '/rates' },
     { label: 'Charts', href: '/charts' },
     { label: 'Rate Alerts', href: '/alerts' },
@@ -92,8 +73,6 @@ export const footerLinks = {
   ],
   business: [
     { label: 'Business Account', href: '/business' },
-    { label: 'Global Payments', href: '/business/payments' },
-    { label: 'Batch Payments', href: '/business/batch' },
     { label: 'FX Risk Management', href: '/business/fx-risk' },
     { label: 'Integrations', href: '/business/integrations' },
     { label: 'Team Roles', href: '/business/team' },

@@ -1,7 +1,5 @@
-'use client';
-
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/router/Link';
 import { Menu, X, ChevronDown, ArrowRight, Globe, User, Zap } from 'lucide-react';
 import { personalNav, businessNav } from '@/data/navigation';
 import { useStickyHeader } from '@/hooks';
