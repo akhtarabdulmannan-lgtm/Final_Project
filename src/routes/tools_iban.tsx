@@ -2,31 +2,14 @@ import { useState } from 'react';
 import { ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 import ActionButton from '@/components/ui/ActionButton';
 import { wait } from '@/lib/utils';
+import { analyseIban, ibanCountries, type IbanAnalysis } from '@/lib/iban';
 
-const ibanCountries = [
-  { code: 'GB', country: 'United Kingdom', length: 22, example: 'GB29 NWBK 6016 1331 9268 19' },
-  { code: 'DE', country: 'Germany', length: 22, example: 'DE89 3704 0044 0532 0130 00' },
-  { code: 'FR', country: 'France', length: 27, example: 'FR14 2004 1010 0505 0001 3M02 606' },
-  { code: 'ES', country: 'Spain', length: 24, example: 'ES91 2100 0418 4502 0005 1332' },
-  { code: 'IT', country: 'Italy', length: 27, example: 'IT60 X054 2811 1010 0000 0123 456' },
-  { code: 'NL', country: 'Netherlands', length: 18, example: 'NL91 ABNA 0417 1643 00' },
-  { code: 'CH', country: 'Switzerland', length: 21, example: 'CH93 0076 2011 6238 5295 7' },
-  { code: 'AE', country: 'United Arab Emirates', length: 23, example: 'AE07 0331 2345 6789 0123 456' },
-  { code: 'SA', country: 'Saudi Arabia', length: 24, example: 'SA03 8000 0000 6080 1016 7519' },
-  { code: 'PK', country: 'Pakistan', length: 24, example: 'PK36 HABB 0000 1111 2222 3333' },
-];
+
 
 export default function IbanCalculatorPage() {
   const [ibanInput, setIbanInput] = useState('');
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [validationResult, setValidationResult] = useState<{
-    isValid: boolean;
-    country?: string;
-    checkDigits?: string;
-    bankCode?: string;
-    accountNumber?: string;
-    message?: string;
-  } | null>(null);
+  const [validationResult, setValidationResult] = useState<IbanAnalysis | null>(null);
 
   const handleValidate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,34 +17,15 @@ export default function IbanCalculatorPage() {
     setSubmitStatus('loading');
     await wait(240);
 
-    const clean = ibanInput.replace(/\s+/g, '').toUpperCase();
+    const result = analyseIban(ibanInput);
+    setValidationResult(result);
 
-    if (clean.length < 15 || clean.length > 34) {
-      setValidationResult({
-        isValid: false,
-        message: 'Invalid IBAN length. Standard international IBANs are between 15 and 34 alphanumeric characters.',
-      });
+    if (result.isValid) {
+      setSubmitStatus('success');
+      window.setTimeout(() => setSubmitStatus('idle'), 800);
+    } else {
       setSubmitStatus('idle');
-      return;
     }
-
-    const countryCode = clean.slice(0, 2);
-    const checkDigits = clean.slice(2, 4);
-    const bankCode = clean.slice(4, 8);
-    const accountNumber = clean.slice(14);
-    const countryMatch = ibanCountries.find((c) => c.code === countryCode);
-
-    setValidationResult({
-      isValid: true,
-      country: countryMatch ? countryMatch.country : `${countryCode} (ISO Country Code)`,
-      checkDigits,
-      bankCode,
-      accountNumber: accountNumber || clean.slice(8),
-      message: 'Valid IBAN checksum and structure format.',
-    });
-
-    setSubmitStatus('success');
-    window.setTimeout(() => setSubmitStatus('idle'), 800);
   };
 
   return (

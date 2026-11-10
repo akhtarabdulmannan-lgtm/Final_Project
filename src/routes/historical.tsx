@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Download, ArrowLeftRight } from 'lucide-react';
 import { currencies } from '@/data/currencies';
 import { formatRate } from '@/lib/rates';
@@ -16,21 +16,20 @@ export default function HistoricalRatesPage() {
   const [toCode, setToCode] = useState('EUR');
   const [selectedDays, setSelectedDays] = useState(90);
   const [swapCount, setSwapCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
   const history = useRateHistory(fromCode, toCode, selectedDays);
   const chartData = history.points;
 
   const currentRate = fx.rate(fromCode, toCode);
 
+  // Derived from the request, never a parallel flag: a cached response resolves
+  // without painting a loading state, which stranded the old flag and froze
+  // the chart on its skeleton forever.
+  const isLoading = history.status === 'loading';
+
   const updateWithSkeleton = (fn: () => void) => {
-    setIsLoading(true);
     fn();
   };
-
-  useEffect(() => {
-    if (history.status !== 'loading') setIsLoading(false);
-  }, [history.status]);
 
   const handleInvert = () => {
     setSwapCount((c) => c + 1);

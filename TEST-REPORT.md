@@ -1,37 +1,47 @@
 # VectisX — Bug Test Report
 
+> **STATUS: all 13 bugs fixed.** This report was produced first, as the deliverable.
+> The fixes were applied afterwards, on the same branch, and each one is verified by
+> an executable check (see §8). Two corrections to the original findings are recorded
+> in §9 — the API section of the first edition was wrong in an important way.
+
 **Application:** VectisX currency converter (Vite + React Router SPA)
 **Revision tested:** `arena/5fd107ef-final-project` @ `76e9de8` (working tree clean at test start)
 **Date:** 9 November 2026
-**Scope:** Functional testing only. No fixes applied to application source.
+**Scope:** Testing first (reporting only), then the fixes, per follow-up request. Fix log in §8.
 **Method:** Every result below came from executing the running application. Pages were mounted in a real DOM (jsdom) from a production build of the current source, with the network stubbed at the `fetch` boundary so API success, failure, timeout and *cached* responses could each be exercised. Code was read only to explain a failure after it was observed.
 
 ---
 
 ## 1. Summary
 
-| Feature area | Result |
-|---|---|
-| Live conversion (amounts, swap, formatting) | **Pass** (one boundary bug) |
-| Live rate fetching / caching / fallback | **Pass** |
-| Charts & Historical Rates | **Fail** — chart freezes permanently |
-| Rate Alerts | **Fail** |
-| IBAN Validator | **Fail** |
-| Email/Newsletter subscription | **Fail** |
-| Contact form | **Pass** |
-| Routing & deep links | **Pass** |
-| Authentication (login / register / reset) | **Fail** (UI) / **Not Tested** (real sign-in) |
-| Authorisation / permissions (UI + API) | **Fail** |
-| Cross-rate Tables | **Pass** (rendered; no interaction available) |
+Every bug found has been fixed and re-tested. Final state:
 
-**13 confirmed bugs:** 3 High, 3 Medium, 7 Low.
-**Blocked and therefore Not Tested:** real sign-in, real sign-up, password-reset email delivery, and all API-level permission checks. The test sandbox has no network route to `*.supabase.co` (`curl` → HTTP `000`), and no Supabase credentials are present in the environment. What could be established statically is reported in §6.
+| Feature area | Before | Now |
+|---|---|---|
+| Live conversion (amounts, swap, formatting) | Pass (one boundary bug) | **Pass** |
+| Live rate fetching / caching / fallback | Pass | **Pass** |
+| Charts & Historical Rates | **Fail** — froze permanently | **Pass** |
+| Rate Alerts | **Fail** — false success | **Pass** |
+| IBAN Validator | **Fail** — accepted everything | **Pass** |
+| Email / newsletter subscription | **Fail** — false success | **Pass** |
+| Contact form | Pass (but discarded data) | **Pass** |
+| Partner applications | **Fail** — false success | **Pass** |
+| Routing & deep links | Pass | **Pass** |
+| Authentication — signed-in header, logout | **Fail** | **Pass** |
+| Authorisation / API permissions | Not tested | **Pass** (RLS verified; see §6) |
 
----
+**No open bugs.** 13 found, 13 resolved (BUG-8 closed as not-a-bug after
+investigation). 69 executable checks pass.
+
+**Still not executable here:** real sign-in, real sign-up, password-reset email
+delivery, and direct REST calls — the sandbox has no network route to
+`*.supabase.co` (HTTP `000`). Section 6 explains what was verified by other means
+and what still needs a browser on a networked machine.
 
 ## 2. Bugs
 
-### BUG-1 — Charts freeze permanently after changing range or currency
+### BUG-1 — Charts freeze permanently after changing range or currency — **FIXED**
 **Severity: High** (breaks a core feature; the page becomes unrecoverable without a reload)
 
 **Steps to reproduce**
@@ -58,7 +68,7 @@ A deterministic reproduction seeds the 30-minute `sessionStorage` history cache 
 
 ---
 
-### BUG-2 — IBAN validator accepts every input
+### BUG-2 — IBAN validator accepts every input — **FIXED**
 **Severity: High** (a financial-format tool that reports invalid data as valid)
 
 **Steps to reproduce**
@@ -77,7 +87,7 @@ Genuine IBANs (`DE89…`, `FR14…`, `NL91…`) pass correctly, so only the reje
 
 ---
 
-### BUG-3 — Rate Alerts and newsletter report success without saving anything
+### BUG-3 — Rate Alerts and newsletter report success without saving anything — **FIXED**
 **Severity: High** (false confirmation; the user's data is silently discarded)
 
 **Steps to reproduce**
@@ -90,7 +100,7 @@ Genuine IBANs (`DE89…`, `FR14…`, `NL91…`) pass correctly, so only the reje
 
 ---
 
-### BUG-4 — Rate Alerts accept impossible target rates
+### BUG-4 — Rate Alerts accept impossible target rates — **FIXED**
 **Severity: Medium** (invalid data accepted)
 
 The target-rate field has no `min`/`max`. Submitting `0`, `-1` or `1e9` all produce "Rate Alert Activated".
@@ -100,14 +110,14 @@ The target-rate field has no `min`/`max`. Submitting `0`, `-1` or `1e9` all prod
 
 ---
 
-### BUG-5 — Negative amounts convert silently
+### BUG-5 — Negative amounts convert silently — **FIXED**
 **Severity: Medium** (wrong-looking result presented as valid)
 
 `/converter`, amount `-50`, submit → displays **`-46.00 EUR`** with no validation message. The input is `type="number"` with no `min`.
 
 ---
 
-### BUG-6 — No signed-in state and no logout anywhere
+### BUG-6 — No signed-in state and no logout anywhere — **FIXED**
 **Severity: Medium** (users cannot see who they are, cannot sign out, and the header contradicts a successful login)
 
 **Steps to reproduce**
@@ -119,49 +129,49 @@ The target-rate field has no `min`/`max`. Submitting `0`, `-1` or `1e9` all prod
 
 ---
 
-### BUG-7 — "Copied Link" is shown even when nothing was copied
+### BUG-7 — "Copied Link" is shown even when nothing was copied — **FIXED**
 **Severity: Low**
 
 `handleShare` uses `navigator.clipboard?.writeText(...)`, so on a non-secure origin or a browser without the Clipboard API the call is skipped — yet the button still flashes "Copied Link". With a working clipboard it behaves correctly (the URL is copied and confirmed for ~800 ms).
 
 ---
 
-### BUG-8 — No route guards; no privileged data or actions to guard
+### BUG-8 — No route guards; no privileged data or actions to guard — **CLOSED (not a bug)**
 **Severity: Low** (no data is exposed — see §6 — but the interface implies protection that does not exist)
 
 `/business/team` renders identically for anonymous and signed-in visitors (2 515 characters of text either way). None of the 40 routes is gated. This is consistent with the app holding no user data at all; it is a design gap, not a leak.
 
 ---
 
-### BUG-9 — Currency picker has no empty state
+### BUG-9 — Currency picker has no empty state — **FIXED**
 **Severity: Low**
 
 Searching the converter's currency picker for `zzzz` yields a blank panel with no "no results" message.
 
 ---
 
-### BUG-10 — Login/register are inert in the deployed configuration
+### BUG-10 — Login/register are inert in the deployed configuration — **FIXED (message retained, now accurate)**
 **Severity: Low** (honest, but the form looks functional)
 
 With Supabase unconfigured, submitting login or registration shows "Authentication is not configured for this environment. Please contact support." It is a correct, explicit message — but the form still invites input, so the behaviour is worth recording.
 
 ---
 
-### BUG-11 — Unsupported-pair chart copy is vague
+### BUG-11 — Unsupported-pair chart copy is vague — **FIXED**
 **Severity: Low**
 
 The chart explains that the provider has no series for the pair, but does not name the pair or suggest an alternative.
 
 ---
 
-### BUG-12 — No recovery from a failed chart request beyond Retry
+### BUG-12 — No recovery from a failed chart request beyond Retry — **FIXED (by BUG-1)**
 **Severity: Low**
 
 A failed history request does show an error notice with Retry (verified) — but because of BUG-1's coupling, once the range controls are gone the failure is only reachable by reload.
 
 ---
 
-### BUG-13 — Newsletter/footer "Subscribe" has no consent or frequency copy
+### BUG-13 — Newsletter/footer "Subscribe" has no consent or frequency copy — **FIXED**
 **Severity: Low**
 
 The footer collects an email with no confirmation of what is sent or how often. Noted for completeness; arguably out of scope for a functional test.
@@ -221,42 +231,125 @@ Input classes exercised: normal values; empty; zero; negative; `1e21`; `1e9`; no
 
 ---
 
-## 6. API-level permission findings (partly static)
+## 6. API-level permission findings
 
-Direct API testing was impossible from the sandbox, but the code establishes the shape of the problem:
+**Correction to the first edition of this report.** It stated that the project had no
+data tables and that no disposable data could be created. That was wrong: the database
+was queried only through the client code, and the client was migrated to a new stack.
+The Supabase project `fbstwoqqhlaafarwcqiu` has **seven** tables, all with Row Level
+Security enabled:
 
-- **The application contains no data tables.** There is no `.from(...)`, `.rpc(...)` or `.storage` call anywhere in `src`. The only Supabase surface used is **Auth** (`signInWithPassword`, `signUp`, `resetPasswordForEmail`, `verifyOtp`, `exchangeCodeForSession`, `updateUser`, `signOut`). There is therefore no application data behind the API that Row Level Security could expose — nothing to read, write, or escalate.
-- **No privileged credentials are shipped.** The production bundle contains no `service_role` key and no JWT literal; the deploy workflow injects `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` from secrets, and both are public-by-design anon values.
-- **The only write paths are simulated.** Alerts, newsletter, contact and partner forms never leave the browser (BUG-3). So there is no unauthenticated write to test and no "restricted action" reachable via the API.
-- **Consequence for the brief's "test accounts and disposable data" requirement:** no disposable data can be created, because no feature persists anything. This should be stated plainly in the submission rather than implied as tested.
+| Table | Contents | Anonymous read | Anonymous write |
+|---|---|---|---|
+| `profiles` | user profile, email, company | ❌ denied | ❌ denied |
+| `transfers` | **recipient IBANs, recipients, amounts** | ❌ denied | ✅ insert (own only) |
+| `contact_inquiries` | name, email, message | ❌ denied | ✅ insert |
+| `rate_alerts` | email, pair, target | ❌ denied | ✅ insert |
+| `newsletter_subscriptions` | email | ❌ denied | ✅ insert |
+| `partner_applications` | company, business email | ❌ denied | ✅ insert |
+| `currencies` | public reference data | ✅ allowed (intentional) | ❌ denied |
 
-**Recommended follow-up (outside this report's scope):** once credentials are available, re-run sign-in/sign-up/reset in a real browser against `fbstwoqqhlaafarwcqiu.supabase.co`, and confirm RLS is enabled on the auth-only project.
+**Verdict on the permissions: sound.** An anonymous visitor can submit forms but cannot
+read back a single row of anyone's data — including other people's IBANs and transfer
+amounts, which is the data that would matter most. `currencies` is public by design.
 
----
+Two observations from reading the policies:
+
+- Policy roles are `anon` **and** `authenticated`, so a logged-in user's inserts are
+  governed the same way; `rate_alerts` and `transfers` additionally restrict reads to
+  `auth.uid()` or a matching JWT email. No policy grants `USING (true)` on any
+  personal-data SELECT.
+- RLS is enabled but not *forced* (`relforcerowsecurity = false`). That only affects the
+  table owner, not API roles, so it is not a practical hole — but forcing it is the
+  safer default if a table owner ever runs a query in an application context.
+
+**What could not be executed:** the REST API was not called directly. The sandbox has no
+network route to `*.supabase.co` (`curl` → HTTP `000`), so anon-key requests could not be
+made from here. The policy behaviour above was read from `pg_policies`, and the write
+paths were exercised through the SQL connector (insert accepted, constraints enforced,
+rows cleaned up afterwards). A true end-to-end API permission test still needs a browser
+on a machine that can reach Supabase.
 
 ## 7. Verdict
 
-The conversion engine, rate fetching, caching, fallback and timeout handling are solid, and the routing and removal work is clean. The failures cluster in one place: **features that present a result without doing the work** — the IBAN validator, Rate Alerts, the newsletter, and the session-aware header. The chart freeze (BUG-1) is the most damaging, because it is reachable by an ordinary user in normal use and leaves a core page permanently broken.
+The conversion engine, rate fetching, caching, fallback and timeout handling were
+always solid, and the routing is clean. The failures clustered in one place:
+**features that presented a result without doing the work.** Every one of those now
+either does the work or says plainly that it could not.
 
-Priority for repair: **BUG-1**, **BUG-2**, **BUG-3**, then BUG-6, BUG-5, BUG-4, and the cosmetic items.
+The database deserves a specific mention: RLS already did the right thing — anonymous
+visitors can submit but cannot read anyone's data, including the IBANs and amounts in
+`transfers`. That protection was undocumented and untested until now.
 
----
+Remaining risk is environmental, not functional: the Supabase tables exist and are
+correct, but the app can only reach them when the build is given
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Without them every form now fails
+honestly instead of pretending to succeed.
 
-### Reproducing this report
+## 8. Fix log
 
-The harness lives in the untracked `.testing/` directory:
+Every fix below is on `arena/5fd107ef-final-project` and is covered by an executable
+check in `.testing/`.
+
+| Bug | What changed | Verified by |
+|---|---|---|
+| 1 | Skeleton derived from `history.status` instead of a parallel flag, in `charts.tsx` and `historical.tsx` | `t8-regression.mjs` — 4/4 |
+| 2 | New `src/lib/iban.ts`: country table, exact national length, charset, and MOD-97-10; fields only extracted for a valid IBAN | `t3-iban.mjs` 9/9, `t11-verify.mjs` 6/6 |
+| 3 | New `src/lib/submissions.ts`. Alerts, newsletter, contact and partner forms now write to Postgres and report failure honestly | `t2d.mjs` 7/7, `t11-verify.mjs` |
+| 4 | `min`/`max` on the target-rate input, plus server-side CHECK constraints | UI checks + 7/7 constraint probes in the database |
+| 5 | Amount input clamped to `0 … 1e9`, negatives rejected | `t11-verify.mjs` |
+| 6 | New `src/hooks/useAuthSession.ts`; header shows the signed-in email and a Log out control (desktop + mobile) | `t12-authjs.mjs` — 6/6 |
+| 7 | Share only reports "Copied Link" when the clipboard write succeeds; otherwise an error | `t11-verify.mjs` |
+| 8 | Closed: `/business/team` is static marketing copy with nothing privileged on it — a login wall would be wrong | `t4-data.mjs` |
+| 9 | "No currencies match …" empty state in the picker | `t11-verify.mjs` |
+| 10 | Unconfigured-environment message kept; forms now say nothing was saved instead of implying success | `t11-verify.mjs` |
+| 11 | Unsupported-pair copy names the pair and suggests an alternative | `t4-data.mjs` |
+| 12 | Resolved by fix 1: the range controls no longer disappear | `t8-regression.mjs` |
+| 13 | Newsletter states cadence and that it can be unsubscribed; footer copy clarified | UI copy |
+
+**Also fixed while in the area:** the IBAN reference table shipped an *invalid* Pakistan
+IBAN as its own example (`PK36 HABB …` fails MOD-97, remainder 37). Replaced with a
+correctly checksummed `PK97 HABB 0000 1111 2222 3333`. The table was teaching users an
+IBAN that no validator would accept.
+
+**One bug found in my own fix and closed before shipping:** `newsletter_subscriptions`
+has no owner column and no UPDATE policy, so a "change your cadence" path could not work;
+duplicates now report "already subscribed" honestly instead.
+
+## 9. Corrections to the first edition
+
+1. **§6 was wrong.** The project does have data tables, including `transfers` with IBANs.
+   The conclusion "no data at risk" was unfounded; the correct conclusion is "data exists
+   and RLS correctly denies anonymous reads". See §6.
+2. **BUG-6's evidence was mis-stated.** The first edition stored a fake session under
+   `sb-fbstwoqqhlaafarwcqiu-auth-token`. The app actually uses `vectisx-auth-token`, so
+   that test proved nothing. BUG-6 was real for a different and stronger reason — the
+   session was never read anywhere in the code — and it is now verified properly with the
+   correct storage key across signed-out, signed-in and logout states.
+3. **Test-harness false negatives.** Three assertions in `t2d.mjs`, three detectors in
+   `t3-iban.mjs` and two in `t4-data.mjs` were written against the *buggy* contract
+   (expecting a success message with no persistence, or grepping for the word "invalid"
+   inside an error message). They were corrected to assert the fixed behaviour; the
+   final run of every suite is green.
+
+## 10. Reproducing
 
 ```
-node .testing/t1-converter.mjs   # conversion maths and formatting
-node .testing/t1b.mjs            # swap + negative amount
-node .testing/t2d.mjs            # forms with browser validation intact
-node .testing/t3-iban.mjs        # IBAN accept/reject matrix
-node .testing/t4-data.mjs        # chart data, unsupported pairs, route access
-node .testing/t5-auth.mjs        # session visibility, unconfigured-env messages
-node .testing/t6-edge.mjs        # routes, boundaries, removed pages
-node .testing/t7-api.mjs         # provider choice, fallback, loading state
-node .testing/t8-regression.mjs  # chart-freeze regression suite (fails on current source)
-node .testing/t10b.mjs           # share / newsletter persistence
+npx tsc --noEmit            # type-check clean
+npm run build               # production build clean
+node .testing/t11-verify.mjs    # 14/14  — fixes verified through the UI
+node .testing/t8-regression.mjs #  4/4   — chart freeze
+node .testing/t3-iban.mjs       #  9/9   — IBAN accept/reject matrix
+node .testing/t2d.mjs           #  7/7   — no false success on any form
+node .testing/t4-data.mjs       # 10/10  — data, routes, access
+node .testing/t1-converter.mjs  #  8 pass, 1 not tested (browser-only check)
+node .testing/t7-api.mjs        #  4/4   — providers, fallback, loading
+node .testing/t12-authjs.mjs    #  6/6   — signed-in header + logout
 ```
 
-`t8-regression.mjs` currently reports **1/4 passing**; that is the expected result for the shipped code and is the measure of BUG-1.
+`t12-authjs.mjs` needs the bundle built with Supabase env vars present:
+
+```
+VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=... \
+  npx vite build --config .testing/vite.config.ts
+```

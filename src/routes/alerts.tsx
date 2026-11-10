@@ -4,6 +4,7 @@ import { currencies } from '@/data/currencies';
 import { formatRate } from '@/lib/rates';
 import { useLiveRates } from '@/lib/fx/RateProvider';
 import { wait } from '@/lib/utils';
+import { createRateAlert, SubmissionError } from '@/lib/submissions';
 import Accordion from '@/components/ui/Accordion';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import StepConnector from '@/components/ui/StepConnector';
@@ -44,6 +45,7 @@ export default function AlertsPage() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isUpdatingPair, setIsUpdatingPair] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const currentRate = fx.rate(fromCode, toCode);
 
   const handlePairChange = async (setter: (v: string) => void, val: string) => {
@@ -56,13 +58,34 @@ export default function AlertsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !targetRate || submitStatus === 'loading') return;
+
+    const parsed = Number(targetRate);
+    if (fromCode === toCode) {
+      setSubmitError('Choose two different currencies for the alert.');
+      return;
+    }
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setSubmitError('Enter a target rate greater than zero.');
+      return;
+    }
+
+    setSubmitError(null);
     setSubmitStatus('loading');
-    await wait(350);
-    setSubmitStatus('success');
-    window.setTimeout(() => {
-      setIsSuccess(true);
+    try {
+      // Resolves only once the alert is stored, so the success panel is
+      // never shown for an alert that was not saved.
+      await createRateAlert({ email, fromCurrency: fromCode, toCurrency: toCode, direction, targetRate: parsed });
+      setSubmitStatus('success');
+      window.setTimeout(() => {
+        setIsSuccess(true);
+        setSubmitStatus('idle');
+      }, 800);
+    } catch (error) {
       setSubmitStatus('idle');
-    }, 800);
+      setSubmitError(
+        error instanceof SubmissionError ? error.message : "We couldn't save your alert. Please try again.",
+      );
+    }
   };
 
   return (
@@ -207,9 +230,14 @@ export default function AlertsPage() {
                     id="alert-target-rate"
                     type="number"
                     step="0.0001"
+                    min="0.0001"
+                    max="1000000"
                     placeholder={`e.g. ${(currentRate * 1.02).toFixed(4)}`}
                     value={targetRate}
-                    onChange={(e) => setTargetRate(e.target.value)}
+                    onChange={(e) => {
+                      setTargetRate(e.target.value);
+                      setSubmitError(null);
+                    }}
                     required
                     className="input-field font-semibold tabular-nums"
                   />
@@ -229,6 +257,12 @@ export default function AlertsPage() {
                     className="input-field"
                   />
                 </div>
+
+                {submitError && (
+                  <p role="alert" className="text-[14px] text-loss">
+                    {submitError}
+                  </p>
+                )}
 
                 <ActionButton
                   type="submit"

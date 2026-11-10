@@ -1,22 +1,47 @@
 import { useState } from 'react';
 import { Mail, PhoneCall, MapPin, CheckCircle2 } from 'lucide-react';
 import ActionButton from '@/components/ui/ActionButton';
-import { wait } from '@/lib/utils';
+import { sendContactMessage, SubmissionError } from '@/lib/submissions';
+
+const CONTACT_TOPICS = [
+  'Personal Money Transfer Inquiry',
+  'Corporate Treasury / FX Dealing Desk',
+  'Developer API / Commercial Licensing',
+  'Verification & KYC Questions',
+  'Partnership / Media Inquiry',
+];
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  // These were previously uncontrolled, so the values were never read at all.
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [topic, setTopic] = useState(CONTACT_TOPICS[0]);
+  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitStatus === 'loading') return;
+
+    setSubmitError(null);
     setSubmitStatus('loading');
-    await wait(300);
-    setSubmitStatus('success');
-    window.setTimeout(() => {
-      setSubmitted(true);
+    try {
+      await sendContactMessage({ name, email, topic, message });
+      setSubmitStatus('success');
+      window.setTimeout(() => {
+        setSubmitted(true);
+        setSubmitStatus('idle');
+      }, 800);
+    } catch (error) {
       setSubmitStatus('idle');
-    }, 800);
+      setSubmitError(
+        error instanceof SubmissionError
+          ? error.message
+          : "We couldn't send your message. Please try again.",
+      );
+    }
   };
 
   return (
@@ -108,6 +133,9 @@ export default function ContactPage() {
                       id="contact-name"
                       type="text"
                       required
+                      maxLength={200}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       placeholder="Jane Doe"
                       className="input-field"
                     />
@@ -120,6 +148,8 @@ export default function ContactPage() {
                       id="contact-email"
                       type="email"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="jane@example.com"
                       className="input-field"
                     />
@@ -130,12 +160,17 @@ export default function ContactPage() {
                   <label htmlFor="contact-topic" className="block mb-1.5">
                     Topic / Inquiry Type
                   </label>
-                  <select id="contact-topic" className="select-field text-[14px] font-medium">
-                    <option>Personal Money Transfer Inquiry</option>
-                    <option>Corporate Treasury / FX Dealing Desk</option>
-                    <option>Developer API / Commercial Licensing</option>
-                    <option>Verification &amp; KYC Questions</option>
-                    <option>Partnership / Media Inquiry</option>
+                  <select
+                    id="contact-topic"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    className="select-field text-[14px] font-medium"
+                  >
+                    {CONTACT_TOPICS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -147,10 +182,19 @@ export default function ContactPage() {
                     id="contact-message"
                     rows={4}
                     required
+                    maxLength={5000}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Please describe how we can assist you..."
                     className="input-field"
                   />
                 </div>
+
+                {submitError && (
+                  <p role="alert" className="text-[14px] text-loss">
+                    {submitError}
+                  </p>
+                )}
 
                 <ActionButton
                   type="submit"
