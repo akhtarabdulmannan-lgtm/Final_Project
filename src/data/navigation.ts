@@ -24,31 +24,11 @@ export const personalNav: NavItem[] = [
     href: '/tools',
     children: [
       { label: 'All Financial Tools', href: '/tools', description: 'Calculators, tables, and utilities' },
-      { label: 'IBAN Calculator', href: '/tools/iban', description: 'Validate any IBAN instantly' },
       { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
     ],
   },
 ];
 
-export const businessNav: NavItem[] = [
-  {
-    label: 'FX Risk',
-    href: '/business/fx-risk',
-    children: [
-      { label: 'Forward Contracts', href: '/business/fx-risk', description: 'Lock in rates for the future' },
-      { label: 'Limit Orders', href: '/business/fx-risk#limit-orders', description: 'Set target rates' },
-      { label: 'FX Options', href: '/business/fx-risk#options', description: 'Flexible hedging' },
-    ],
-  },
-  {
-    label: 'Team',
-    href: '/business/team',
-  },
-  {
-    label: 'Integrations',
-    href: '/business/integrations',
-  },
-];
 
 export const footerLinks = {
   product: [
@@ -57,13 +37,6 @@ export const footerLinks = {
     { label: 'Charts', href: '/charts' },
     { label: 'Rate Alerts', href: '/alerts' },
     { label: 'Historical Rates', href: '/historical' },
-    { label: 'IBAN Calculator', href: '/tools/iban' },
-  ],
-  business: [
-    { label: 'Business Account', href: '/business' },
-    { label: 'FX Risk Management', href: '/business/fx-risk' },
-    { label: 'Integrations', href: '/business/integrations' },
-    { label: 'Team Roles', href: '/business/team' },
   ],
   company: [
     { label: 'About VectisX', href: '/about' },

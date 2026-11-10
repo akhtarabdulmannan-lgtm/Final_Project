@@ -394,105 +394,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Business Features */}
-      <section className="section-padding bg-surface-invert text-ink-invert">
-        <div className="container-vx">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <ScrollReveal className="lg:col-span-6 space-y-6">
-              <span className="badge-invert">VectisX Business Account</span>
-              <h2 className="text-ink-invert">Institutional Cross-Border Infrastructure</h2>
-              <p className="text-ink-invert-muted">
-                Scale your global operations with multi-currency corporate accounts, bulk payouts, forward contracts, and seamless ERP sync without setup or monthly maintenance fees.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {[
-                  {
-                    title: 'Bulk Conversion',
-                    desc: 'Price a whole list of currency exposures in one pass and export the converted figures as CSV.',
-                  },
-                  {
-                    title: 'Forward Contracts',
-                    desc: 'Lock in current FX rates for delivery up to 24 months in the future to hedge against volatility.',
-                  },
-                  {
-                    title: 'Role-Based Approvals',
-                    desc: 'Custom tiered permissions across Creator, Verifier, and Approver roles with audit trails.',
-                  },
-                  {
-                    title: 'ERP Integrations',
-                    desc: 'Native connectors for Microsoft Dynamics 365, Sage Intacct, and custom REST API hooks.',
-                  },
-                ].map((item) => (
-                  <div key={item.title} className="p-4 rounded-2xl bg-[#1A1F26] border border-line-invert">
-                    <h3 className="text-[18px] leading-[24px] text-ink-invert">{item.title}</h3>
-                    <p className="text-[14px] leading-[22px] text-ink-invert-muted mt-1">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-4 flex flex-wrap gap-3">
-                <Link href="/business" className="btn-invert">
-                  <span>Explore Business Account</span>
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="btn-ghost text-ink-invert border border-line-invert hover:bg-[#1A1F26] hover:text-ink-invert"
-                >
-                  Contact Sales Desk
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={100} className="lg:col-span-6 bg-[#1A1F26] p-8 rounded-2xl border border-line-invert space-y-6">
-              <h3 className="text-ink-invert">Institutional Scale</h3>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={17000} suffix="+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Active Business Clients</div>
-                </div>
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={17} prefix="$" suffix="B+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Annual FX Payment Volume</div>
-                </div>
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={190} suffix="+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Destination Countries</div>
-                </div>
-                <div>
-                  <div className="text-[32px] leading-[38px] font-heading font-semibold text-ink-invert">
-                    <CountUpValue value={30} suffix="+" duration={400} />
-                  </div>
-                  <div className="text-caption text-ink-invert-muted mt-1">Years Continuous FX Excellence</div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-line-invert">
-                <span className="text-caption text-ink-invert-muted block mb-3 font-medium uppercase tracking-wider">
-                  Trusted by Industry Leaders
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {['ShopFlow', 'CloudBooks', 'VistaCore', 'PayStream', 'GlobalTech', 'NexaPay'].map((client) => (
-                    <span
-                      key={client}
-                      className="px-3 py-1.5 rounded-lg bg-surface-invert border border-line-invert text-caption font-medium text-ink-invert"
-                    >
-                      {client}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
 
       {/* A-Z Honest Map Directory */}
       <section className="section-padding bg-bg">
@@ -507,14 +408,14 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 text-[14px]">
             {[
               ['A', 'Alerts, Accounts, API', '/alerts'],
-              ['B', 'Business, Bank Data', '/business'],
+              ['B', 'Bank Data, Base Rates', '/rates'],
               ['C', 'Converter, Charts, Tables', '/converter'],
               ['D', 'Daily Rates, Data API', '/rates'],
               ['E', 'Email Updates, ERP Sync', '/tools/email-updates'],
-              ['F', 'Forward Contracts, FX Risk', '/business/fx-risk'],
+              ['F', 'Forward Rates, FX History', '/historical'],
               ['G', 'Guaranteed Rates, Graphs', '/charts'],
               ['H', 'Historical Rates, Help', '/historical'],
-              ['I', 'IBAN Calculator, Integrations', '/tools/iban'],
+              ['I', 'Indices, Inverse Rates', '/tables'],
               ['L', 'Limit Orders, Live Rates', '/rates'],
               ['M', 'Multi-Currency, Mid-Market', '/register'],
               ['O', 'Options, Open Data', '/rates'],
@@ -522,7 +423,7 @@ export default function HomePage() {
               ['R', 'Rate Alerts, Referral', '/referral'],
               ['S', 'Saved Snapshots, Security', '/security'],
               ['T', 'Tools, Tables, Trends', '/tools'],
-              ['U', 'User Roles, Permissions', '/business/team'],
+              ['U', 'USD Pairs, Utilities', '/converter'],
               ['V', 'Volatility & Macro Blog', '/blog'],
             ].map(([letter, label, href], index) => (
               <ScrollReveal key={letter} delay={index * 25}>

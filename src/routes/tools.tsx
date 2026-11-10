@@ -11,12 +11,6 @@ export default function ToolsHubPage() {
       Icon: ArrowLeftRight,
     },
     {
-      title: 'IBAN Calculator & Validator',
-      desc: 'Verify International Bank Account Numbers, extract routing codes, and confirm ISO checksum formats.',
-      href: '/tools/iban',
-      Icon: ShieldCheck,
-    },
-    {
       title: 'Daily Market Email Updates',
       desc: 'Subscribe to daily or weekly macroeconomic briefings and central bank currency digests.',
       href: '/tools/email-updates',
