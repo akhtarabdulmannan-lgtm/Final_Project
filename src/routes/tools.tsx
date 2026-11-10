@@ -1,5 +1,5 @@
 import Link from '@/router/Link';
-import { ShieldCheck, Mail, Table, Calendar, Smartphone, ArrowLeftRight } from 'lucide-react';
+import { ShieldCheck, Mail, Table, Calendar, ArrowLeftRight } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function ToolsHubPage() {
@@ -33,12 +33,6 @@ export default function ToolsHubPage() {
       desc: 'Inspect daily closing prices, CSV exports, and volatility series dating back to 1998.',
       href: '/historical',
       Icon: Calendar,
-    },
-    {
-      title: 'VectisX Mobile Apps',
-      desc: 'Track live exchange rates, set instant alerts, and authorize transfers from iOS and Android.',
-      href: '/apps',
-      Icon: Smartphone,
     },
   ];
 
