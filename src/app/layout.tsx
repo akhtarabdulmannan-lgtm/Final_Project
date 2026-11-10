@@ -1,7 +1,46 @@
 import type { Metadata } from 'next';
+import localFont from 'next/font/local';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import './globals.css';
+
+const inter = localFont({
+  src: [
+    {
+      path: './fonts/inter-latin-400-normal.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/inter-latin-500-normal.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './fonts/inter-latin-600-normal.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+  display: 'swap',
+  preload: true,
+  variable: '--font-inter',
+  fallback: ['system-ui', 'sans-serif'],
+});
+
+const interTight = localFont({
+  src: [
+    {
+      path: './fonts/inter-tight-latin-600-normal.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+  display: 'swap',
+  preload: true,
+  variable: '--font-inter-tight',
+  fallback: ['system-ui', 'sans-serif'],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -36,9 +75,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased text-surface-900 bg-white">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-brand-500 focus:text-white focus:rounded-lg">
+    <html lang="en" className={`${inter.variable} ${interTight.variable}`}>
+      <body className="font-sans antialiased bg-bg text-ink-700">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2.5 focus:min-h-[44px] focus:inline-flex focus:items-center focus:bg-primary focus:text-primary-fg focus:rounded-lg focus:font-medium"
+        >
           Skip to main content
         </a>
         <Header />

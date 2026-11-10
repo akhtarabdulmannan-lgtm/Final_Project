@@ -2,23 +2,29 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, TrendingUp, Calendar, ArrowRight, Bell, Send, ShieldCheck } from 'lucide-react';
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
+import LiveRateValue from '@/components/ui/LiveRateValue';
+import LiveUpdatedBadge from '@/components/ui/LiveUpdatedBadge';
+import DeltaChip from '@/components/ui/DeltaChip';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import { ChartSkeleton } from '@/components/ui/Skeleton';
 import { getCurrency, currencies } from '@/data/currencies';
-import { getRate, formatRate, formatAmount, get24hChange, getHistoricalRates, get24hHigh, get24hLow } from '@/lib/rates';
+import { getTickedRate, formatRate, get24hChange, getHistoricalRates, get24hHigh, get24hLow } from '@/lib/rates';
+import { useLiveTick } from '@/hooks';
+import { wait } from '@/lib/utils';
 import { useState, useMemo } from 'react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export default function DynamicPairPage() {
   const params = useParams();
   const pairParam = (params?.pair as string) || 'usd-to-eur';
-  
-  // Parse pairParam e.g. "usd-to-eur"
   const parts = pairParam.split('-to-');
   const fromCode = (parts[0] || 'USD').toUpperCase();
   const toCode = (parts[1] || 'EUR').toUpperCase();
 
   const [timeRange, setTimeRange] = useState<'7D' | '30D' | '90D' | '1Y'>('30D');
+  const [chartLoading, setChartLoading] = useState(false);
+  const { tick, utcTime } = useLiveTick(7000);
 
   const daysMap = {
     '7D': 7,
@@ -30,7 +36,7 @@ export default function DynamicPairPage() {
   const fromCurrency = getCurrency(fromCode) || { code: fromCode, name: fromCode, symbol: '$', flag: '🌐', region: 'Global' };
   const toCurrency = getCurrency(toCode) || { code: toCode, name: toCode, symbol: '€', flag: '🌐', region: 'Global' };
 
-  const currentRate = getRate(fromCode, toCode);
+  const currentRate = getTickedRate(fromCode, toCode, tick);
   const inverseRate = 1 / currentRate;
   const change24h = get24hChange(fromCode, toCode);
   const high24h = get24hHigh(fromCode, toCode);
@@ -41,37 +47,62 @@ export default function DynamicPairPage() {
   }, [fromCode, toCode, timeRange]);
 
   const relatedPairs = currencies
-    .filter(c => c.code !== fromCode && c.code !== toCode)
+    .filter((c) => c.code !== fromCode && c.code !== toCode)
     .slice(0, 6)
-    .map(c => [fromCode, c.code]);
+    .map((c) => [fromCode, c.code]);
+
+  const handleRangeChange = async (range: '7D' | '30D' | '90D' | '1Y') => {
+    setChartLoading(true);
+    setTimeRange(range);
+    await wait(220);
+    setChartLoading(false);
+  };
 
   return (
-    <div className="min-h-screen bg-surface-50 pb-20">
+    <div className="min-h-screen bg-bg pb-16">
       {/* Breadcrumb Bar */}
-      <div className="bg-white border-b border-surface-200">
-        <div className="container-vx py-3 flex items-center gap-2 text-xs text-surface-500">
-          <Link href="/" className="hover:text-brand-500">Home</Link>
-          <span>/</span>
-          <Link href="/converter" className="hover:text-brand-500">Converter</Link>
-          <span>/</span>
-          <span className="font-semibold text-surface-900">{fromCode} to {toCode}</span>
+      <div className="bg-surface border-b border-line">
+        <div className="container-vx py-2 flex items-center gap-2 text-caption text-ink-500">
+          <Link href="/" className="min-h-[44px] inline-flex items-center hover:text-ink">
+            Home
+          </Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/converter" className="min-h-[44px] inline-flex items-center hover:text-ink">
+            Converter
+          </Link>
+          <span aria-hidden="true">/</span>
+          <span className="font-medium text-ink">
+            {fromCode} to {toCode}
+          </span>
         </div>
       </div>
 
       {/* Header & Converter */}
-      <section className="bg-gradient-to-b from-brand-950 via-brand-900 to-brand-800 text-white py-12">
+      <section className="bg-surface border-b border-line py-12">
         <div className="container-vx">
-          <div className="max-w-3xl mb-8">
-            <div className="flex items-center gap-2 text-teal-400 text-xs font-semibold mb-2">
-              <span className="text-xl">{fromCurrency.flag}</span>
-              <span>1 {fromCode} = {formatRate(currentRate)} {toCode}</span>
-              <span className="text-xl">{toCurrency.flag}</span>
+          <div className="max-w-3xl mb-8 space-y-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="badge-neutral tabular-nums">
+                <span aria-hidden="true">{fromCurrency.flag}</span>
+                <span>
+                  1 {fromCode} ={' '}
+                  <LiveRateValue
+                    value={currentRate}
+                    pairKey={`${fromCode}-${toCode}`}
+                    formatted={formatRate(currentRate)}
+                  />{' '}
+                  {toCode}
+                </span>
+                <span aria-hidden="true">{toCurrency.flag}</span>
+              </span>
+              <DeltaChip change={change24h} suffix="(24h)" />
+              <LiveUpdatedBadge utcTime={utcTime} />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight">
+            <h1>
               Convert {fromCurrency.name} to {toCurrency.name}
             </h1>
-            <p className="text-surface-300 text-sm mt-2">
-              Live mid-market exchange rate between {fromCode} and {toCode}. Updated in real time with bank-beating transfer options.
+            <p className="text-ink-500">
+              Live mid-market exchange rate between {fromCode} and {toCode}. Updated continuously with transparent transfer options.
             </p>
           </div>
 
@@ -83,109 +114,138 @@ export default function DynamicPairPage() {
 
       {/* Chart Section */}
       <section className="py-12">
-        <div className="container-vx">
-          <div className="card p-6 bg-white mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-surface-100 gap-4">
-              <div>
-                <span className="text-xs font-semibold text-brand-500 uppercase tracking-wider">Historical Trend</span>
-                <h2 className="text-xl sm:text-2xl font-heading font-bold text-surface-900 mt-1">
-                  {fromCode} to {toCode} Exchange Rate Chart
-                </h2>
+        <div className="container-vx space-y-8">
+          {chartLoading ? (
+            <ChartSkeleton />
+          ) : (
+            <div className="card p-6 bg-surface">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-line gap-4">
+                <div>
+                  <span className="text-caption font-medium text-ink-500 uppercase tracking-wider">
+                    Historical Trend
+                  </span>
+                  <h2 className="mt-1">
+                    {fromCode} to {toCode} Exchange Rate Chart
+                  </h2>
+                </div>
+
+                {/* Time Range Selector */}
+                <div className="flex rounded-xl bg-surface-subtle p-1 gap-1" role="group" aria-label="Chart time range">
+                  {(['7D', '30D', '90D', '1Y'] as const).map((range) => (
+                    <button
+                      key={range}
+                      type="button"
+                      onClick={() => handleRangeChange(range)}
+                      aria-pressed={timeRange === range}
+                      className={`px-3 min-h-[44px] text-[13px] font-medium rounded-lg transition-colors duration-150 tabular-nums ${
+                        timeRange === range
+                          ? 'bg-surface text-ink border border-line'
+                          : 'text-ink-500 hover:text-ink'
+                      }`}
+                    >
+                      {range}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Time Range Selector */}
-              <div className="flex rounded-xl bg-surface-100 p-1">
-                {(['7D', '30D', '90D', '1Y'] as const).map(range => (
-                  <button
-                    key={range}
-                    onClick={() => setTimeRange(range)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                      timeRange === range
-                        ? 'bg-white text-brand-500 shadow-sm'
-                        : 'text-surface-600 hover:text-surface-900'
-                    }`}
-                  >
-                    {range}
-                  </button>
-                ))}
+              <div className="h-80 w-full pt-6">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E1E5EC" />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: '#4B5565', fontSize: 12, fontFamily: 'var(--font-inter)' }}
+                      tickFormatter={(str) => str.slice(5)}
+                    />
+                    <YAxis
+                      domain={['auto', 'auto']}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: '#4B5565', fontSize: 12, fontFamily: 'var(--font-inter)' }}
+                      tickFormatter={(val) => formatRate(val)}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#111418',
+                        borderRadius: '12px',
+                        border: '1px solid #282E38',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                      formatter={(val: number) => [`${formatRate(val)} ${toCode}`, 'Rate']}
+                      labelFormatter={(label) => `Date: ${label}`}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="rate"
+                      stroke="#111418"
+                      strokeWidth={2}
+                      fill="#111418"
+                      fillOpacity={0.07}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </div>
-
-            {/* Chart Area */}
-            <div className="h-80 w-full pt-6">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="rateGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0052FF" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="#0052FF" stopOpacity={0.0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{ fill: '#64748B', fontSize: 11 }}
-                    tickFormatter={(str) => str.slice(5)}
-                  />
-                  <YAxis 
-                    domain={['auto', 'auto']} 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{ fill: '#64748B', fontSize: 11 }}
-                    tickFormatter={(val) => formatRate(val)}
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#0A1628', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
-                    formatter={(val: number) => [formatRate(val) + ` ${toCode}`, 'Rate']}
-                    labelFormatter={(label) => `Date: ${label}`}
-                  />
-                  <Area type="monotone" dataKey="rate" stroke="#0052FF" strokeWidth={2.5} fillOpacity={1} fill="url(#rateGradient)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          )}
 
           {/* Rate Statistics */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="card p-4 bg-white">
-              <span className="text-xs text-surface-400 block mb-1">Current Mid-Market</span>
-              <span className="text-xl font-bold font-mono text-surface-900">{formatRate(currentRate)}</span>
-              <span className="text-[10px] text-teal-600 block mt-1">Live Interbank</span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="card p-4">
+              <span className="text-caption text-ink-500 block mb-1">Current Mid-Market</span>
+              <span className="text-[20px] leading-[28px] font-semibold text-ink tabular-nums">
+                {formatRate(currentRate)}
+              </span>
+              <span className="text-caption text-ink-500 block mt-1">Live Interbank</span>
             </div>
-            <div className="card p-4 bg-white">
-              <span className="text-xs text-surface-400 block mb-1">24h High</span>
-              <span className="text-xl font-bold font-mono text-surface-900">{formatRate(high24h)}</span>
-              <span className="text-[10px] text-surface-400 block mt-1">Daily peak</span>
+            <div className="card p-4">
+              <span className="text-caption text-ink-500 block mb-1">24h High</span>
+              <span className="text-[20px] leading-[28px] font-semibold text-ink tabular-nums">
+                {formatRate(high24h)}
+              </span>
+              <span className="text-caption text-ink-500 block mt-1">Daily peak</span>
             </div>
-            <div className="card p-4 bg-white">
-              <span className="text-xs text-surface-400 block mb-1">24h Low</span>
-              <span className="text-xl font-bold font-mono text-surface-900">{formatRate(low24h)}</span>
-              <span className="text-[10px] text-surface-400 block mt-1">Daily floor</span>
+            <div className="card p-4">
+              <span className="text-caption text-ink-500 block mb-1">24h Low</span>
+              <span className="text-[20px] leading-[28px] font-semibold text-ink tabular-nums">
+                {formatRate(low24h)}
+              </span>
+              <span className="text-caption text-ink-500 block mt-1">Daily floor</span>
             </div>
-            <div className="card p-4 bg-white">
-              <span className="text-xs text-surface-400 block mb-1">Inverse Rate</span>
-              <span className="text-xl font-bold font-mono text-surface-900">{formatRate(inverseRate)}</span>
-              <span className="text-[10px] text-surface-400 block mt-1">1 {toCode} = {fromCode}</span>
+            <div className="card p-4">
+              <span className="text-caption text-ink-500 block mb-1">Inverse Rate</span>
+              <span className="text-[20px] leading-[28px] font-semibold text-ink tabular-nums">
+                {formatRate(inverseRate)}
+              </span>
+              <span className="text-caption text-ink-500 block mt-1">
+                1 {toCode} = {fromCode}
+              </span>
             </div>
           </div>
 
           {/* Related Currency Pairs */}
-          <div className="card p-6 bg-white">
-            <h3 className="font-heading font-bold text-lg text-surface-900 mb-4">
-              More {fromCode} Conversions
-            </h3>
+          <div className="card p-6">
+            <h3 className="mb-4">More {fromCode} Conversions</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {relatedPairs.map(([f, t]) => (
-                <Link
-                  key={`${f}-${t}`}
-                  href={`/converter/${f.toLowerCase()}-to-${t.toLowerCase()}`}
-                  className="p-3 rounded-xl border border-surface-100 hover:border-brand-500/30 hover:bg-surface-50 flex items-center justify-between transition-colors"
-                >
-                  <span className="font-semibold text-sm text-surface-800">{f} to {t}</span>
-                  <span className="font-mono text-xs text-surface-500">{formatRate(getRate(f, t))}</span>
-                </Link>
+              {relatedPairs.map(([f, t], index) => (
+                <ScrollReveal key={`${f}-${t}`} delay={index * 50}>
+                  <Link
+                    href={`/converter/${f.toLowerCase()}-to-${t.toLowerCase()}`}
+                    aria-label={`Convert ${f} to ${t}`}
+                    className="card-interactive p-4 flex items-center justify-between"
+                  >
+                    <span className="font-medium text-[15px] text-ink">
+                      {f} to {t}
+                    </span>
+                    <span className="text-[14px] text-ink-500 tabular-nums">
+                      {formatRate(getTickedRate(f, t, tick))}
+                    </span>
+                  </Link>
+                </ScrollReveal>
               ))}
             </div>
           </div>

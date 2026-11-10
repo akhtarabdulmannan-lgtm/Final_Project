@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { CheckCircle2, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function ApiPricingPage() {
   const tiers = [
@@ -17,10 +18,10 @@ export default function ApiPricingPage() {
         '220+ Currencies & Metals',
         'Standard Email Developer Support',
         'JSON REST API Format',
-        'Standard Rate Blender Filtering'
+        'Standard Rate Blender Filtering',
       ],
       highlighted: false,
-      cta: 'Choose Core'
+      cta: 'Choose Core',
     },
     {
       name: 'Intermediate',
@@ -34,27 +35,27 @@ export default function ApiPricingPage() {
         '220+ Currencies, Metals & Selected Crypto',
         'Historical Rates back to 1998',
         'Monthly Averages & Volatility Indices',
-        'Priority Technical Support'
+        'Priority Technical Support',
       ],
       highlighted: true,
-      cta: 'Choose Intermediate'
+      cta: 'Choose Intermediate',
     },
     {
       name: 'Prime',
       price: '$4,499',
       period: 'per year',
       requests: '200,000 req / mo',
-      desc: 'High-frequency transactional systems, automated trading bots, and mid-tier multi-entity enterprise ERPs.',
+      desc: 'High-frequency transactional systems, automated trading workflows, and mid-tier multi-entity ERPs.',
       features: [
         '15-Minute rate frequency updates',
         'Unlimited Base Currency anchors',
         'Bid & Ask Real-Time Spreads (Beta)',
         'Central Bank Benchmark Rate Feeds',
         'Dedicated Technical Account Manager',
-        '99.9% Uptime Guarantee'
+        '99.9% Uptime Guarantee',
       ],
       highlighted: false,
-      cta: 'Choose Prime'
+      cta: 'Choose Prime',
     },
     {
       name: 'Enterprise',
@@ -68,11 +69,11 @@ export default function ApiPricingPage() {
         'Custom Margin & Source Rate Overrides',
         'Multi-Entity License Allowance',
         '99.99% Uptime SLA with Financial Backing',
-        'Direct Engineering Phone Support & Slack'
+        'Direct Engineering Phone Support & Slack',
       ],
       highlighted: false,
-      cta: 'Contact Sales'
-    }
+      cta: 'Contact Sales',
+    },
   ];
 
   const addons = [
@@ -83,107 +84,107 @@ export default function ApiPricingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="badge-brand">Commercial API Licensing</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            Predictable, Transparent API Pricing
-          </h1>
-          <p className="text-surface-600 text-sm mt-3 leading-relaxed">
-            Choose the update frequency and query quota tailored for your application. All plans include full SDK access and proprietary Rate Blender filtering.
+        <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+          <span className="badge-neutral">Commercial API Licensing</span>
+          <h1>Predictable, Transparent API Pricing</h1>
+          <p className="text-ink-500 mx-auto">
+            Choose the update frequency and query quota tailored for your application. All plans include full SDK access and Rate Blender filtering.
           </p>
         </div>
 
         {/* 4 Tiers */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {tiers.map(t => (
-            <div 
-              key={t.name}
-              className={`rounded-3xl p-6 flex flex-col justify-between transition-all ${
-                t.highlighted 
-                  ? 'bg-brand-900 text-white shadow-2xl ring-2 ring-brand-500 scale-105' 
-                  : 'bg-white text-surface-900 border border-surface-200 shadow-sm'
-              }`}
-            >
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-bold text-lg font-heading">{t.name}</h3>
-                  {t.highlighted && (
-                    <span className="text-[10px] font-bold text-teal-300 bg-teal-900/60 px-2 py-0.5 rounded-full uppercase">
-                      Most Popular
+          {tiers.map((t, idx) => (
+            <ScrollReveal key={t.name} delay={idx * 50}>
+              <div
+                className={`rounded-2xl p-6 flex flex-col justify-between h-full border transition-[border-color] duration-150 ${
+                  t.highlighted
+                    ? 'bg-surface-invert text-ink-invert border-line-invert'
+                    : 'bg-surface text-ink border-line hover:border-line-strong'
+                }`}
+              >
+                <div>
+                  <div className="flex justify-between items-center gap-2 mb-3">
+                    <h3 className={t.highlighted ? 'text-ink-invert' : 'text-ink'}>{t.name}</h3>
+                    {t.highlighted && <span className="badge-invert">Most Popular</span>}
+                  </div>
+                  <div className="mb-3 tabular-nums">
+                    <span className="text-[30px] leading-[36px] font-heading font-semibold">{t.price}</span>
+                    <span className={`text-caption ml-1.5 ${t.highlighted ? 'text-ink-invert-muted' : 'text-ink-500'}`}>
+                      {t.period}
                     </span>
-                  )}
-                </div>
-                <div className="mb-4">
-                  <span className="text-3xl font-extrabold font-mono">{t.price}</span>
-                  <span className={`text-xs ml-1 ${t.highlighted ? 'text-surface-300' : 'text-surface-500'}`}>{t.period}</span>
-                </div>
-                <div className={`text-xs font-semibold px-2.5 py-1 rounded-lg mb-4 inline-block ${
-                  t.highlighted ? 'bg-white/10 text-teal-300' : 'bg-surface-100 text-surface-700'
-                }`}>
-                  {t.requests}
-                </div>
-                <p className={`text-xs mb-6 leading-relaxed ${t.highlighted ? 'text-surface-300' : 'text-surface-600'}`}>
-                  {t.desc}
-                </p>
+                  </div>
+                  <div
+                    className={`text-caption font-medium px-3 py-1 rounded-lg mb-4 inline-block tabular-nums ${
+                      t.highlighted ? 'bg-[#1A1F26] text-ink-invert border border-line-invert' : 'bg-surface-subtle text-ink-700 border border-line'
+                    }`}
+                  >
+                    {t.requests}
+                  </div>
+                  <p className={`text-[14px] leading-[22px] mb-5 ${t.highlighted ? 'text-ink-invert-muted' : 'text-ink-500'}`}>
+                    {t.desc}
+                  </p>
 
-                <div className="space-y-2.5 border-t pt-4 border-surface-100/20 text-xs">
-                  {t.features.map((f, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <CheckCircle2 className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${t.highlighted ? 'text-teal-400' : 'text-brand-500'}`} />
-                      <span className={t.highlighted ? 'text-surface-200' : 'text-surface-700'}>{f}</span>
-                    </div>
-                  ))}
+                  <div className={`space-y-2.5 border-t pt-4 text-[13px] leading-[18px] ${t.highlighted ? 'border-line-invert' : 'border-line'}`}>
+                    {t.features.map((f) => (
+                      <div key={f} className="flex items-start gap-2">
+                        <CheckCircle2
+                          className={`w-4 h-4 flex-shrink-0 mt-0.5 ${t.highlighted ? 'text-ink-invert' : 'text-ink'}`}
+                          aria-hidden="true"
+                        />
+                        <span className={t.highlighted ? 'text-ink-invert-muted' : 'text-ink-700'}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-8">
+                  <Link
+                    href={t.name === 'Enterprise' ? '/contact' : '/register'}
+                    className={`w-full justify-center ${t.highlighted ? 'btn-invert' : 'btn-primary'}`}
+                  >
+                    {t.cta}
+                  </Link>
                 </div>
               </div>
-
-              <div className="pt-8">
-                <Link
-                  href={t.name === 'Enterprise' ? '/contact' : '/register'}
-                  className={`w-full justify-center btn-sm ${
-                    t.highlighted ? 'btn-teal' : 'btn-primary'
-                  }`}
-                >
-                  {t.cta}
-                </Link>
-              </div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
 
         {/* Add-ons */}
-        <div className="card p-8 bg-white mb-16">
-          <div className="max-w-xl mb-6">
-            <span className="badge-teal">Modular Capabilities</span>
-            <h3 className="text-2xl font-bold font-heading text-surface-900 mt-1">
-              Enterprise Add-On Options
-            </h3>
-            <p className="text-xs text-surface-500 mt-1">
+        <div className="card p-8 bg-surface mb-12">
+          <div className="max-w-xl mb-6 space-y-2">
+            <span className="badge-neutral">Modular Capabilities</span>
+            <h2>Enterprise Add-On Options</h2>
+            <p className="text-ink-500">
               Enhance any tier with specialized regulatory rate data and subsidiary licensing rights.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {addons.map(a => (
-              <div key={a.name} className="p-4 rounded-2xl bg-surface-50 border border-surface-200 space-y-2">
-                <div className="font-bold text-surface-900 text-sm">{a.name}</div>
-                <div className="text-brand-600 font-bold font-mono text-xs">{a.price}</div>
-                <p className="text-[11px] text-surface-500 leading-relaxed">{a.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {addons.map((a) => (
+              <div key={a.name} className="p-4 rounded-xl bg-surface-subtle border border-line space-y-2">
+                <div className="font-semibold text-ink text-[15px]">{a.name}</div>
+                <div className="text-ink font-semibold text-[14px] tabular-nums">{a.price}</div>
+                <p className="text-caption text-ink-500">{a.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Free Sandbox CTA */}
-        <div className="card p-8 bg-gradient-to-r from-brand-900 to-brand-950 text-white flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-2xl font-bold font-heading">Start with a 14-day free developer trial</h3>
-            <p className="text-xs text-surface-300 mt-1">Get immediate test credentials. No credit card required.</p>
+        <div className="card-invert p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h2 className="text-ink-invert">Start with a 14-day free developer trial</h2>
+            <p className="text-ink-invert-muted">
+              Get immediate test credentials. No credit card required.
+            </p>
           </div>
-          <Link href="/register" className="btn-teal whitespace-nowrap">
-            Generate Free Sandbox Key <ArrowRight className="w-4 h-4 ml-1" />
+          <Link href="/register" className="btn-invert whitespace-nowrap">
+            <span>Generate Free Sandbox Key</span>
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>
       </div>

@@ -13,37 +13,37 @@ export default function LicensesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-50 py-12 sm:py-20">
+    <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
-        <div className="max-w-3xl mb-12">
-          <span className="badge-brand">Regulatory Compliance</span>
-          <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-surface-900 mt-2">
-            State & International Money Transmitter Licenses
-          </h1>
-          <p className="text-surface-600 text-base mt-3 leading-relaxed">
+        <div className="max-w-3xl mb-12 space-y-3">
+          <span className="badge-neutral">Regulatory Compliance</span>
+          <h1>State &amp; International Money Transmitter Licenses</h1>
+          <p className="text-ink-500">
             VectisX Financial Inc. operates under strict regulatory supervision and holds authorized money transmission licenses across federal, state, and international banking jurisdictions.
           </p>
         </div>
 
-        <div className="card p-6 bg-white overflow-hidden shadow-sm">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-surface-50 text-surface-500 uppercase border-b border-surface-200">
-                <th className="py-3 px-4 font-bold">Jurisdiction</th>
-                <th className="py-3 px-4 font-bold">Regulatory Authority</th>
-                <th className="py-3 px-4 font-bold font-mono">License Number</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-100">
-              {states.map((s, i) => (
-                <tr key={i} className="hover:bg-surface-50">
-                  <td className="py-3 px-4 font-bold text-surface-900">{s.state}</td>
-                  <td className="py-3 px-4 text-surface-600">{s.agency}</td>
-                  <td className="py-3 px-4 font-mono font-bold text-brand-600">{s.id}</td>
+        <div className="card p-0 bg-surface overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-surface-subtle text-caption text-ink-500 uppercase border-b border-line">
+                  <th className="py-3.5 px-6 font-medium">Jurisdiction</th>
+                  <th className="py-3.5 px-6 font-medium">Regulatory Authority</th>
+                  <th className="py-3.5 px-6 font-medium">License Number</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-line tabular-nums">
+                {states.map((s) => (
+                  <tr key={s.state} className="hover:bg-surface-subtle/60">
+                    <td className="py-3.5 px-6 font-semibold text-ink">{s.state}</td>
+                    <td className="py-3.5 px-6 text-ink-700">{s.agency}</td>
+                    <td className="py-3.5 px-6 font-medium text-ink">{s.id}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

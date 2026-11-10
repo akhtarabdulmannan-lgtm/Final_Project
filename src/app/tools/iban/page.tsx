@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { ShieldCheck, CheckCircle2, AlertCircle, Building2, HelpCircle } from 'lucide-react';
-import Accordion from '@/components/ui/Accordion';
+import { ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import ActionButton from '@/components/ui/ActionButton';
+import { wait } from '@/lib/utils';
 
 const ibanCountries = [
   { code: 'GB', country: 'United Kingdom', length: 22, example: 'GB29 NWBK 6016 1331 9268 19' },
@@ -19,149 +20,170 @@ const ibanCountries = [
 
 export default function IbanCalculatorPage() {
   const [ibanInput, setIbanInput] = useState('');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [validationResult, setValidationResult] = useState<{
     isValid: boolean;
     country?: string;
     checkDigits?: string;
     bankCode?: string;
-    sortCode?: string;
     accountNumber?: string;
     message?: string;
   } | null>(null);
 
-  const handleValidate = (e: React.FormEvent) => {
+  const handleValidate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitStatus === 'loading') return;
+    setSubmitStatus('loading');
+    await wait(240);
+
     const clean = ibanInput.replace(/\s+/g, '').toUpperCase();
 
     if (clean.length < 15 || clean.length > 34) {
       setValidationResult({
         isValid: false,
-        message: 'Invalid IBAN length. Standard international IBANs are between 15 and 34 alphanumeric characters.'
+        message: 'Invalid IBAN length. Standard international IBANs are between 15 and 34 alphanumeric characters.',
       });
+      setSubmitStatus('idle');
       return;
     }
 
     const countryCode = clean.slice(0, 2);
     const checkDigits = clean.slice(2, 4);
     const bankCode = clean.slice(4, 8);
-    const sortCode = clean.slice(8, 14);
     const accountNumber = clean.slice(14);
-
-    const countryMatch = ibanCountries.find(c => c.code === countryCode);
+    const countryMatch = ibanCountries.find((c) => c.code === countryCode);
 
     setValidationResult({
       isValid: true,
       country: countryMatch ? countryMatch.country : `${countryCode} (ISO Country Code)`,
       checkDigits,
       bankCode,
-      sortCode: sortCode || 'N/A',
       accountNumber: accountNumber || clean.slice(8),
-      message: 'Valid IBAN checksum and structure format.'
+      message: 'Valid IBAN checksum and structure format.',
     });
+
+    setSubmitStatus('success');
+    window.setTimeout(() => setSubmitStatus('idle'), 800);
   };
 
   return (
-    <div className="min-h-screen bg-surface-50 py-10 sm:py-16">
+    <div className="min-h-screen bg-bg py-10 sm:py-16">
       <div className="container-vx">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="badge-brand">Banking Utilities</span>
-          <h1 className="text-3xl sm:text-4xl font-heading font-extrabold text-surface-900 mt-2">
-            IBAN Calculator & Validator
-          </h1>
-          <p className="text-sm text-surface-500 mt-2">
+        <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
+          <span className="badge-neutral">Banking Utilities</span>
+          <h1>IBAN Calculator &amp; Validator</h1>
+          <p className="text-ink-500 mx-auto">
             Check, validate, and extract routing specifications for International Bank Account Numbers in seconds.
           </p>
         </div>
 
         {/* Input Form */}
-        <div className="max-w-xl mx-auto card p-6 sm:p-8 bg-white shadow-xl mb-12">
+        <div className="max-w-xl mx-auto card p-6 sm:p-8 bg-surface mb-12">
           <form onSubmit={handleValidate} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-surface-600 block mb-1">
+              <label htmlFor="iban-input" className="block mb-1.5">
                 Enter International Bank Account Number (IBAN)
               </label>
               <input
+                id="iban-input"
                 type="text"
                 value={ibanInput}
                 onChange={(e) => setIbanInput(e.target.value)}
                 placeholder="e.g. GB29 NWBK 6016 1331 9268 19"
                 required
-                className="input-field font-mono text-base uppercase"
+                className="input-field uppercase tabular-nums"
               />
             </div>
 
-            <button type="submit" className="btn-primary w-full justify-center btn-lg">
-              <ShieldCheck className="w-4 h-4" /> Validate IBAN Instantly
-            </button>
+            <ActionButton
+              type="submit"
+              status={submitStatus}
+              successLabel="Validated"
+              className="w-full justify-center btn-lg"
+            >
+              <span className="inline-flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" aria-hidden="true" />
+                <span>Validate IBAN Instantly</span>
+              </span>
+            </ActionButton>
           </form>
 
           {validationResult && (
-            <div className={`mt-6 p-5 rounded-2xl border ${
-              validationResult.isValid ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50 border-rose-200'
-            }`}>
+            <div
+              className={`mt-6 p-5 rounded-2xl border ${
+                validationResult.isValid
+                  ? 'bg-gain-bg border-gain-border'
+                  : 'bg-loss-bg border-loss-border'
+              }`}
+            >
               <div className="flex items-center gap-2 mb-3">
                 {validationResult.isValid ? (
                   <>
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                    <span className="font-bold text-emerald-900 text-sm">Valid IBAN Structure</span>
+                    <CheckCircle2 className="w-5 h-5 text-gain" aria-hidden="true" />
+                    <span className="font-semibold text-gain text-[15px]">Valid IBAN Structure</span>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="w-5 h-5 text-rose-600" />
-                    <span className="font-bold text-rose-900 text-sm">Validation Error</span>
+                    <AlertCircle className="w-5 h-5 text-loss" aria-hidden="true" />
+                    <span className="font-semibold text-loss text-[15px]">Validation Error</span>
                   </>
                 )}
               </div>
 
               {validationResult.isValid ? (
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="p-2.5 bg-white rounded-xl border border-surface-100">
-                    <span className="text-surface-400 block">Issuing Country</span>
-                    <strong className="text-surface-900 text-sm">{validationResult.country}</strong>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-caption">
+                  <div className="p-3 bg-surface rounded-xl border border-line">
+                    <span className="text-ink-500 block">Issuing Country</span>
+                    <strong className="text-ink text-[14px] font-semibold">
+                      {validationResult.country}
+                    </strong>
                   </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-surface-100">
-                    <span className="text-surface-400 block">Check Digits</span>
-                    <strong className="text-surface-900 text-sm font-mono">{validationResult.checkDigits}</strong>
+                  <div className="p-3 bg-surface rounded-xl border border-line">
+                    <span className="text-ink-500 block">Check Digits</span>
+                    <strong className="text-ink text-[14px] font-semibold tabular-nums">
+                      {validationResult.checkDigits}
+                    </strong>
                   </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-surface-100">
-                    <span className="text-surface-400 block">Bank Identifier Code</span>
-                    <strong className="text-surface-900 text-sm font-mono">{validationResult.bankCode}</strong>
+                  <div className="p-3 bg-surface rounded-xl border border-line">
+                    <span className="text-ink-500 block">Bank Identifier Code</span>
+                    <strong className="text-ink text-[14px] font-semibold tabular-nums">
+                      {validationResult.bankCode}
+                    </strong>
                   </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-surface-100">
-                    <span className="text-surface-400 block">Account Number (BBAN)</span>
-                    <strong className="text-surface-900 text-sm font-mono truncate block">{validationResult.accountNumber}</strong>
+                  <div className="p-3 bg-surface rounded-xl border border-line">
+                    <span className="text-ink-500 block">Account Number (BBAN)</span>
+                    <strong className="text-ink text-[14px] font-semibold truncate block tabular-nums">
+                      {validationResult.accountNumber}
+                    </strong>
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-rose-700">{validationResult.message}</p>
+                <p className="text-[14px] text-loss">{validationResult.message}</p>
               )}
             </div>
           )}
         </div>
 
-        {/* IBAN Format Specification Table */}
-        <div className="card p-6 bg-white">
-          <h3 className="font-heading font-bold text-lg text-surface-900 mb-4">
-            International IBAN Lengths & Formats
-          </h3>
+        {/* IBAN Format Table */}
+        <div className="card p-6 bg-surface">
+          <h3 className="mb-4">International IBAN Lengths &amp; Formats</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-50 text-surface-500 uppercase border-b border-surface-200">
-                  <th className="py-3 px-4 font-bold">Country</th>
-                  <th className="py-3 px-4 font-bold">Code</th>
-                  <th className="py-3 px-4 font-bold">Characters</th>
-                  <th className="py-3 px-4 font-bold font-mono">Example IBAN Pattern</th>
+                <tr className="bg-surface-subtle text-caption text-ink-500 uppercase border-b border-line">
+                  <th className="py-3 px-4 font-medium">Country</th>
+                  <th className="py-3 px-4 font-medium">Code</th>
+                  <th className="py-3 px-4 font-medium">Characters</th>
+                  <th className="py-3 px-4 font-medium">Example IBAN Pattern</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-100">
-                {ibanCountries.map(c => (
-                  <tr key={c.code} className="hover:bg-surface-50">
-                    <td className="py-3 px-4 font-semibold text-surface-900">{c.country}</td>
-                    <td className="py-3 px-4 font-mono font-bold text-brand-600">{c.code}</td>
-                    <td className="py-3 px-4 font-mono">{c.length} chars</td>
-                    <td className="py-3 px-4 font-mono text-surface-600">{c.example}</td>
+              <tbody className="divide-y divide-line tabular-nums">
+                {ibanCountries.map((c) => (
+                  <tr key={c.code} className="hover:bg-surface-subtle/60">
+                    <td className="py-3 px-4 font-medium text-ink">{c.country}</td>
+                    <td className="py-3 px-4 font-semibold text-ink">{c.code}</td>
+                    <td className="py-3 px-4 text-ink-700">{c.length} chars</td>
+                    <td className="py-3 px-4 text-ink-500">{c.example}</td>
                   </tr>
                 ))}
               </tbody>
