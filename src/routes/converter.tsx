@@ -87,8 +87,8 @@ export default function ConverterPage() {
               },
               {
                 step: '3',
-                title: 'Analyze or Transfer',
-                desc: 'Inspect 10-year historical charts, set free target rate notifications, or proceed directly to send funds.',
+                title: 'Analyze or Watch',
+                desc: 'Inspect 10-year historical charts, or set a free target-rate alert and let the site watch the pair for you.',
               },
             ].map((item, idx) => (
               <ScrollReveal key={item.step} delay={idx * 50} className="relative z-10">

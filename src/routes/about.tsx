@@ -117,7 +117,7 @@ export default function AboutPage() {
           <div className="space-y-1">
             <h2 className="text-ink-invert">Experience the VectisX difference</h2>
             <p className="text-ink-invert-muted">
-              Start converting or sending money today with guaranteed mid-market rates.
+              Start converting today, at the rate the market is actually quoting.
             </p>
           </div>
           <Link href="/register" className="btn-invert whitespace-nowrap">
