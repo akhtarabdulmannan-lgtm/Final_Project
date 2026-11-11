@@ -3,7 +3,7 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
-  Star,
+  Database,
 } from 'lucide-react';
 import CurrencyConverter from '@/components/sections/CurrencyConverter';
 import ScrollReveal from '@/components/ui/ScrollReveal';
@@ -51,11 +51,11 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-2 text-[14px] text-ink-700">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-ink flex-shrink-0" aria-hidden="true" />
-                  <span>FinCEN Registered &amp; SOC 2 Certified</span>
+                  <span>No account or payment details required</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Star className="w-5 h-5 text-ink fill-ink flex-shrink-0" aria-hidden="true" />
-                  <span className="tabular-nums">4.8/5 Rating (500k+ reviews)</span>
+                  <Database className="w-5 h-5 text-ink flex-shrink-0" aria-hidden="true" />
+                  <span className="tabular-nums">Live rates from public data feeds</span>
                 </div>
               </div>
             </div>
@@ -286,7 +286,7 @@ export default function HomePage() {
               </div>
               <h2>Live Rates for World Currencies</h2>
               <p className="text-ink-500">
-                Updated directly from interbank liquidity providers.
+                Converted from the live mid-market feed, updated with each refresh.
               </p>
             </div>
 

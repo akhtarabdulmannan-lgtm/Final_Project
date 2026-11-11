@@ -1,32 +1,41 @@
-import { ShieldCheck, Lock, Server, FileCheck, EyeOff } from 'lucide-react';
+import { Database, Lock, UserCheck, ShieldAlert, KeyRound } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
+/**
+ * Security page.
+ *
+ * The previous version claimed SOC 2 Type II certification, segregated Tier-1
+ * client fund accounts, AES-256 custody of identity documents and ML fraud
+ * monitoring. For a project that stores an email address and holds no funds,
+ * every one of those claims was false. What replaces them is a description of
+ * the controls that do exist, each of which can be checked in the repository.
+ */
 export default function SecurityPage() {
   const specs = [
     {
-      title: 'SOC 2 Type II Audited',
-      desc: 'Independent annual audits verify strict adherence to organizational controls for security, availability, and confidentiality.',
-      icon: FileCheck,
+      title: 'Row-level security on every table',
+      desc: 'All seven Supabase tables have RLS enabled. Anonymous reads are denied; the same denial was tested with direct database queries, not assumed from the dashboard.',
+      icon: Database,
     },
     {
-      title: 'End-to-End Encryption',
-      desc: 'All customer records, identity checks, and transfer instructions are protected with AES-256 at rest and TLS 1.3 in transit.',
+      title: 'Email addresses only',
+      desc: 'Registration stores an email address and a display name. No address, phone number, date of birth, identity document, or payment detail is collected anywhere on the site.',
+      icon: UserCheck,
+    },
+    {
+      title: 'Passwords handled by the auth provider',
+      desc: 'Passwords are hashed by Supabase Auth and never touch this application\u2019s code or storage. The client validates length and confirmation before submitting.',
       icon: Lock,
     },
     {
-      title: 'Segregated Client Funds',
-      desc: 'Customer settlement balances are held strictly in segregated Tier-1 trust bank accounts, never commingled with corporate assets.',
-      icon: ShieldCheck,
+      title: 'Keys kept out of the browser bundle',
+      desc: 'Rate-feed keys live in the serverless function\u2019s environment, not in client JavaScript. Supabase ships only its public anon key, which RLS is what actually protects.',
+      icon: KeyRound,
     },
     {
-      title: '24/7 Anomaly Detection',
-      desc: 'Automated ML fraud monitoring evaluates every transaction against real-time behavioral vectors and sanctions watchlists.',
-      icon: Server,
-    },
-    {
-      title: 'Zero-Trust Access',
-      desc: 'Mandatory hardware security keys and role-based access segmentation restrict production database credentials strictly.',
-      icon: EyeOff,
+      title: 'Failures are visible, not silent',
+      desc: 'Forms report what actually happened. A write that fails says so; it never shows a success message for something that did not save.',
+      icon: ShieldAlert,
     },
   ];
 
@@ -34,10 +43,11 @@ export default function SecurityPage() {
     <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
         <div className="max-w-3xl mb-12 space-y-3">
-          <span className="badge-neutral">Institutional Security</span>
-          <h1>Bank-Grade Infrastructure Protecting Every Transaction</h1>
+          <span className="badge-neutral">Security &amp; Data Handling</span>
+          <h1>What This Site Stores, and How</h1>
           <p className="text-ink-500">
-            Security is the foundation of VectisX. We protect millions of dollars daily through rigorous cryptographic standards, regulatory licenses, and segregated asset custody.
+            A short, checkable description of the data this project handles. It is deliberately
+            small, because the site does very little.
           </p>
         </div>
 
@@ -55,10 +65,20 @@ export default function SecurityPage() {
           ))}
         </div>
 
+        <div className="card p-8 bg-surface max-w-3xl mb-14 space-y-3">
+          <h2 className="text-[20px] leading-[28px]">What is explicitly not claimed</h2>
+          <p className="text-ink-700">
+            This project has not undergone a SOC 2 audit, an ISO 27001 assessment, or a
+            penetration test, and it holds no client funds to segregate. Earlier versions of this
+            page said otherwise; those statements were removed because they were untrue.
+          </p>
+        </div>
+
         <div className="card-invert p-8 text-center max-w-2xl mx-auto space-y-3">
-          <h2 className="text-ink-invert">Responsible Vulnerability Disclosure</h2>
+          <h2 className="text-ink-invert">Found a Problem?</h2>
           <p className="text-ink-invert-muted mx-auto">
-            We value the security researcher community. Report potential bugs or protocol issues directly to our infosec incident desk.
+            If you spot a bug, a security issue, or a claim on this site that does not hold up,
+            please report it directly.
           </p>
           <div className="text-[15px] font-semibold text-ink-invert pt-1">akhtarabdulmannan@gmail.com</div>
         </div>

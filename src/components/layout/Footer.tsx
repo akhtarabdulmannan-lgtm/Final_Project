@@ -42,9 +42,9 @@ export default function Footer() {
           </nav>
 
           {/* Company */}
-          <nav aria-label="Company">
+          <nav aria-label="Project">
             <p className="text-[14px] leading-[20px] font-medium mb-4 text-ink-invert">
-              Company
+              Project
             </p>
             <ul className="space-y-1">
               {footerLinks.company.map((link) => (
@@ -98,15 +98,14 @@ export default function Footer() {
               ))}
             </div>
             <p className="text-caption text-ink-invert-muted text-left md:text-right">
-              © 2026 VectisX. A subsidiary of Meridian Financial Corp. All rights reserved.
-              FinCEN-registered. US state-licensed money transmitter.
+              © 2026 VectisX. All rights reserved.
             </p>
           </div>
           <p className="text-caption text-ink-invert-muted mt-4 max-w-4xl">
             VectisX is an educational currency-conversion project. Exchange rates are shown for information only, are not
             transaction rates, and may be delayed by the provider that publishes them. This site does not offer money transfer,
-            payment, or financial advice services.
-            SOC 2 Type II certified. Past performance does not guarantee future results.
+            payment, custody, or financial advice services, and it holds no financial licences or third-party security
+            certifications.
           </p>
         </div>
       </div>

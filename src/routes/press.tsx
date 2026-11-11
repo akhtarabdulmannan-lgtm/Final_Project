@@ -1,42 +1,70 @@
 import Link from '@/router/Link';
-import { Newspaper, Download } from 'lucide-react';
-import ActionButton from '@/components/ui/ActionButton';
+import { Newspaper, FileText, Mail } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
-import { wait } from '@/lib/utils';
 
+/**
+ * Press page.
+ *
+ * The previous version listed three dated press releases about a fictional
+ * parent company and offered a "Download Media Kit (.zip)" button that ran a
+ * 300 ms timer and produced no file. Both are gone: the releases described
+ * events that never happened, and the download button was a fake affordance.
+ * What remains are links to material that actually exists.
+ */
 export default function PressPage() {
-  const releases = [
-    { date: 'November 1, 2026', title: 'VectisX Opens Its Rate Engine: 64 Currencies on Public Data Feeds' },
-    { date: 'August 15, 2026', title: 'Annual FX Trends Report: Businesses Lose $28B Annually to Hidden Bank Markups' },
-    { date: 'May 12, 2026', title: 'Meridian Financial Group Reports 34% Increase in Cross-Border Transaction Settlement Volume' },
+  const material = [
+    {
+      title: 'How the rates are sourced',
+      body: 'Where current rates come from, what the serverless proxy does, and why a saved snapshot is shown instead of an invented figure when the feed is unreachable.',
+      href: '/about',
+      label: 'Read the build notes',
+    },
+    {
+      title: 'Rate history and exports',
+      body: 'Charts, the business-day series, and the CSV export with its columns and date format documented on the page itself.',
+      href: '/historical',
+      label: 'Open historical data',
+    },
+    {
+      title: 'Security and data handling',
+      body: 'What is stored (an email address), what is not, and which claims this project explicitly does not make.',
+      href: '/security',
+      label: 'Read the security page',
+    },
+    {
+      title: 'Licensing and regulatory status',
+      body: 'No licences are held, and the page explains why none are required for displaying public reference rates.',
+      href: '/licenses',
+      label: 'Read the licensing page',
+    },
   ];
-
-  const handleDownloadBrandKit = async () => {
-    await wait(300);
-  };
 
   return (
     <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
         <div className="max-w-3xl mb-12 space-y-3">
-          <span className="badge-neutral">Media &amp; Pressroom</span>
-          <h1>Official News, Releases &amp; Brand Assets</h1>
+          <span className="badge-neutral">Project Information</span>
+          <h1>Project Notes &amp; Documentation</h1>
           <p className="text-ink-500">
-            Access company announcements, corporate milestones, executive commentary, and media kits for VectisX.
+            There is no pressroom, no media kit and no issued announcements. This page collects
+            the documentation that does exist, each link pointing at a page on this site.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-14">
           <div className="lg:col-span-8 space-y-4">
-            <h2 className="mb-2">Recent Press Releases</h2>
-            {releases.map((r, idx) => (
-              <ScrollReveal key={r.title} delay={idx * 50}>
+            <h2 className="mb-2">Available Material</h2>
+            {material.map((m, idx) => (
+              <ScrollReveal key={m.title} delay={idx * 50}>
                 <div className="card p-6 bg-surface space-y-3">
-                  <div className="text-caption font-medium text-ink-500 tabular-nums">{r.date}</div>
-                  <h3 className="text-[20px] leading-[28px]">{r.title}</h3>
+                  <div className="w-10 h-10 rounded-xl bg-surface-subtle border border-line text-ink flex items-center justify-center">
+                    <FileText className="w-5 h-5" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-[20px] leading-[28px]">{m.title}</h3>
+                  <p className="text-[15px] leading-[24px] text-ink-500">{m.body}</p>
                   <div className="pt-1">
-                    <Link href="/blog" className="btn-ghost btn-sm px-0">
-                      Read Full Release &rarr;
+                    <Link href={m.href} className="btn-ghost btn-sm px-0">
+                      {m.label} &rarr;
                     </Link>
                   </div>
                 </div>
@@ -49,29 +77,23 @@ export default function PressPage() {
               <div className="w-10 h-10 rounded-xl bg-surface-subtle border border-line text-ink flex items-center justify-center">
                 <Newspaper className="w-5 h-5" aria-hidden="true" />
               </div>
-              <h3>Media Contact</h3>
+              <h3>Contact</h3>
               <p className="text-[14px] leading-[22px] text-ink-500">
-                For press inquiries, analyst interviews, or executive commentary:
+                Questions about the project, the data sources, or the coursework write-up:
               </p>
               <div className="text-[14px] font-semibold text-ink">akhtarabdulmannan@gmail.com</div>
             </div>
 
             <div className="card-invert p-6 space-y-3">
-              <h3 className="text-ink-invert">Brand Guidelines &amp; Logos</h3>
+              <div className="flex items-center gap-2">
+                <Mail className="w-5 h-5 text-ink-invert" aria-hidden="true" />
+                <h3 className="text-ink-invert">No media kit</h3>
+              </div>
               <p className="text-[14px] leading-[22px] text-ink-invert-muted">
-                Download high-resolution SVG marks, color tokens, and media kit specifications.
+                There are no logo archives, brand guidelines or press credentials to download.
+                The button that used to sit here did not produce a file, so it has been removed
+                rather than left to look like it works.
               </p>
-              <ActionButton
-                variant="secondary"
-                onAction={handleDownloadBrandKit}
-                successLabel="Kit Ready"
-                className="w-full justify-center bg-surface text-ink"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <Download className="w-4 h-4" aria-hidden="true" />
-                  <span>Download Media Kit (.zip)</span>
-                </span>
-              </ActionButton>
             </div>
           </div>
         </div>

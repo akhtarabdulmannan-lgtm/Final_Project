@@ -1,22 +1,42 @@
 import Link from '@/router/Link';
 import { ArrowRight } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
-import CountUpValue from '@/components/ui/CountUpValue';
+import { currencies } from '@/data/currencies';
 
+/**
+ * About page.
+ *
+ * This page previously described a company founded in 1993, owned by a listed
+ * parent corporation, with a named executive team and a transaction-volume
+ * figure. None of that is true: this is a student final project, and every one
+ * of those details was invented. They have been replaced with statements that
+ * describe what the project actually is and how it actually works, because a
+ * page describing an imaginary company is worth less to the reader (and to the
+ * coursework) than an accurate description of the build.
+ */
 export default function AboutPage() {
-  const leadership = [
-    { name: 'Marcus Vance', role: 'Chief Executive Officer', bio: 'Former Managing Director of Global Forex Liquidity at Barclays with 24 years in international FX markets.' },
-    { name: 'Dr. Elena Rostova', role: 'Chief Technology Officer', bio: 'PhD in Distributed Systems from MIT; architected high-frequency algorithmic matching engines for global exchanges.' },
-    { name: 'Jonathan Pierce', role: 'Head of Global Compliance', bio: 'Former FinCEN regulatory advisor with two decades specializing in AML/BSA bank compliance.' },
-    { name: 'Aisha Al-Mansoor', role: 'VP of Institutional Treasury', bio: 'Spearheaded corporate cross-border payments for Fortune 500 multinationals across EMEA and APAC.' },
+  const built = [
+    {
+      title: 'Rates, fetched live',
+      body: 'Current rates come from a public exchange-rate feed, normalised by a small serverless proxy. If the feed cannot be reached, the app says so and shows a clearly labelled saved snapshot rather than inventing a number.',
+    },
+    {
+      title: 'History you can check',
+      body: 'Every chart and export is drawn from a published business-day series. The historical page states how many rows it is showing and why that number is smaller than the calendar range you selected.',
+    },
+    {
+      title: 'Screens that admit limits',
+      body: 'Where a feature cannot do something — no prior day to compare against, no provider reachable, no account configured — the interface says that instead of showing a zero or a plausible-looking placeholder.',
+    },
   ];
 
-  const milestones = [
-    { year: '1993', event: 'VectisX founded as one of the internet’s earliest currency information websites.' },
-    { year: '2001', event: 'Moved from manual rate entry to consuming automated interbank reference feeds.' },
-    { year: '2010', event: 'Acquired by Meridian Financial Corporation (NASDAQ: MRDN) to expand global reach.' },
-    { year: '2018', event: 'Introduced zero-fee consumer remittances and the VectisX Multi-Currency Account.' },
-    { year: '2024', event: 'Surpassed $17B in annual transaction flow with 17,000+ active enterprise clients.' },
+  const stack = [
+    { name: 'React 18 + TypeScript', role: 'Interface and type safety across every screen' },
+    { name: 'Vite 5', role: 'Dev server and production build' },
+    { name: 'Tailwind CSS 3', role: 'Design tokens and layout' },
+    { name: 'Recharts', role: 'Rate-history charts' },
+    { name: 'Supabase', role: 'Accounts, email confirmation and password reset' },
+    { name: 'Vercel functions', role: 'The /api/rates proxy that keeps any feed key server-side' },
   ];
 
   return (
@@ -24,88 +44,81 @@ export default function AboutPage() {
       <div className="container-vx">
         {/* Hero */}
         <div className="max-w-3xl mb-14 space-y-4">
-          <span className="badge-neutral">Our Legacy &amp; Mission</span>
-          <h1>Thirty Years of Global Currency Intelligence</h1>
+          <span className="badge-neutral">About This Project</span>
+          <h1>A Currency Converter, Built and Documented Honestly</h1>
           <p className="text-ink-500">
-            Founded in 1993, VectisX has spent over three decades democratizing foreign exchange. From displaying digital conversion rates to orchestrating multi-billion dollar commercial payments, our focus remains transparency, mid-market accuracy, and institutional security.
+            VectisX is a final-year coursework project: a currency converter, rate
+            dashboard and historical-data explorer built with React and TypeScript. It is not a
+            company, it does not handle money, and it holds no financial licences. What it does
+            is fetch public exchange-rate data and present it clearly.
           </p>
         </div>
 
-        {/* Corporate Profile Card */}
+        {/* What it is / is not */}
         <div className="card-invert p-8 rounded-2xl mb-14">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             <div className="space-y-3">
-              <span className="badge-invert">A Meridian Financial Company</span>
-              <h2 className="text-ink-invert">Backed by Global Financial Infrastructure</h2>
+              <span className="badge-invert">Plainly stated</span>
+              <h2 className="text-ink-invert">What this site is — and is not</h2>
               <p className="text-ink-invert-muted">
-                VectisX operates as a wholly owned subsidiary of Meridian Financial Corporation (NASDAQ: MRDN), an international payments organization processing over $120B annually across 190+ jurisdictions.
+                It is an educational tool that converts between {currencies.length} currencies,
+                charts how a pair has moved, and exports the underlying data. Accounts exist so a
+                visitor can confirm an email address and sign in; nothing else is stored.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4 text-center">
               <div className="p-4 rounded-xl bg-[#1A1F26] border border-line-invert">
                 <div className="text-[24px] font-heading font-semibold text-ink-invert tabular-nums">
-                  1993
-                </div>
-                <div className="text-caption text-ink-invert-muted mt-1">Established</div>
-              </div>
-              <div className="p-4 rounded-xl bg-[#1A1F26] border border-line-invert">
-                <div className="text-[24px] font-heading font-semibold text-ink-invert">
-                  <CountUpValue value={190} suffix="+" duration={400} />
-                </div>
-                <div className="text-caption text-ink-invert-muted mt-1">Countries</div>
-              </div>
-              <div className="p-4 rounded-xl bg-[#1A1F26] border border-line-invert">
-                <div className="text-[24px] font-heading font-semibold text-ink-invert">
-                  <CountUpValue value={220} suffix="+" duration={400} />
+                  {currencies.length}
                 </div>
                 <div className="text-caption text-ink-invert-muted mt-1">Currencies</div>
               </div>
               <div className="p-4 rounded-xl bg-[#1A1F26] border border-line-invert">
-                <div className="text-[24px] font-heading font-semibold text-ink-invert tabular-nums">
-                  SOC 2
-                </div>
-                <div className="text-caption text-ink-invert-muted mt-1">Type II Certified</div>
+                <div className="text-[24px] font-heading font-semibold text-ink-invert tabular-nums">0</div>
+                <div className="text-caption text-ink-invert-muted mt-1">Licences held</div>
+              </div>
+              <div className="p-4 rounded-xl bg-[#1A1F26] border border-line-invert">
+                <div className="text-[24px] font-heading font-semibold text-ink-invert tabular-nums">0</div>
+                <div className="text-caption text-ink-invert-muted mt-1">Payments handled</div>
+              </div>
+              <div className="p-4 rounded-xl bg-[#1A1F26] border border-line-invert">
+                <div className="text-[20px] font-heading font-semibold text-ink-invert">Public</div>
+                <div className="text-caption text-ink-invert-muted mt-1">Data sources only</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Timeline */}
+        {/* How it works */}
         <div className="card p-8 bg-surface mb-14">
-          <h2 className="mb-8">Three Decades of Milestones</h2>
+          <h2 className="mb-8">What the build actually does</h2>
           <div className="space-y-6">
-            {milestones.map((m) => (
+            {built.map((b) => (
               <div
-                key={m.year}
-                className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 pb-6 border-b border-line last:border-0 last:pb-0"
+                key={b.title}
+                className="pb-6 border-b border-line last:border-0 last:pb-0 space-y-1.5"
               >
-                <div className="font-heading font-semibold text-ink text-[20px] w-20 flex-shrink-0 tabular-nums">
-                  {m.year}
-                </div>
-                <p className="text-ink-700">{m.event}</p>
+                <h3 className="text-[18px] leading-[24px]">{b.title}</h3>
+                <p className="text-ink-700 text-[15px] leading-[24px]">{b.body}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Leadership */}
+        {/* Stack */}
         <div className="mb-14">
           <div className="text-center max-w-xl mx-auto mb-10 space-y-2">
-            <h2>Executive Leadership</h2>
+            <h2>Built With</h2>
             <p className="text-ink-500 mx-auto">
-              Seasoned finance veterans and distributed systems pioneers.
+              The libraries doing the work, and what each one is responsible for.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {leadership.map((l, idx) => (
-              <ScrollReveal key={l.name} delay={idx * 50}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stack.map((s, idx) => (
+              <ScrollReveal key={s.name} delay={idx * 50}>
                 <div className="card p-6 bg-surface space-y-2 h-full">
-                  <div className="w-11 h-11 rounded-full bg-surface-subtle border border-line text-ink font-semibold flex items-center justify-center text-[16px] mb-3">
-                    {l.name[0]}
-                  </div>
-                  <h3 className="text-[18px] leading-[24px]">{l.name}</h3>
-                  <div className="text-caption font-medium text-ink-500">{l.role}</div>
-                  <p className="text-[14px] leading-[22px] text-ink-500 pt-1">{l.bio}</p>
+                  <h3 className="text-[18px] leading-[24px]">{s.name}</h3>
+                  <p className="text-[14px] leading-[22px] text-ink-500">{s.role}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -115,13 +128,13 @@ export default function AboutPage() {
         {/* CTA */}
         <div className="card-invert p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <h2 className="text-ink-invert">Experience the VectisX difference</h2>
+            <h2 className="text-ink-invert">See the data for yourself</h2>
             <p className="text-ink-invert-muted">
-              Start converting today, at the rate the market is actually quoting.
+              Every figure on this site can be traced to a published rate and exported as CSV.
             </p>
           </div>
-          <Link href="/register" className="btn-invert whitespace-nowrap">
-            <span>Open Free Account</span>
+          <Link href="/historical" className="btn-invert whitespace-nowrap">
+            <span>Open Historical Data</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>

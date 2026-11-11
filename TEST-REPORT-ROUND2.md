@@ -3,7 +3,7 @@
 **Date:** 9 November 2026
 **Branch:** `arena/c0712867-final-project` (based on `23605b2`, the revision currently live)
 **Scope:** the 14 items from the owner's review, plus the regressions those changes could cause.
-**Result:** **90 of 90 executable checks pass.** Three real defects were found and fixed
+**Result:** **110 of 110 executable checks pass.** Three real defects were found and fixed
 during this round — including one in the 24h-change fix itself, which would have shipped
 looking correct while still reporting `0.00%`.
 
@@ -27,6 +27,7 @@ looking correct while still reporting `0.00%`.
 | 12 | Remove footer social links | **Removed** |
 | 13 | Remove footer email subscribe | **Removed** |
 | 14 | Contact email is `akhtarabdulmannan@gmail.com` | **Applied** everywhere, including press and security pages |
+| 15 | *(added)* False credential and company claims | **Removed from 8 pages** — see §14 |
 
 ---
 
@@ -50,7 +51,7 @@ Reproduce with:
 
 ```bash
 npx vite build --config .testing/vite.config.ts   # build the harness bundle
-node .testing/run.mjs                             # 90 checks, exit 0
+node .testing/run.mjs                             # 110 checks, exit 0
 ```
 
 ---
@@ -256,6 +257,30 @@ Every route mounts with a real heading and none links to a removed page: `/`,
 
 ---
 
+## 14. False claims removed from the marketing pages (round 2, item 15)
+
+A live read of the deployed site after the first deploy of this round showed claims that
+were simply untrue. They were raised with the owner, who chose to fix all of them.
+
+| Page | Removed | Replaced with |
+| --- | --- | --- |
+| Home | "FinCEN Registered & SOC 2 Certified", "4.8/5 Rating (500k+ reviews)", "Updated directly from interbank liquidity providers" | "No account or payment details required", "Live rates from public data feeds", an accurate matrix caption |
+| Footer | "A subsidiary of Meridian Financial Corp. FinCEN-registered. US state-licensed money transmitter." and a trailing "SOC 2 Type II certified." | "© 2026 VectisX. All rights reserved." plus an explicit statement that no financial licences or security certifications are held |
+| About | 1993 founding story, $120B parent company, four invented executives, five invented milestones, SOC 2 badge | What the project is, what it is not (0 licences, 0 payments handled), three descriptions of how it actually works, the real stack |
+| Licenses | Eight fabricated regulator licence numbers (FinCEN, five US states, FCA, FINTRAC) | A statement that no financial licences are held, why none are required, and what that means for the reader |
+| Security | SOC 2 audit, segregated Tier-1 client funds, AES-256 custody, ML fraud and sanctions screening | The five controls that do exist (RLS on all seven tables, email-only data, provider-handled passwords, keys kept server-side, failures surfaced) plus a list of what is *not* claimed |
+| Referral | $50/$50 cash reward, "$1,000+ transfer" condition, fake referral code and a link generator that copied a dead domain | Sharing a real pair page, with four working examples |
+| Press | Three dated releases about a fictional parent company; a "Download Media Kit (.zip)" button that ran a timer and produced no file | Links to the documentation that exists, and an explicit note that there is no media kit |
+| Careers | Five full-time vacancies, 401(k) matching, family health cover | An outline of the build, aimed at a reader or marker |
+| Partners | CPA commissions, reseller programmes, "remittance rails" | Reusing the endpoint, forking the repo, citing the write-up |
+| Blog | Five fabricated author bylines; one shared stock article body printed under every title; an unknown slug silently rendered article #1 | The author's real address as the byline, a scope note per note, and a genuine not-found page for unknown slugs |
+| Privacy / Terms | "VectisX Financial Inc." compliance language, AES-256/TLS 1.3 claims, statutory banking retention | Plain description of the data actually held and how to have it deleted |
+
+The check suite now loads all 21 content pages and asserts 12 forbidden claim patterns
+(FInCEN, SOC 2, money transmitter, NASDAQ, Meridian, AES-256/custody, fraud monitoring,
+cash payouts, bank-grade, founding date, volume figures, licence numbers) do not appear —
+except where a page explicitly denies the claim, which `/security` and `/licenses` do.
+
 ## 13. Known limitations of this round
 
 1. **No live end-to-end test.** Sandbox egress is blocked, so the deployed site, the
@@ -270,3 +295,10 @@ Every route mounts with a real heading and none links to a removed page: `/`,
 4. **`rate_alerts` and `newsletter_subscriptions` tables still exist** in Postgres with
    RLS. Nothing in the app writes to them. They are left in place deliberately: dropping
    tables is destructive and was not requested.
+5. **Blog notes are summaries, not articles.** Each carries an excerpt and a scope note
+   and links to the page where the idea is demonstrated. They were not padded into fake
+   long-form content, and the previous shared stock article was removed rather than
+   rewritten per post.
+6. **"VectisX" remains as a product name.** It is clearly stated on the about, licensing
+   and footer text that it is a coursework project and not a company; renaming the brand
+   was not part of the request.

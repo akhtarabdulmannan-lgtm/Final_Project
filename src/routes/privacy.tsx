@@ -9,27 +9,41 @@ export default function PrivacyPage() {
           </div>
 
           <p>
-            VectisX Financial Inc. (&ldquo;VectisX&rdquo;, &ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) respects your privacy and is committed to protecting the personal and financial information you share with us. This Privacy Policy describes how we collect, process, store, and safeguard your information in compliance with GDPR, CCPA, and international financial privacy regulations.
+            VectisX is a student coursework project, not a company. This page describes, in plain
+            terms, the very small amount of data the site handles, because a site that collects an
+            email address should say so plainly rather than borrow the wording of a corporate
+            privacy policy it does not need.
           </p>
 
           <section className="space-y-2">
             <h2>1. Information We Collect</h2>
             <p>
-              When you create an account, we store the email address you register with and, through Supabase, the minimum account metadata needed to sign you in. We do not collect identity documents, bank details, or payment information, because this site does not move money.
+              If you create an account, the email address you register with and the display name
+              you type are stored by Supabase, along with the minimum metadata needed to sign you
+              in and to send a confirmation email. If you use the contact form, the message and
+              address you submit are stored in the project database. Nothing else is collected:
+              no identity documents, no bank details, no payment information, and no cookies for
+              advertising or tracking, because none of those things exist here.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2>2. Encryption &amp; Data Protection</h2>
+            <h2>2. How the Data Is Held</h2>
             <p>
-              All personally identifiable financial records are encrypted at rest via AES-256 and in transit using TLS 1.3 security protocols. VectisX never sells or rents customer data to third-party advertisers.
+              Data is stored in a Supabase Postgres database with row-level security enabled on
+              every table; anonymous reads are denied and have been tested as denied. Traffic to
+              the site and to Supabase uses HTTPS. There is no separate encryption claim to make
+              beyond that, and this project has not commissioned a security audit. Your data is
+              never sold, rented or shared with advertisers, because there are no advertisers.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2>3. Your Privacy Rights</h2>
             <p>
-              Under applicable legislation, you hold the right to access, rectify, export, or request erasure of personal data held by VectisX, subject to mandatory statutory banking record retention periods.
+              To have an account deleted, or to ask what is held about you, write to
+              akhtarabdulmannan@gmail.com and it will be removed. There are no statutory banking
+              retention obligations to qualify that, because no banking records exist.
             </p>
           </section>
         </div>

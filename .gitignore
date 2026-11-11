@@ -23,8 +23,5 @@ yarn-error.log*
 # Vercel
 .vercel
 
-# Local test harness (not part of the app)
-.testing/
-
-# Test harness (regenerated on demand, see TEST-REPORT-ROUND2.md)
+# Local test harness (regenerated on demand, not part of the app)
 /.testing

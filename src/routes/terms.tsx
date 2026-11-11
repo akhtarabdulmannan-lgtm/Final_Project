@@ -9,13 +9,15 @@ export default function TermsPage() {
           </div>
 
           <p>
-            Please read these Terms of Service (&ldquo;Terms&rdquo;) carefully before accessing or using the VectisX foreign exchange tools, currency APIs, or international payment transfer services operated by VectisX Financial Inc.
+            VectisX is a student coursework project that displays public exchange-rate information. These terms describe the basis on which it is offered. There is no company behind it, no payment service, and no API for commercial use.
           </p>
 
           <section className="space-y-2">
             <h2>1. Acceptance of Terms</h2>
             <p>
-              By accessing the VectisX website, mobile application, or API endpoints, you agree to be bound by these Terms and all applicable local, state, federal, and international financial laws.
+              By using this site you accept this page as an accurate description of what it does.
+              It offers no warranty of accuracy for the rates it displays and no financial,
+              legal or tax advice.
             </p>
           </section>
 
@@ -27,9 +29,12 @@ export default function TermsPage() {
           </section>
 
           <section className="space-y-2">
-            <h2>3. API Usage Limits &amp; Commercial Licensing</h2>
+            <h2>3. Reuse of the Code and Data</h2>
             <p>
-              Unauthorized automated scraping of public web interfaces is strictly prohibited. Programmatic utilization requires an active API key authorized under our Commercial API Terms.
+              The project source is published in a public repository and may be read and reused for
+              coursework. The exchange-rate data belongs to its publishers, not to this project;
+              check their terms before relying on it for anything beyond a demonstration. There is
+              no commercial API, no API key, and no service level of any kind.
             </p>
           </section>
         </div>

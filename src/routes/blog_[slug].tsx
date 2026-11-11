@@ -9,7 +9,24 @@ export default function BlogPostPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const post = blogPosts.find((p) => p.slug === slug) || blogPosts[0];
+  const post = blogPosts.find((p) => p.slug === slug);
+
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-bg py-12 sm:py-16">
+        <div className="container-vx max-w-2xl text-center space-y-4">
+          <span className="badge-neutral">Not Found</span>
+          <h1>That Note Does Not Exist</h1>
+          <p className="text-ink-500">
+            There is no article at this address. The index lists every note that is published.
+          </p>
+          <Link href="/blog" className="btn-primary btn-sm inline-flex">
+            Back to all notes
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleShare = async () => {
     await navigator.clipboard?.writeText(window.location.href);
@@ -42,27 +59,33 @@ export default function BlogPostPage() {
           </div>
         </div>
 
-        {/* Content Body */}
+        {/* Content Body.
+            These notes carry a summary only; the long-form explanation for each
+            lives in the project README. The previous version printed one shared
+            article body under every title, which meant a piece about currency
+            rankings was followed by paragraphs about corporate hedging. */}
         <article className="card p-6 sm:p-10 bg-surface text-ink-700 space-y-6">
           <p className="text-[18px] leading-[28px] font-medium text-ink">{post.excerpt}</p>
 
-          <p>
-            Foreign exchange markets operate across global financial capitals 24 hours a day, five days a week. For corporations moving millions or consumers remitting money overseas, understanding mid-market exchange pricing is critical to eliminating unneeded transaction costs.
-          </p>
+          <div className="rounded-xl bg-surface-subtle border border-line p-5 space-y-2">
+            <h3 className="text-[16px] leading-[24px]">A note on scope</h3>
+            <p className="text-[15px] leading-[24px]">
+              This is a short note published as part of a coursework project, not a news article
+              or an advisory piece. Anything here about rates, spreads or market practice is
+              general background; nothing on this site is financial advice, and no figure should
+              be used to make a transaction without checking it with the bank or broker carrying
+              it out.
+            </p>
+          </div>
 
-          <h3>The Illusion of Zero Commission</h3>
-          <p>
-            Many retail payment providers advertise zero commission or free wire transfers. However, financial institutions frequently widen the spread between the buy and sell price—pocketing anywhere from 2% to 6% in hidden markup margins.
-          </p>
-
-          <blockquote className="p-5 rounded-xl bg-surface-subtle border-l-4 border-ink font-medium text-ink prose-measure">
-            “The mid-market rate is the only truly unbiased benchmark in global foreign exchange. Transparent platforms display this rate upfront alongside explicit transaction fees.”
-          </blockquote>
-
-          <h3>Strategic Hedging for Commercial Enterprise</h3>
-          <p>
-            When cross-border businesses purchase supplies denominated in foreign currencies, fluctuating exchange rates introduce unpredictable margin compression. Forward contracts lock in current rates for settlements up to 24 months into the future, providing budget certainty and balance sheet protection.
-          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/historical" className="btn-secondary btn-sm">
+              See the rate history behind this
+            </Link>
+            <Link href="/converter" className="btn-ghost btn-sm">
+              Try the converter
+            </Link>
+          </div>
 
           <div className="pt-8 border-t border-line flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-wrap gap-2">

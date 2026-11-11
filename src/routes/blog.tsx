@@ -10,10 +10,10 @@ export default function BlogIndexPage() {
     <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
         <div className="max-w-3xl mb-12 space-y-3">
-          <span className="badge-neutral">Market Intelligence</span>
-          <h1>VectisX Currency &amp; Macro Insights</h1>
+          <span className="badge-neutral">Project Notes</span>
+          <h1>Notes on How the Rates Work</h1>
           <p className="text-ink-500">
-            Market commentary, exchange rate analysis, international business treasury guides, and technical developer tutorials.
+            Short notes on exchange-rate mechanics, written alongside the build, each linked to the page on this site where you can see the idea working.
           </p>
         </div>
 

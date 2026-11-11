@@ -1,8 +1,13 @@
 # VectisX — Currency Converter & Exchange Rate Dashboard
 
-A React + Vite web app for converting currencies, charting exchange-rate history, and
-watching the pairs you care about. Rates come from public REST APIs at runtime — nothing
-on the converter is hardcoded.
+A React + Vite web app for converting currencies and charting exchange-rate history,
+built as a final-year coursework project. Rates come from public REST APIs at runtime —
+nothing on the converter is hardcoded.
+
+It is an educational tool, not a financial service: it holds no money, offers no
+transfers, and displays reference rates for information only. The site states this on
+every page that could be mistaken for something more, and holds no licences because it
+carries out no regulated activity.
 
 **Live app (GitHub Pages):** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
 **Mirror (Vercel):** https://vectisx.vercel.app

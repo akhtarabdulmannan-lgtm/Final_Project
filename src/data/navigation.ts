@@ -34,10 +34,10 @@ export const footerLinks = {
     { label: 'Historical Rates', href: '/historical' },
   ],
   company: [
-    { label: 'About VectisX', href: '/about' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Press', href: '/press' },
-    { label: 'Security', href: '/security' },
+    { label: 'About the Project', href: '/about' },
+    { label: 'How It Was Built', href: '/careers' },
+    { label: 'Project Notes', href: '/press' },
+    { label: 'Security & Data', href: '/security' },
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
     { label: 'Help Center', href: '/help' },
@@ -46,7 +46,7 @@ export const footerLinks = {
     { label: 'Terms of Service', href: '/terms' },
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Cookie Policy', href: '/cookies' },
-    { label: 'Licenses', href: '/licenses' },
+    { label: 'Licensing Status', href: '/licenses' },
   ],
   popularPairs: [
     { label: 'USD to EUR', href: '/converter/usd-to-eur' },
