@@ -10,6 +10,18 @@ import './styles/globals.css';
  * /Final_Project/charts would 404 on refresh. With hash routing the entry
  * document always loads and the router resolves the path client-side.
  */
+/**
+ * A path-style link such as /about reaches the static host before the router
+ * ever runs, and HashRouter then renders the home route because the hash is
+ * empty. Vercel serves index.html for those paths, so rewrite them into the
+ * equivalent hash route before mounting. Without this, every shared
+ * non-hash URL silently showed the homepage instead of its page.
+ */
+const deepPath = window.location.pathname.replace(/^\/Final_Project/, '');
+if (!window.location.hash && deepPath && deepPath !== '/') {
+  window.location.replace(`/#${deepPath}${window.location.search}`);
+}
+
 const container = document.getElementById('root');
 if (!container) throw new Error('Root element #root not found');
 
