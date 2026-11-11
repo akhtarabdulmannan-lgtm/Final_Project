@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { ArrowLeftRight, TrendingUp, Bell, ChevronDown, Search, X, RefreshCw } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowLeftRight, TrendingUp, ChevronDown, Search, X, RefreshCw } from 'lucide-react';
 import { currencies, getCurrency, searchCurrencies } from '@/data/currencies';
 import { formatAmount, formatRate } from '@/lib/rates';
 import { useLiveRates } from '@/lib/fx/RateProvider';
@@ -11,7 +11,7 @@ import DeltaChip from '@/components/ui/DeltaChip';
 import ActionButton from '@/components/ui/ActionButton';
 import { Skeleton } from '@/components/ui/Skeleton';
 
-type Tab = 'convert' | 'charts' | 'alerts';
+type Tab = 'convert' | 'charts';
 
 interface CurrencyConverterProps {
   defaultFrom?: string;
@@ -35,15 +35,19 @@ export default function CurrencyConverter({
   const [swapCount, setSwapCount] = useState(0);
   const [pickerOpen, setPickerOpen] = useState<'from' | 'to' | null>(null);
   const [pickerSearch, setPickerSearch] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const listRef = useRef<HTMLDivElement | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Alert tab state
-  const [alertTarget, setAlertTarget] = useState('');
-  const [alertEmail, setAlertEmail] = useState('');
-  const [alertStatus, setAlertStatus] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [alertCreated, setAlertCreated] = useState(false);
-
-  const { rate: getLiveRate, change: getChange, status: rateStatus, refresh, updatedAt } = useLiveRates();
+  const {
+    rate: getLiveRate,
+    change: getChange,
+    status: rateStatus,
+    refresh,
+    updatedAt,
+    previousRates,
+    previousDate,
+  } = useLiveRates();
   const rate = getLiveRate(fromCode, toCode);
   const result = amount * rate;
   const inverseRate = rate ? 1 / rate : 0;
@@ -51,6 +55,17 @@ export default function CurrencyConverter({
   const fromCurrency = getCurrency(fromCode);
   const toCurrency = getCurrency(toCode);
   const pairKey = `${fromCode}-${toCode}`;
+
+  // Keep the highlighted row in range and visible as the filter narrows.
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [pickerSearch, pickerOpen]);
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const row = listRef.current?.querySelector<HTMLElement>(`[data-picker-index="${activeIndex}"]`);
+    row?.scrollIntoView?.({ block: 'nearest' });
+  }, [activeIndex, pickerOpen]);
 
   const handleSwap = useCallback(() => {
     setSwapCount((c) => c + 1);
@@ -77,18 +92,6 @@ export default function CurrencyConverter({
     setIsRefreshing(false);
   };
 
-  const handleAlertSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!alertEmail || alertStatus === 'loading') return;
-    setAlertStatus('loading');
-    await wait(350);
-    setAlertStatus('success');
-    setAlertCreated(true);
-    window.setTimeout(() => {
-      setAlertStatus('idle');
-    }, 800);
-  };
-
   useEffect(() => {
     if (!pickerOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -101,7 +104,6 @@ export default function CurrencyConverter({
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'convert', label: 'Convert', icon: <ArrowLeftRight className="w-4 h-4" aria-hidden="true" /> },
     { key: 'charts', label: 'Charts', icon: <TrendingUp className="w-4 h-4" aria-hidden="true" /> },
-    { key: 'alerts', label: 'Alerts', icon: <Bell className="w-4 h-4" aria-hidden="true" /> },
   ];
 
   const filteredCurrencies = pickerSearch
@@ -190,6 +192,7 @@ export default function CurrencyConverter({
                 onClick={() => {
                   setPickerOpen('from');
                   setPickerSearch('');
+                  setActiveIndex(0);
                 }}
                 aria-label={`Source currency ${fromCode} ${fromCurrency?.name || ''}`}
                 className="input-field flex items-center gap-2 text-left"
@@ -226,6 +229,7 @@ export default function CurrencyConverter({
                 onClick={() => {
                   setPickerOpen('to');
                   setPickerSearch('');
+                  setActiveIndex(0);
                 }}
                 aria-label={`Target currency ${toCode} ${toCurrency?.name || ''}`}
                 className="input-field flex items-center gap-2 text-left"
@@ -277,7 +281,7 @@ export default function CurrencyConverter({
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-2 mt-3">
-                <DeltaChip change={change} suffix="(24h)" />
+                <DeltaChip change={change} suffix="(24h)" hasData={Boolean(previousRates)} comparedTo={previousDate} />
                 <span className="badge-neutral">Mid-market rate</span>
               </div>
             </div>
@@ -290,12 +294,6 @@ export default function CurrencyConverter({
               className="btn-primary flex-1 justify-center"
             >
               View Full Chart
-            </Link>
-            <Link
-              href={`/alerts?pair=${fromCode.toLowerCase()}-${toCode.toLowerCase()}`}
-              className="btn-secondary flex-1 justify-center"
-            >
-              Set rate alert
             </Link>
           </div>
         </div>
@@ -320,90 +318,6 @@ export default function CurrencyConverter({
                 <span>View Full Charts</span>
               </Link>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Alerts Tab */}
-      {activeTab === 'alerts' && (
-        <div className="p-5 sm:p-6">
-          <div className="py-2 space-y-4">
-            <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-xl bg-surface-subtle border border-line flex items-center justify-center mx-auto">
-                <Bell className="w-6 h-6 text-ink" aria-hidden="true" />
-              </div>
-              <h3 className="font-heading font-semibold text-ink">Set a Rate Alert</h3>
-              <p className="text-ink-500 mx-auto">
-                Get notified when {fromCode}/{toCode} reaches your target rate.
-              </p>
-            </div>
-
-            {alertCreated ? (
-              <div className="p-4 rounded-xl bg-gain-bg border border-gain-border text-gain text-[14px] text-center space-y-2">
-                <p className="font-medium mx-auto">
-                  Alert active for {fromCode}/{toCode} at{' '}
-                  <span className="tabular-nums font-semibold">
-                    {alertTarget || formatRate(rate)}
-                  </span>
-                  .
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setAlertCreated(false)}
-                  className="btn-secondary btn-sm"
-                >
-                  Create Another Alert
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleAlertSubmit} className="space-y-3 text-left max-w-xs mx-auto">
-                <div>
-                  <label htmlFor="widget-alert-rate" className="mb-1 block">
-                    Target rate
-                  </label>
-                  <input
-                    id="widget-alert-rate"
-                    type="number"
-                    className="input-field tabular-nums"
-                    placeholder={formatRate(rate)}
-                    step="0.0001"
-                    value={alertTarget}
-                    onChange={(e) => setAlertTarget(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="widget-alert-email" className="mb-1 block">
-                    Email
-                  </label>
-                  <input
-                    id="widget-alert-email"
-                    type="email"
-                    className="input-field"
-                    placeholder="you@example.com"
-                    value={alertEmail}
-                    onChange={(e) => setAlertEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <ActionButton
-                  type="submit"
-                  status={alertStatus}
-                  successLabel="Alert Created"
-                  className="w-full justify-center"
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <Bell className="w-4 h-4" aria-hidden="true" />
-                    <span>Create Alert</span>
-                  </span>
-                </ActionButton>
-                <div className="text-center pt-1">
-                  <Link href="/alerts" className="text-caption font-medium text-ink underline hover:text-ink-700 inline-flex items-center min-h-[44px]">
-                    Manage all alert rules
-                  </Link>
-                </div>
-              </form>
-            )}
           </div>
         </div>
       )}
@@ -438,28 +352,78 @@ export default function CurrencyConverter({
                   type="text"
                   value={pickerSearch}
                   onChange={(e) => setPickerSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    const last = filteredCurrencies.length - 1;
+
+                    if (e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      if (last < 0) return;
+                      setActiveIndex((i) => (i >= last ? 0 : i + 1));
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault();
+                      if (last < 0) return;
+                      setActiveIndex((i) => (i <= 0 ? last : i - 1));
+                    } else if (e.key === 'Home') {
+                      e.preventDefault();
+                      setActiveIndex(0);
+                    } else if (e.key === 'End') {
+                      e.preventDefault();
+                      if (last >= 0) setActiveIndex(last);
+                    } else if (e.key === 'Enter') {
+                      const picked = filteredCurrencies[activeIndex];
+                      if (picked) {
+                        e.preventDefault();
+                        void handleCurrencyChange(pickerOpen!, picked.code);
+                      }
+                    }
+                  }}
                   className="input-field pl-10"
                   placeholder="Search currency or country..."
                   aria-label="Search currency or country"
+                  role="combobox"
+                  aria-expanded="true"
+                  aria-controls="currency-picker-list"
+                  aria-activedescendant={
+                    filteredCurrencies[activeIndex]
+                      ? `currency-option-${filteredCurrencies[activeIndex].code}`
+                      : undefined
+                  }
+                  autoComplete="off"
                   autoFocus
                 />
               </div>
             </div>
-            <div className="overflow-y-auto flex-1 p-2">
+            <div
+              id="currency-picker-list"
+              ref={listRef}
+              role="listbox"
+              aria-label="Currencies"
+              className="overflow-y-auto flex-1 p-2"
+            >
               {filteredCurrencies.length === 0 && (
                 <p className="px-4 py-8 text-center text-[14px] text-ink-500" role="status">
                   No currencies match “{pickerSearch.trim()}”. Try a different name or code.
                 </p>
               )}
-              {filteredCurrencies.map((c) => {
+              {filteredCurrencies.map((c, index) => {
                 const isSelected = (pickerOpen === 'from' ? fromCode : toCode) === c.code;
+                const isActive = index === activeIndex;
                 return (
                   <button
                     key={c.code}
+                    id={`currency-option-${c.code}`}
                     type="button"
+                    role="option"
+                    aria-selected={isActive}
+                    data-picker-index={index}
+                    onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => handleCurrencyChange(pickerOpen, c.code)}
                     className={`w-full flex items-center gap-3 px-4 min-h-[48px] py-2.5 rounded-xl text-left transition-colors duration-150 ${
-                      isSelected ? 'bg-surface-subtle text-ink border border-line' : 'hover:bg-surface-subtle'
+                      isActive
+                        ? 'bg-surface-subtle text-ink border border-line-strong'
+                        : isSelected
+                          ? 'bg-surface-subtle text-ink border border-line'
+                          : 'hover:bg-surface-subtle border border-transparent'
                     }`}
                   >
                     <span className="text-[20px]" aria-hidden="true">{c.flag}</span>

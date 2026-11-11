@@ -17,7 +17,7 @@ interface PageMeta {
 
 const SITE_NAME = 'VectisX';
 const DEFAULT_DESCRIPTION =
-  'Convert currencies with live mid-market exchange rates from the European Central Bank, chart rate history, and set rate alerts.';
+  'Convert currencies with live mid-market exchange rates, and chart how a pair has moved over time.';
 
 function applyMeta({ title, description }: PageMeta) {
   if (typeof document === 'undefined') return;

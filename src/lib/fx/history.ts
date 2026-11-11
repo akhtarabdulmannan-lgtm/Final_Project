@@ -22,6 +22,99 @@ function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
+const SNAPSHOT_KEY = 'vx:frankfurter-daily';
+const SNAPSHOT_TTL_MS = 6 * 60 * 60 * 1000;
+
+export interface ReferenceDay {
+  /** The provider's own publication date, ISO-8601, e.g. "2026-11-10". */
+  date: string;
+  /** Every quoted rate for that day, expressed against USD. */
+  rates: Record<string, number>;
+}
+
+export interface ReferenceDays {
+  /** Newest publication the provider has. */
+  latest: ReferenceDay;
+  /** The publication before it. Null when the provider returned only one. */
+  previous: ReferenceDay | null;
+  savedAt: number;
+}
+
+/**
+ * The two most recent published reference days, used as the "yesterday" side
+ * of the 24h change.
+ *
+ * The app previously compared the live snapshot against the previous *page
+ * load*, so a first visit reported +0.00% for every single pair — which is
+ * exactly what a self-comparison must produce. A real figure needs a genuinely
+ * earlier publication, so this asks the provider for a short window and keeps
+ * the newest two business days.
+ *
+ * Both days are returned because the caller has to decide which one is
+ * "previous": if the live feed is already on `latest`, the earlier one is the
+ * baseline; if the live feed is a day behind, `latest` is.
+ */
+export async function fetchReferenceDays(signal?: AbortSignal): Promise<ReferenceDays | null> {
+  try {
+    const cached = window.sessionStorage.getItem(SNAPSHOT_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached) as ReferenceDays;
+      if (Date.now() - parsed.savedAt < SNAPSHOT_TTL_MS && parsed.latest?.rates) return parsed;
+    }
+  } catch {
+    /* sessionStorage can be blocked; fall through to the network */
+  }
+
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const onAbort = () => controller.abort();
+  signal?.addEventListener('abort', onAbort);
+
+  try {
+    // A window rather than /latest, because /latest returns a single day and a
+    // single day cannot be compared with anything.
+    const end = new Date();
+    const start = new Date(end);
+    start.setUTCDate(start.getUTCDate() - 12);
+    const url = `https://api.frankfurter.dev/v1/${isoDate(start)}..${isoDate(end)}?base=USD`;
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) return null;
+
+    const payload = (await response.json()) as { rates?: Record<string, Record<string, number>> };
+    const all = payload?.rates ?? {};
+    const days = Object.keys(all).sort();
+    if (days.length < 1) return null;
+
+    const toDay = (date: string): ReferenceDay => ({
+      date,
+      rates: all[date] as Record<string, number>,
+    });
+
+    const result: ReferenceDays = {
+      latest: toDay(days[days.length - 1]),
+      previous: days.length > 1 ? toDay(days[days.length - 2]) : null,
+      savedAt: Date.now(),
+    };
+
+    try {
+      window.sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(result));
+    } catch {
+      /* caching is best-effort */
+    }
+
+    return result;
+  } catch {
+    return null;
+  } finally {
+    window.clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
+  }
+}
+
 export async function fetchHistory(
   from: string,
   to: string,

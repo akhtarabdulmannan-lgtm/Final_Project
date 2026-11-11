@@ -53,7 +53,7 @@ export default function PressPage() {
               <p className="text-[14px] leading-[22px] text-ink-500">
                 For press inquiries, analyst interviews, or executive commentary:
               </p>
-              <div className="text-[14px] font-semibold text-ink">press@vectisx.com</div>
+              <div className="text-[14px] font-semibold text-ink">akhtarabdulmannan@gmail.com</div>
             </div>
 
             <div className="card-invert p-6 space-y-3">

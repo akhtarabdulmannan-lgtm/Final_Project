@@ -6,7 +6,7 @@ export const personalNav: NavItem[] = [
     href: '/converter',
     children: [
       { label: 'Currency Converter', href: '/converter', description: 'Real-time mid-market rates' },
-      { label: 'Live Rate Tables', href: '/rates', description: '100+ currencies at a glance' },
+      { label: 'Live Rate Tables', href: '/rates', description: '64 currencies at a glance' },
       { label: 'Historical Rates', href: '/historical', description: 'Rates back to 1998' },
       { label: 'Currency Tables', href: '/tables', description: 'Cross-rate matrix' },
     ],
@@ -16,15 +16,11 @@ export const personalNav: NavItem[] = [
     href: '/charts',
   },
   {
-    label: 'Alerts',
-    href: '/alerts',
-  },
-  {
     label: 'Tools',
     href: '/tools',
     children: [
       { label: 'All Financial Tools', href: '/tools', description: 'Calculators, tables, and utilities' },
-      { label: 'Rate Email Updates', href: '/tools/email-updates', description: 'Daily market analysis' },
+      { label: 'Currency Tables', href: '/tables', description: 'Cross-rate matrix' },
     ],
   },
 ];
@@ -35,7 +31,6 @@ export const footerLinks = {
     { label: 'Currency Converter', href: '/converter' },
     { label: 'Live Rates', href: '/rates' },
     { label: 'Charts', href: '/charts' },
-    { label: 'Rate Alerts', href: '/alerts' },
     { label: 'Historical Rates', href: '/historical' },
   ],
   company: [

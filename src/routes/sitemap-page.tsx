@@ -10,11 +10,9 @@ export default function SitemapVisualPage() {
         { label: 'Currency Converter', href: '/converter' },
         { label: 'Live Exchange Rates', href: '/rates' },
         { label: 'Currency Charts', href: '/charts' },
-        { label: 'Rate Alerts', href: '/alerts' },
         { label: 'FX Tools Suite', href: '/tools' },
         { label: 'Historical Rates Lookup', href: '/historical' },
         { label: 'Currency Tables', href: '/tables' },
-        { label: 'Daily Email Updates', href: '/tools/email-updates' },
       ],
     },
     {

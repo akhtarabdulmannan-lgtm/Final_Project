@@ -1,5 +1,5 @@
 import Link from '@/router/Link';
-import { ShieldCheck, Mail, Table, Calendar, ArrowLeftRight } from 'lucide-react';
+import { Table, Calendar, ArrowLeftRight, Gauge } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function ToolsHubPage() {
@@ -11,10 +11,10 @@ export default function ToolsHubPage() {
       Icon: ArrowLeftRight,
     },
     {
-      title: 'Daily Market Email Updates',
-      desc: 'Subscribe to daily or weekly macroeconomic briefings and central bank currency digests.',
-      href: '/tools/email-updates',
-      Icon: Mail,
+      title: 'Interactive Currency Charts',
+      desc: 'Chart any supported pair from a single day out to ten years, with the rate shown for every date.',
+      href: '/charts',
+      Icon: Gauge,
     },
     {
       title: 'Cross-Rate Currency Matrix',
@@ -37,7 +37,7 @@ export default function ToolsHubPage() {
           <span className="badge-neutral">Financial Utilities</span>
           <h1>Currency Tools &amp; Calculators</h1>
           <p className="text-ink-500">
-            Free institutional utilities for validating banking details, tracking historical FX series, and planning cross-border transfers.
+            Free utilities for converting currencies, comparing cross-rates, and exporting historical FX series.
           </p>
         </div>
 

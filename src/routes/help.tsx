@@ -8,7 +8,7 @@ const generalFaqs = [
   {
     question: 'Do I need an account to use VectisX?',
     answer:
-      'No. Every converter, chart, table and rate alert works without signing in. An account is only useful if you want your email subscriptions tied to it.',
+      'No. Every converter, chart and table works without signing in. An account is optional.',
   },
   {
     question: 'What documents are required for business account verification?',
@@ -18,19 +18,18 @@ const generalFaqs = [
   {
     question: 'Which exchange rate does the converter use?',
     answer:
-      'Live mid-market rates from open.er-api.com, falling back to the European Central Bank feed via Frankfurter. Rates are cached for 15 minutes and marked "Offline rates" when the provider cannot be reached.',
+      'Live mid-market reference rates republished from public data feeds, falling back to central-bank reference rates. Rates are cached for 15 minutes and marked "Offline rates" when no provider can be reached.',
   },
   {
     question: 'How many currencies can I convert between?',
     answer:
-      '64 currencies are supported across the converter, cross-rate tables, charts and alerts. Historical charts use ECB reference data and cover windows from one day to ten years.',
+      '64 currencies are supported across the converter, cross-rate tables and charts. Historical charts use ECB reference data and cover windows from one day to ten years.',
   },
 ];
 
 const categories = [
-  { title: 'Rate Alerts & Notifications', articles: 18, desc: 'Setting target rates, alert delivery, and notification preferences.', href: '/alerts' },
   { title: 'Converting & Charts', articles: 12, desc: 'Supported currencies, historical windows, and how to read the inverse rate.', href: '/converter' },
-  { title: 'Security & Verification', articles: 9, desc: 'KYC identity verification, 2FA, and fraud prevention.', href: '/security' },
+  { title: 'Historical Data & Exports', articles: 9, desc: 'Time windows, closing rates, and CSV downloads.', href: '/historical' },
 ];
 
 export default function HelpPage() {

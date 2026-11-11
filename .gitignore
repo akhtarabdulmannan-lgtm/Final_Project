@@ -25,3 +25,6 @@ yarn-error.log*
 
 # Local test harness (not part of the app)
 .testing/
+
+# Test harness (regenerated on demand, see TEST-REPORT-ROUND2.md)
+/.testing

@@ -46,7 +46,7 @@ export default function HomePage() {
                 Global Currency Intelligence
               </h1>
               <p className="text-ink-500 mx-auto lg:mx-0">
-                Check live mid-market rates for the currencies you actually use, chart how a pair has moved over time, and set an alert for the level you are waiting on — all from one screen.
+                Check live mid-market rates for the currencies you actually use, convert at the rate the market is quoting, and chart how a pair has moved over time — all from one screen.
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-2 text-[14px] text-ink-700">
                 <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ export default function HomePage() {
                       <span className="font-heading font-semibold text-[18px] leading-[24px] text-ink">
                         {from} / {to}
                       </span>
-                      <DeltaChip change={change} />
+                      <DeltaChip change={change} hasData={Boolean(fx.previousRates)} comparedTo={fx.previousDate} />
                     </div>
                     <div className="text-[24px] leading-[32px] font-semibold text-ink mb-2 tabular-nums">
                       <LiveRateValue
@@ -166,7 +166,7 @@ export default function HomePage() {
                   <div>
                     <h3 className="text-[18px] leading-[24px] text-ink">Chart It or Watch It</h3>
                     <p className="text-[15px] leading-[22px] text-ink-500 mt-1">
-                      Follow a pair on a historical chart, or set a rate alert and let the site tell you when it moves.
+                      Follow any pair on a historical chart running from a single day to ten years, and read the inverse rate alongside it.
                     </p>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export default function HomePage() {
               {
                 step: '1',
                 title: 'We Call the API',
-                desc: 'On load, the app requests the latest reference rates from open.er-api.com, falling back to the European Central Bank feed if that is unavailable.',
+                desc: 'On load, the app requests the latest reference rates from a public market feed, falling back to central-bank reference rates if that is unavailable.',
               },
               {
                 step: '2',
@@ -238,7 +238,7 @@ export default function HomePage() {
               {
                 step: '3',
                 title: 'You Chart & Watch',
-                desc: 'Historical charts pull a real time series, and rate alerts compare your target against the same live feed.',
+                desc: 'Historical charts pull a real published time series, so you can see how a pair has actually moved.',
               },
             ].map((item, idx) => (
               <ScrollReveal key={item.step} delay={idx * 50} className="relative z-10">
@@ -259,10 +259,12 @@ export default function HomePage() {
               <div className="space-y-2">
                 <span className="badge-invert">Open data</span>
                 <h3 className="text-ink-invert">
-                  Rates from open.er-api.com &amp; the European Central Bank
+                  Rates from public market &amp; central-bank data
                 </h3>
                 <p className="text-ink-invert-muted">
-                  Both providers are free, public JSON APIs. If neither can be reached, the app says so and shows a clearly labelled saved snapshot.
+                  Reference rates are republished from free, public data sources and cached for
+                  fifteen minutes. If none can be reached, the app says so and shows a clearly
+                  labelled saved snapshot rather than inventing numbers.
                 </p>
               </div>
               <Link href="/historical" className="btn-invert whitespace-nowrap">
@@ -358,7 +360,7 @@ export default function HomePage() {
                         />
                       </td>
                       <td className="py-3.5 px-6 text-right">
-                        <DeltaChip change={change} />
+                        <DeltaChip change={change} hasData={Boolean(fx.previousRates)} comparedTo={fx.previousDate} />
                       </td>
                       <td className="py-3.5 px-6 text-center">
                         <Link
@@ -380,8 +382,8 @@ export default function HomePage() {
             <Link href="/rates" className="inline-flex items-center min-h-[44px] text-[15px] font-medium text-ink hover:underline">
               Browse complete list of live currencies &rarr;
             </Link>
-            <Link href="/alerts" className="inline-flex items-center min-h-[44px] text-[15px] font-medium text-ink hover:underline">
-              Set custom rate triggers &rarr;
+            <Link href="/tables" className="inline-flex items-center min-h-[44px] text-[15px] font-medium text-ink hover:underline">
+              Compare every pair at once &rarr;
             </Link>
           </div>
         </div>
@@ -400,20 +402,20 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 text-[14px]">
             {[
-              ['A', 'Alerts, Accounts, API', '/alerts'],
+              ['A', 'Accounts, Archive', '/register'],
               ['B', 'Bank Data, Base Rates', '/rates'],
               ['C', 'Converter, Charts, Tables', '/converter'],
-              ['D', 'Daily Rates, Data API', '/rates'],
-              ['E', 'Email Updates, ERP Sync', '/tools/email-updates'],
-              ['F', 'Forward Rates, FX History', '/historical'],
-              ['G', 'Guaranteed Rates, Graphs', '/charts'],
+              ['D', 'Daily Rates, Downloads', '/historical'],
+              ['E', 'Exchange Rates, ECB Data', '/rates'],
+              ['F', 'FX History, Floating Rates', '/historical'],
+              ['G', 'Graphs, Gain &amp; Loss', '/charts'],
               ['H', 'Historical Rates, Help', '/historical'],
               ['I', 'Indices, Inverse Rates', '/tables'],
-              ['L', 'Limit Orders, Live Rates', '/rates'],
-              ['M', 'Multi-Currency, Mid-Market', '/register'],
-              ['O', 'Options, Open Data', '/rates'],
-              ['P', 'Pairs, Partner Program', '/partners'],
-              ['R', 'Rate Alerts, Referral', '/referral'],
+              ['L', 'Live Rates, Latest Close', '/rates'],
+              ['M', 'Mid-Market Rates, Matrix', '/tables'],
+              ['O', 'Open Data, One-day Charts', '/charts'],
+              ['P', 'Pairs, Popular Conversions', '/converter'],
+              ['R', 'Rates, Rate History', '/rates'],
               ['S', 'Saved Snapshots, Security', '/security'],
               ['T', 'Tools, Tables, Trends', '/tools'],
               ['U', 'USD Pairs, Utilities', '/converter'],

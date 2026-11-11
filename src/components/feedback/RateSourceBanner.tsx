@@ -39,7 +39,7 @@ export default function RateSourceBanner({ className }: { className?: string }) 
           </span>
         ) : (
           <span>
-            Live rates from <strong className="font-medium text-ink">{sourceLabel}</strong>, updated{' '}
+            Live rates from the <strong className="font-medium text-ink">{sourceLabel}</strong>, updated{' '}
             {updatedAt}
           </span>
         )}

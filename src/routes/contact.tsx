@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Mail, PhoneCall, MapPin, CheckCircle2 } from 'lucide-react';
+import { Mail, CheckCircle2, MessageSquare } from 'lucide-react';
 import ActionButton from '@/components/ui/ActionButton';
 import { sendContactMessage, SubmissionError } from '@/lib/submissions';
 
 const CONTACT_TOPICS = [
-  'Corporate Treasury / FX Dealing Desk',
-  'Developer API / Commercial Licensing',
-  'Verification & KYC Questions',
-  'Partnership / Media Inquiry',
+  'General question',
+  'Data or rates issue',
+  'Correction request',
+  'Media or press',
 ];
 
 export default function ContactPage() {
@@ -47,70 +47,53 @@ export default function ContactPage() {
     <div className="min-h-screen bg-bg py-12 sm:py-16">
       <div className="container-vx">
         <div className="max-w-3xl mb-12 space-y-3">
-          <span className="badge-neutral">Global Assistance</span>
+          <span className="badge-neutral">Contact</span>
           <h1>Get in Touch with VectisX</h1>
           <p className="text-ink-500">
-            Have questions about consumer transfers, business foreign exchange hedging, or API integration? Our global team is here to support you 24/7.
+            VectisX is an independent currency-conversion project. Spot a wrong rate, a broken
+            link or something that reads inaccurately, and this is the fastest way to report it.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Contact Details */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="card p-6 bg-surface space-y-2">
-              <div className="flex items-center gap-2.5 text-ink font-semibold text-[15px]">
-                <PhoneCall className="w-4 h-4" aria-hidden="true" />
-                <span>Phone Support</span>
-              </div>
-              <p className="text-caption text-ink-500">Available 24 hours a day, 7 days a week.</p>
-              <div className="text-[18px] font-semibold text-ink tabular-nums">+1 (800) 555-8328</div>
-              <div className="text-caption text-ink-500 tabular-nums">
-                UK: +44 20 7946 0192 | International: +1 416 555 0199
-              </div>
-            </div>
-
-            <div className="card p-6 bg-surface space-y-2">
+            <div className="card p-6 bg-surface space-y-3">
               <div className="flex items-center gap-2.5 text-ink font-semibold text-[15px]">
                 <Mail className="w-4 h-4" aria-hidden="true" />
-                <span>Email Inquiries</span>
-              </div>
-              <p className="text-caption text-ink-500">Average response time under 1 hour.</p>
-              <div className="text-[14px] space-y-1 text-ink-700">
-                <div>
-                  Customer Support: <strong className="font-semibold text-ink">support@vectisx.com</strong>
-                </div>
-                <div>
-                  Corporate FX Dealing: <strong className="font-semibold text-ink">business@vectisx.com</strong>
-                </div>
-                <div>
-                  API &amp; Integrations: <strong className="font-semibold text-ink">api@vectisx.com</strong>
-                </div>
-              </div>
-            </div>
-
-            <div className="card p-6 bg-surface space-y-2">
-              <div className="flex items-center gap-2.5 text-ink font-semibold text-[15px]">
-                <MapPin className="w-4 h-4" aria-hidden="true" />
-                <span>Global Headquarters</span>
+                <span>Email</span>
               </div>
               <p className="text-[14px] leading-[22px] text-ink-700">
-                VectisX Financial Inc.
-                <br />
-                120 Wall Street, 28th Floor
-                <br />
-                New York, NY 10005, United States
+                <a
+                  href="mailto:akhtarabdulmannan@gmail.com"
+                  className="font-semibold text-ink underline underline-offset-2 hover:no-underline"
+                >
+                  akhtarabdulmannan@gmail.com
+                </a>
               </p>
-              <div className="text-caption text-ink-500 pt-2 border-t border-line">
-                Additional offices in London, Toronto, Sydney, and Singapore.
+              <p className="text-caption text-ink-500">
+                This is a one-person project, so replies are usually within a couple of days
+                rather than within the hour.
+              </p>
+            </div>
+
+            <div className="card p-6 bg-surface space-y-3">
+              <div className="flex items-center gap-2.5 text-ink font-semibold text-[15px]">
+                <MessageSquare className="w-4 h-4" aria-hidden="true" />
+                <span>Use the form</span>
               </div>
+              <p className="text-[14px] leading-[22px] text-ink-700">
+                Messages sent through the form are stored in the project&apos;s database and read
+                in the same inbox. There is no phone line and no postal address behind this site.
+              </p>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="lg:col-span-7 card p-6 sm:p-8 bg-surface">
-            <h2 className="mb-2">Send Us a Direct Message</h2>
+            <h2 className="mb-2">Send a Message</h2>
             <p className="text-ink-500 mb-6">
-              Fill in your information and our specialists will respond promptly.
+              Fill this in and it is saved straight to the project&apos;s inbox.
             </p>
 
             {submitted ? (
@@ -118,7 +101,8 @@ export default function ContactPage() {
                 <CheckCircle2 className="w-10 h-10 mx-auto" aria-hidden="true" />
                 <h3 className="text-gain">Message Received</h3>
                 <p className="text-[14px] max-w-sm mx-auto">
-                  Thank you for reaching out. A ticket has been created and an assigned specialist will reply to your email shortly.
+                  Thank you for reaching out. Your message has been saved; replies go to the email
+                  address you gave, usually within a couple of days.
                 </p>
               </div>
             ) : (

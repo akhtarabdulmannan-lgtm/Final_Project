@@ -29,8 +29,8 @@ export default function ForgotPasswordPage() {
 
       if (resetError) {
         setError(
-          resetError.message.toLowerCase().includes('rate limit')
-            ? 'Too many reset emails were requested. Please wait a few minutes and try again.'
+          /rate limit|too many|only request this after/i.test(resetError.message)
+            ? 'Too many reset emails were requested. Please wait a minute or two and try again.'
             : resetError.message
         );
         return;

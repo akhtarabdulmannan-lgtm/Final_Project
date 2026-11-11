@@ -20,7 +20,6 @@ The app has four main screens, each with a distinct job:
 | --- | --- | --- |
 | **Converter** | `#/converter` | Converts an amount between 200+ currencies using the live mid-market rate, shows the inverse rate, and links to a dedicated pair page for each currency combination. |
 | **Charts** | `#/charts` | Interactive area chart of the selected pair over 1D–10Y, with CSV export and share-link copying. Built on Recharts. |
-| **Rate Alerts** | `#/alerts` | Sets a target rate for a pair and direction, then compares it against the live feed. |
 | **Live Rate Tables** | `#/rates`, `#/tables` | Sortable table of every supported currency and a cross-rate matrix for bulk comparison. |
 
 Supporting pages (business, API docs, help, legal, blog, auth) round out the site.
@@ -35,19 +34,49 @@ Supporting pages (business, API docs, help, legal, blog, auth) round out the sit
 | Routing | **react-router-dom** v6 (`HashRouter`) |
 | Styling | **Tailwind CSS 3** with a custom design-token layer in `src/styles/globals.css` |
 | Functionality libraries | **Recharts** (charts), **lucide-react** (icons), **@supabase/supabase-js** (auth screens) |
-| Data | Public REST APIs, fetched in the browser |
+| Data | Public REST APIs, fetched through a same-origin `/api/rates` proxy (serverless function) with a direct fallback |
 
 ---
 
 ## The API integration
 
-Two free, public, CORS-enabled JSON APIs are used. No API key is required.
+Two free, public, CORS-enabled JSON APIs supply the data. Neither needs a key, and no
+provider name is shown in the interface — the UI describes the feed, not the vendor.
 
-1. **open.er-api.com** — `GET https://open.er-api.com/v6/latest/USD`
-   Primary source for current rates (~160 currencies, daily reference data).
-2. **api.frankfurter.dev** — `GET https://api.frankfurter.dev/v1/latest?base=USD`
-   Fallback for current rates, and the source for historical series:
-   `GET https://api.frankfurter.dev/v1/2026-01-01..2026-06-01?base=USD&symbols=EUR`
+1. `open.er-api.com/v6/latest/USD` — current rates for ~160 currencies.
+2. `api.frankfurter.dev/v1/...` — current rates as a fallback, and the source for every
+   historical series: `GET https://api.frankfurter.dev/v1/2026-01-01..2026-06-01?base=USD&symbols=EUR`.
+
+### The `/api/rates` proxy
+
+`api/rates.ts` is a Vercel serverless function that fetches the current rates
+server-side and returns one normalised shape:
+
+```json
+{ "base_code": "USD", "time_last_update_utc": "…", "rates": { "EUR": 0.86 } }
+```
+
+`src/lib/fx/client.ts` requests it first and falls back to calling the public API
+directly when the function is not deployed (for example `npm run dev`, where Vite serves
+no functions). Two reasons for the indirection:
+
+- **The provider key never reaches the browser.** If a keyed provider is ever used,
+  `FX_API_KEY` is read inside the function and is never bundled into client JavaScript.
+- **One response shape.** The function normalises er-api and Frankfurter payloads, so the
+  client parses one schema instead of two.
+
+Environment variables, all optional, set in the Vercel project (never in the repo):
+
+| Variable | Purpose |
+| --- | --- |
+| `FX_API_URL` | Upstream URL the function should call. Defaults to the public er-api endpoint. |
+| `FX_API_KEY` | Sent upstream when present (omit for keyless providers). |
+| `FX_API_KEY_PARAM` | Query-string name for the key, e.g. `access_key`. Defaults to `api_key`. |
+
+The function caches for 60 seconds (`s-maxage`) and serves stale for five minutes
+(`stale-while-revalidate`).
+
+### Fallbacks
 
 The client lives in `src/lib/fx/client.ts` and `src/lib/fx/history.ts`. Each call:
 
@@ -59,7 +88,7 @@ The client lives in `src/lib/fx/client.ts` and `src/lib/fx/history.ts`. Each cal
 `src/lib/fx/RateProvider.tsx` owns the request and exposes three states to the UI:
 
 - **loading** — skeleton placeholders and a "Fetching live rates…" badge,
-- **ready** — a banner naming the provider and its update date,
+- **ready** — a banner naming the feed and its update date,
 - **error** — a dismissible notice explaining what failed, with a **Retry** button and
   a collapsible technical-details block.
 
@@ -102,7 +131,7 @@ npm run preview   # serve the production build locally
 
 ### Optional: sign-in screens
 
-The converter, charts and alerts need no configuration. The login/register/reset screens
+The converter and charts need no configuration. The login/register/reset screens
 use Supabase and stay disabled unless credentials are present. Copy `.env.example` to
 `.env` and fill in:
 
@@ -112,6 +141,8 @@ VITE_SUPABASE_ANON_KEY=<anon-key>
 ```
 
 Both values are public by design; access is controlled by Supabase row-level security.
+Email sign-up requires confirmation: the account is only usable after the link in the
+verification mail is followed (`mailer_autoconfirm` is off in the Supabase project).
 
 ---
 
@@ -132,6 +163,7 @@ hard refresh on any deep link still boots the app.
 ## Project structure
 
 ```
+api/rates.ts                # serverless proxy for current rates
 src/
 ├── App.tsx                 # route table + layout shell
 ├── main.tsx                # React entry point (HashRouter)
@@ -164,6 +196,6 @@ in `App.tsx`; it currently verifies 74 links across 39 routes.
 
 ## Credits
 
-Rate data: [open.er-api.com](https://www.exchangerate-api.com/) and
+Rate data: [ExchangeRate-API](https://www.exchangerate-api.com/) and
 [Frankfurter](https://frankfurter.dev/) (European Central Bank reference rates).
 UI inspiration: Xe.com. Not affiliated with either; this is a coursework project.

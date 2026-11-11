@@ -12,6 +12,16 @@ import type { FxApiErrorShape, LiveRateSnapshot, RateSource } from './types';
  * in `src/lib/rates.ts` and the UI labels it as offline.
  */
 
+/**
+ * Preferred source: the project's own serverless proxy (`/api/rates`).
+ *
+ * It normalises whichever provider is configured server-side into one shape and
+ * keeps any provider key in the Vercel environment instead of the browser. When
+ * it is not deployed (a static host, or local dev with no function server) it
+ * answers nothing useful and the direct public providers below are used, so the
+ * app never depends on the proxy existing.
+ */
+const PROXY_URL = '/api/rates';
 const PRIMARY_URL = 'https://open.er-api.com/v6/latest/USD';
 const FALLBACK_URL = 'https://api.frankfurter.dev/v1/latest?base=USD';
 
@@ -156,6 +166,19 @@ function writeCache(snapshot: LiveRateSnapshot) {
 export async function fetchLiveRates(signal?: AbortSignal): Promise<LiveRateSnapshot> {
   const failures: string[] = [];
 
+  // 1. Same-origin proxy, when the deployment provides one.
+  try {
+    const payload = await fetchJson(PROXY_URL, signal);
+    const provider = (payload as { provider?: string } | null)?.provider;
+    const snapshot = parseRates(payload, provider === 'fallback' ? 'frankfurter' : 'er-api');
+    writeCache(snapshot);
+    return snapshot;
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    failures.push(`proxy: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  // 2. Direct public provider.
   try {
     const payload = await fetchJson(PRIMARY_URL, signal);
     const snapshot = parseRates(payload, 'er-api');
@@ -185,8 +208,16 @@ export async function fetchLiveRates(signal?: AbortSignal): Promise<LiveRateSnap
   );
 }
 
+/**
+ * User-facing names for where a set of rates came from.
+ *
+ * These deliberately do not name the upstream services: the source URLs are an
+ * implementation detail, and advertising "open.er-api.com" in the header only
+ * tells a visitor which endpoint to scrape. The offline state is still stated
+ * bluntly, because that one changes how the numbers should be read.
+ */
 export const PROVIDER_LABELS: Record<RateSource, string> = {
-  'er-api': 'open.er-api.com',
-  frankfurter: 'European Central Bank (Frankfurter)',
+  'er-api': 'live market feed',
+  frankfurter: 'central-bank reference rates',
   cache: 'saved copy from this browser',
 };

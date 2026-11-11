@@ -6,6 +6,13 @@
 > in §9 — the API section of the first edition was wrong in an important way.
 
 **Application:** VectisX currency converter (Vite + React Router SPA)
+
+> **Note on scope.** This report covers the QA round at revision `76e9de8`. At the
+> owner's request the **Rate Alerts page, the Daily Market Email Updates tool and the
+> footer newsletter/social blocks were subsequently deleted from the product**, so the
+> alerts and newsletter rows in §1–§8 describe code that no longer exists. Nothing else
+> in those sections is affected. The fixes made in the round following this one are
+> recorded in `TEST-REPORT-ROUND2.md`.
 **Revision tested:** `arena/5fd107ef-final-project` @ `76e9de8` (working tree clean at test start)
 **Date:** 9 November 2026
 **Scope:** Testing first (reporting only), then the fixes, per follow-up request. Fix log in §8.

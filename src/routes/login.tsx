@@ -43,11 +43,18 @@ export default function LoginPage() {
       });
 
       if (signInError) {
-        setError(
-          signInError.message.toLowerCase().includes('invalid login credentials')
-            ? 'Incorrect email or password. If you recently changed your password, use the new one or reset it again.'
-            : signInError.message
-        );
+        const raw = signInError.message.toLowerCase();
+        if (raw.includes('email not confirmed')) {
+          setError(
+            'That address has not been confirmed yet. Open the confirmation link we emailed you, then sign in. If it never arrived, go back to the register page to resend it.',
+          );
+        } else if (raw.includes('invalid login credentials')) {
+          setError(
+            'Incorrect email or password. If you recently changed your password, use the new one or reset it again.',
+          );
+        } else {
+          setError(signInError.message);
+        }
         return;
       }
 

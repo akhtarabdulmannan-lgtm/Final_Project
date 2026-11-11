@@ -35,17 +35,6 @@ export interface HistoricalRate {
   close: number;
 }
 
-export interface RateAlert {
-  id: string;
-  from: string;
-  to: string;
-  targetRate: number;
-  direction: 'above' | 'below';
-  email: string;
-  active: boolean;
-  createdAt: string;
-}
-
 export interface TransferQuote {
   from: string;
   to: string;

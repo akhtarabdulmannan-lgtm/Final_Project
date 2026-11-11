@@ -60,7 +60,7 @@ export default function SecurityPage() {
           <p className="text-ink-invert-muted mx-auto">
             We value the security researcher community. Report potential bugs or protocol issues directly to our infosec incident desk.
           </p>
-          <div className="text-[15px] font-semibold text-ink-invert pt-1">security@vectisx.com</div>
+          <div className="text-[15px] font-semibold text-ink-invert pt-1">akhtarabdulmannan@gmail.com</div>
         </div>
       </div>
     </div>

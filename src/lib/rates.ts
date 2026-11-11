@@ -54,10 +54,23 @@ export function convert(amount: number, from: string, to: string, live?: RateMap
 export function get24hChange(from: string, to: string, live?: RateMap | null, previous?: RateMap | null): number {
   if (from === to) return 0;
   if (!live || !previous) return 0;
+
+  // `previous` is a second provider snapshot whose base may differ from `live`
+  // (er-api quotes against USD, Frankfurter can quote against anything), so both
+  // sides are resolved through getRate rather than divided directly.
   const current = getRate(from, to, live);
   const prior = getRate(from, to, previous);
-  if (!prior) return 0;
+  if (!prior || !Number.isFinite(current) || !Number.isFinite(prior)) return 0;
+
   return ((current - prior) / prior) * 100;
+}
+
+/**
+ * True when a pair has no genuine day-over-day figure. The UI uses this to say
+ * so explicitly instead of printing a "0.00%" that reads like a real quote.
+ */
+export function has24hChange(previous?: RateMap | null): boolean {
+  return Boolean(previous);
 }
 
 /**

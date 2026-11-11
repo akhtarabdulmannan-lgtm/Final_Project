@@ -212,7 +212,7 @@ export default function RatesPage() {
                           />
                         </td>
                         <td className="py-3.5 px-6 text-right">
-                          <DeltaChip change={change} />
+                          <DeltaChip change={change} hasData={Boolean(fx.previousRates)} comparedTo={fx.previousDate} />
                         </td>
                         <td className="py-3.5 px-6 text-center">
                           <div className="flex items-center justify-center gap-2">

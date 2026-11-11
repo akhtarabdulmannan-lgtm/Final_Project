@@ -14,6 +14,43 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [registered, setRegistered] = useState(false);
   const [autoActivated, setAutoActivated] = useState(false);
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [resendError, setResendError] = useState<string | null>(null);
+
+  /**
+   * Re-sends the confirmation email. Supabase reports success even when the
+   * address is already confirmed (deliberately, so the form cannot be used to
+   * test which emails are registered), so the copy never claims a new mail was
+   * definitely delivered.
+   */
+  const handleResend = async () => {
+    if (resendState === 'sending') return;
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    setResendError(null);
+    setResendState('sending');
+    try {
+      const { error: resendFailure } = await supabase.auth.resend({
+        type: 'signup',
+        email: email.trim().toLowerCase(),
+        options: { emailRedirectTo: `${window.location.origin}/login` },
+      });
+      if (resendFailure) {
+        setResendState('error');
+        setResendError(
+          /rate limit|too many|only request this after/i.test(resendFailure.message)
+            ? 'Too many emails were requested. Please wait a minute or two and try again.'
+            : resendFailure.message,
+        );
+        return;
+      }
+      setResendState('sent');
+    } catch {
+      setResendState('error');
+      setResendError('Unable to reach the authentication service. Please try again.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +110,7 @@ export default function RegisterPage() {
             </div>
             <h1>Create Account</h1>
             <p className="text-caption text-ink-500 mx-auto">
-              Track live mid-market rates, historical charts, and alerts across 64 currencies.
+              Track live mid-market rates and historical charts across 64 currencies.
             </p>
           </div>
 
@@ -103,11 +140,36 @@ export default function RegisterPage() {
                   </>
                 ) : (
                   <>
-                    We sent a confirmation link to <strong className="font-semibold">{email}</strong>. Confirm
-                    your email, then sign in.
+                    We sent a confirmation link to <strong className="font-semibold">{email}</strong>. You
+                    must confirm it before you can sign in. If nothing arrives within a few minutes,
+                    check your spam folder, then resend it below.
                   </>
                 )}
               </p>
+
+              {!autoActivated && (
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resendState === 'sending' || resendState === 'sent'}
+                    aria-busy={resendState === 'sending'}
+                    className="btn-secondary btn-sm w-full justify-center"
+                  >
+                    {resendState === 'sending'
+                      ? 'Sending...'
+                      : resendState === 'sent'
+                        ? 'Confirmation email sent again'
+                        : 'Resend confirmation email'}
+                  </button>
+                  {resendError && (
+                    <p role="alert" className="text-[13px] text-loss">
+                      {resendError}
+                    </p>
+                  )}
+                </div>
+              )}
+
               <Link href="/login" className="btn-primary btn-sm">
                 Go to sign in
               </Link>

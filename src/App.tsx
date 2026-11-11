@@ -17,9 +17,7 @@ const Rates = lazy(() => import('@/routes/rates'));
 const Charts = lazy(() => import('@/routes/charts'));
 const Historical = lazy(() => import('@/routes/historical'));
 const Tables = lazy(() => import('@/routes/tables'));
-const Alerts = lazy(() => import('@/routes/alerts'));
 const Tools = lazy(() => import('@/routes/tools'));
-const ToolsEmailUpdates = lazy(() => import('@/routes/tools_email-updates'));
 const About = lazy(() => import('@/routes/about'));
 const Careers = lazy(() => import('@/routes/careers'));
 const Press = lazy(() => import('@/routes/press'));
@@ -49,9 +47,7 @@ const TITLES: Record<string, string> = {
   '/charts': 'Currency Charts',
   '/historical': 'Historical Rates',
   '/tables': 'Currency Tables',
-  '/alerts': 'Rate Alerts',
   '/tools': 'Financial Tools',
-  '/tools/email-updates': 'Rate Email Updates',
   '/about': 'About',
   '/careers': 'Careers',
   '/press': 'Press',
@@ -87,7 +83,7 @@ function DocumentTitle() {
   usePageMeta({
     title,
     description:
-      'Convert currencies with live mid-market exchange rates from the European Central Bank, chart rate history, and set rate alerts.',
+      'Convert currencies with live mid-market exchange rates, and chart how a pair has moved over time.',
   });
   return null;
 }
@@ -115,9 +111,7 @@ export default function App() {
             <Route path="/charts" element={<Charts />} />
             <Route path="/historical" element={<Historical />} />
             <Route path="/tables" element={<Tables />} />
-            <Route path="/alerts" element={<Alerts />} />
             <Route path="/tools" element={<Tools />} />
-            <Route path="/tools/email-updates" element={<ToolsEmailUpdates />} />
             <Route path="/about" element={<About />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/press" element={<Press />} />

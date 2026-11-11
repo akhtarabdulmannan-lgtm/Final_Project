@@ -40,12 +40,24 @@ export default function HistoricalRatesPage() {
   };
 
   const handleDownloadCsv = async () => {
-    const csv = ['date,rate', ...chartData.map((item) => `${item.date},${formatRate(item.rate)}`)].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    // Excel is the usual destination for these files, and it renders an ISO
+    // date like 2026-11-10 as "########" unless the cell is quoted or written
+    // in a locale-explicit form. Quoting every date plus a UTF-8 BOM keeps the
+    // dates readable in Excel, Sheets and LibreOffice alike.
+    const rows = chartData.map(
+      (item) =>
+        `"${item.date}",${formatRate(item.rate)},"${formatRate(100 * item.rate)}","${formatRate(1 / item.rate)}"`,
+    );
+    const csv = [
+      `"Date","1 ${fromCode} in ${toCode}","100 ${fromCode} in ${toCode}","1 ${toCode} in ${fromCode}"`,
+      ...rows,
+    ].join('\r\n');
+
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `historical-${fromCode}-${toCode}-${selectedDays}d.csv`;
+    link.download = `vectisx-${fromCode}-${toCode}-${selectedDays}d.csv`;
     link.click();
     URL.revokeObjectURL(url);
     await wait(250);
@@ -193,6 +205,7 @@ export default function HistoricalRatesPage() {
                         fontVariantNumeric: 'tabular-nums',
                       }}
                       formatter={(v: number) => [`${formatRate(v)} ${toCode}`, 'Rate']}
+                      labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Line type="monotone" dataKey="rate" stroke="#111418" strokeWidth={2} dot={false} />
                   </LineChart>
@@ -204,7 +217,12 @@ export default function HistoricalRatesPage() {
 
         {/* Historical Table */}
         <div className="card p-6 bg-surface">
-          <h3 className="mb-4">Daily Closing Rates Ledger</h3>
+          <h3 className="mb-1">Daily Closing Rates Ledger</h3>
+          <p className="text-caption text-ink-500 mb-4">
+            Showing the 15 most recent of {chartData.length} published rates.
+            The ECB publishes on business days only, so a 90-day window contains roughly 65
+            rates — weekends and holidays are absent rather than filled in.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-surface-subtle text-caption font-medium text-ink-500 uppercase border-b border-line">

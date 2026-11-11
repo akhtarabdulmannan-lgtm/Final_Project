@@ -22,7 +22,7 @@ export default function TermsPage() {
           <section className="space-y-2">
             <h2>2. Accuracy of Exchange Rates</h2>
             <p>
-              Rates displayed in the Currency Converter are mid-market reference rates republished from public providers (open.er-api.com and the European Central Bank via Frankfurter). They are informational, may be delayed, and are not transaction rates; no currency is bought, sold, or transferred through this site.
+              Rates displayed in the Currency Converter are mid-market reference rates republished from public data providers. They are informational, may be delayed, and are not transaction rates; no currency is bought, sold, or transferred through this site.
             </p>
           </section>
 

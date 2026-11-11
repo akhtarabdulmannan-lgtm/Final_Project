@@ -96,7 +96,7 @@ export default function DynamicPairPage() {
                 </span>
                 <span aria-hidden="true">{toCurrency.flag}</span>
               </span>
-              <DeltaChip change={change24h} suffix="(24h)" />
+              <DeltaChip change={change24h} suffix="(24h)" hasData={Boolean(fx.previousRates)} comparedTo={fx.previousDate} />
               <LiveUpdatedBadge utcTime={fx.updatedAt} />
             </div>
             <h1>

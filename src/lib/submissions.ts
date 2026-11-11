@@ -55,64 +55,6 @@ async function currentOwnerId(): Promise<string | null> {
   return data.session?.user?.id ?? null;
 }
 
-export interface RateAlertInput {
-  email: string;
-  fromCurrency: string;
-  toCurrency: string;
-  direction: 'above' | 'below';
-  targetRate: number;
-}
-
-/**
- * Saves a rate alert. Resolves only once the row exists in Postgres, so a
- * success message always means the alert survived.
- */
-export async function createRateAlert(input: RateAlertInput): Promise<void> {
-  const supabase = requireClient();
-  const { error } = await supabase.from('rate_alerts').insert({
-    email: input.email.trim(),
-    from_currency: input.fromCurrency,
-    to_currency: input.toCurrency,
-    direction: input.direction,
-    target_rate: input.targetRate,
-    user_id: await currentOwnerId(),
-  });
-  if (error) throw toSubmissionError(error);
-}
-
-export interface NewsletterInput {
-  email: string;
-  frequency: 'daily' | 'weekly';
-}
-
-/**
- * Subscribes an email address. The unique constraint on `email` means a repeat
- * submission is reported as "already subscribed" rather than a fake success.
- */
-export async function subscribeToNewsletter(input: NewsletterInput): Promise<void> {
-  const supabase = requireClient();
-  const email = input.email.trim().toLowerCase();
-
-  // The table has no owner column: a subscription is keyed by email alone and
-  // is deliberately not linked to the auth user.
-  const { error } = await supabase
-    .from('newsletter_subscriptions')
-    .insert({ email, frequency: input.frequency });
-
-  if (!error) return;
-
-  // Already subscribed. The email column is unique and there is no UPDATE
-  // policy for this table, so changing cadence is not something the browser
-  // can do — say so honestly instead of pretending it worked.
-  if (error.code === UNIQUE_VIOLATION) {
-    throw new SubmissionError(
-      'This email is already subscribed. Contact support if you need to change the cadence.',
-    );
-  }
-
-  throw toSubmissionError(error);
-}
-
 export interface ContactInput {
   name: string;
   email: string;

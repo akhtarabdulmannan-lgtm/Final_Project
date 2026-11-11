@@ -1,6 +1,33 @@
 import { useState } from 'react';
 import Link from '@/router/Link';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+
+/**
+ * Recharts' default tooltip shows only the y value. The chart is read as
+ * "what was the rate on this date", so both halves are printed explicitly.
+ */
+function RateTooltip({ active, payload, label, pairLabel }: {
+  active?: boolean;
+  payload?: Array<{ value?: number | string }>;
+  label?: string;
+  pairLabel: string;
+}) {
+  if (!active || !payload?.length) return null;
+  const value = Number(payload[0]?.value);
+  if (!Number.isFinite(value)) return null;
+
+  return (
+    <div
+      className="rounded-xl border border-[#282E38] bg-[#111418] px-3.5 py-2.5 text-[13px] text-white"
+      style={{ fontVariantNumeric: 'tabular-nums' }}
+    >
+      <div className="text-[12px] text-[#9AA4B2]">{label}</div>
+      <div className="font-semibold">
+        1 {pairLabel.split('/')[0]} = {formatRate(value)} {pairLabel.split('/')[1]}
+      </div>
+    </div>
+  );
+}
 import { currencies } from '@/data/currencies';
 import { formatRate } from '@/lib/rates';
 import { useRateHistory } from '@/lib/fx/useHistory';
@@ -185,7 +212,7 @@ export default function ChartsPage() {
                       {toCode}
                     </div>
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-caption text-ink-500">
-                      <DeltaChip change={change} suffix="past 24h" />
+                      <DeltaChip change={change} suffix="past 24h" hasData={Boolean(fx.previousRates)} comparedTo={fx.previousDate} />
                       <span>• Mid-market rate</span>
                     </div>
                   </div>
@@ -220,7 +247,7 @@ export default function ChartsPage() {
                         tickLine={false}
                         axisLine={false}
                         tick={{ fill: '#4B5565', fontSize: 12, fontFamily: 'var(--font-inter)' }}
-                        tickFormatter={(d) => d.slice(5)}
+                        tickFormatter={(d: string) => (['1Y', '5Y', '10Y'].includes(range) ? d : d.slice(5))}
                       />
                       <YAxis
                         domain={['auto', 'auto']}
@@ -230,15 +257,8 @@ export default function ChartsPage() {
                         tickFormatter={(v) => formatRate(v)}
                       />
                       <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#111418',
-                          borderRadius: '12px',
-                          border: '1px solid #282E38',
-                          color: '#FFFFFF',
-                          fontSize: '13px',
-                          fontVariantNumeric: 'tabular-nums',
-                        }}
-                        formatter={(v: number) => [`${formatRate(v)} ${toCode}`, 'Rate']}
+                        content={<RateTooltip pairLabel={`${fromCode}/${toCode}`} />}
+                        cursor={{ stroke: '#4B5565', strokeDasharray: '3 3' }}
                       />
                       <Area
                         type="monotone"
@@ -304,19 +324,22 @@ export default function ChartsPage() {
                 </span>
               </div>
               <div className="pt-2">
-                <Link href="/alerts" className="btn-primary w-full justify-center btn-sm">
-                  Set Free Rate Alert
+                <Link
+                  href={`/converter/${fromCode.toLowerCase()}-to-${toCode.toLowerCase()}`}
+                  className="btn-primary w-full justify-center btn-sm"
+                >
+                  Convert {fromCode} to {toCode}
                 </Link>
               </div>
             </div>
 
             <div className="card-invert p-5 space-y-3">
-              <h3 className="text-[18px] leading-[24px] text-ink-invert">Tracking {fromCode}/{toCode}?</h3>
+              <h3 className="text-[18px] leading-[24px] text-ink-invert">Need the raw numbers?</h3>
               <p className="text-[14px] leading-[22px] text-ink-invert-muted">
-                Set a target and get an email the moment the pair trades at your level — useful before you commit to a conversion.
+                Download the full published series for {fromCode}/{toCode} as a CSV and work with it in your own spreadsheet.
               </p>
-              <Link href="/alerts" className="btn-invert btn-sm w-full justify-center">
-                Create a Rate Alert
+              <Link href="/historical" className="btn-invert btn-sm w-full justify-center">
+                Open Historical Data
               </Link>
             </div>
           </div>

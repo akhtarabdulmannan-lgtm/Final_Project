@@ -19,7 +19,7 @@ const faqs = [
   {
     question: 'How often are VectisX exchange rates updated?',
     answer:
-      'Rates are fetched from open.er-api.com, a public reference-rate API, with the European Central Bank feed as a fallback. Both publish one reference rate per business day, so the figures are mid-market rather than a live dealing price.',
+      'Rates are republished from free, public reference-rate data, with a central-bank feed as the fallback. Both publish roughly one reference rate per business day, so the figures are mid-market rather than a live dealing price.',
   },
   {
     question: 'How often do the rates on the converter update?',
@@ -88,7 +88,7 @@ export default function ConverterPage() {
               {
                 step: '3',
                 title: 'Analyze or Watch',
-                desc: 'Inspect 10-year historical charts, or set a free target-rate alert and let the site watch the pair for you.',
+                desc: 'Inspect charts running up to ten years, then export the daily series as CSV and inspect it yourself.',
               },
             ].map((item, idx) => (
               <ScrollReveal key={item.step} delay={idx * 50} className="relative z-10">
@@ -137,7 +137,7 @@ export default function ConverterPage() {
                       <span className="font-heading font-semibold text-ink text-[18px]">
                         {from} to {to}
                       </span>
-                      <DeltaChip change={change} />
+                      <DeltaChip change={change} hasData={Boolean(fx.previousRates)} comparedTo={fx.previousDate} />
                     </div>
                     <div className="text-[20px] leading-[28px] font-semibold text-ink tabular-nums">
                       1 {from} ={' '}
