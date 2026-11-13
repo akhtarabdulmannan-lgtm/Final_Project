@@ -353,7 +353,7 @@ class Report:
             ("Deadline", "13 November 2026"),
             ("Application", "VectisX - currency converter, live rate tables, historical charts"),
             ("Repository", "github.com/akhtarabdulmannan-lgtm/Final_Project"),
-            ("Deployed", "vectisx.vercel.app  (GitHub Pages: see appendix)"),
+            ("Deployed", "akhtarabdulmannan-lgtm.github.io/Final_Project"),
             ("Date", "9 November 2026"),
         ]
         for k, v in meta:
@@ -541,8 +541,8 @@ def build():
     r.para(DESCRIPTION)
     r.space(2)
     r.kv("Repository", "github.com/akhtarabdulmannan-lgtm/Final_Project")
-    r.kv("Deployed", "vectisx.vercel.app")
-    r.kv("Pages URL", "akhtarabdulmannan-lgtm.github.io/Final_Project (see appendix)")
+    r.kv("Deployed", "akhtarabdulmannan-lgtm.github.io/Final_Project")
+    r.kv("Mirror", "vectisx.vercel.app")
     r.space(6)
     r.stat_strip([
         ("64", "currencies converted"),
@@ -612,9 +612,10 @@ def build():
         "Chart tooltip and pointer interactions are verified by hand, because jsdom cannot produce a real hover.",
         "The rate feed publishes on business days only, so a 90-day window holds about 65 rows; the historical "
         "page states this instead of padding the series.",
-        "GitHub Pages is configured in .github/workflows/deploy.yml and builds correctly with "
-        "VITE_BASE=/Final_Project/, but the repository's Pages source must be switched on once in Settings -> "
-        "Pages before that URL serves the app. Until then the public deployment is vectisx.vercel.app.",
+        "GitHub Pages serves the app from akhtarabdulmannan-lgtm.github.io/Final_Project, built and published "
+        "by .github/workflows/deploy.yml on every push to main. The Vercel mirror at vectisx.vercel.app is the "
+        "one deployment that also runs the api/rates serverless proxy, so the two hosts differ in where the "
+        "current-rate request originates; the browser-side fallback covers the Pages host.",
         "Accounts use the Supabase built-in email sender, which is rate limited: fine for a demonstration, not "
         "for many sign-ups at once.",
     ])

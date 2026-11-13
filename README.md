@@ -9,14 +9,12 @@ transfers, and displays reference rates for information only. The site states th
 every page that could be mistaken for something more, and holds no licences because it
 carries out no regulated activity.
 
-**Live app (Vercel):** https://vectisx.vercel.app
-**GitHub Pages mirror:** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
+**Live app (GitHub Pages):** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
+**Mirror (Vercel):** https://vectisx.vercel.app
 
-> **Deployment status at submission.** The Vercel URL above is live and builds from
-> `main` on every push. The GitHub Pages workflow runs and its build step succeeds, but
-> the publish step fails until Pages is switched on once in
-> **Settings → Pages → Build and deployment → Source: GitHub Actions** (see
-> [Deployment](#deployment)). Until that switch is flipped the Pages URL returns 404.
+> Both hosts serve the same build from `main`. GitHub Pages is the primary deployment;
+> the Vercel mirror additionally runs the `api/rates.ts` serverless proxy, so it is the
+> one place the current-rate request is made server-side.
 
 ---
 
@@ -170,7 +168,7 @@ npm run build
 npm run preview      # serves dist/ over http://localhost:4173
 ```
 
-If you only want to look at the finished site, use the deployed URL: <https://vectisx.vercel.app>.
+If you only want to look at the finished site, use the deployed URL: <https://akhtarabdulmannan-lgtm.github.io/Final_Project/>.
 
 ### Optional: sign-in screens
 
@@ -191,29 +189,26 @@ verification mail is followed (`mailer_autoconfirm` is off in the Supabase proje
 
 ## Deployment
 
-### Vercel (live)
-
-`vercel.json` builds with `npm run build:web` and serves `dist/`. It also hosts the
-`api/rates.ts` serverless proxy on the same origin, so the converter gets a keyless,
-server-side rate fetch and the provider key never reaches the browser. This deployment is
-live at <https://vectisx.vercel.app>.
-
-### GitHub Pages
+### GitHub Pages (primary)
 
 `.github/workflows/deploy.yml` builds on every push to `main` and publishes `dist/` with
-the official Pages actions. `vite.config.ts` sets `base: '/Final_Project/'` for production
-builds so assets resolve under the repository subpath, and the build copies `index.html`
-to `404.html` so a hard refresh on a deep link still boots the app.
+the official Pages actions; the site is live at
+<https://akhtarabdulmannan-lgtm.github.io/Final_Project/>.
 
-**It needs one manual switch, once per repository:**
+`vite.config.ts` sets `base: '/Final_Project/'` for production builds so assets resolve
+under the repository subpath. Routing is hash-based (`HashRouter`), so every in-app route
+is a fragment of the same document and needs no server rewrite; the build also copies
+`index.html` to `404.html` so that any stray non-hash path still boots the SPA.
 
-1. **Settings → Pages → Build and deployment → Source: GitHub Actions**
-2. Push to `main`, or run the workflow from the Actions tab.
+One-time setup, already applied to this repository: **Settings → Pages → Build and
+deployment → Source: GitHub Actions**.
 
-Verified state at submission: the workflow's **build** job passes (type-check, link check
-and build all succeed), but the **deploy** job fails at *Deploy to GitHub Pages* because no
-Pages site exists until step 1 is done. So the Pages URL is **not** serving the app yet.
-The Vercel deployment above is fully live and needs no setup.
+### Vercel (mirror)
+
+`vercel.json` builds with `npm run build:web` and serves `dist/` from the domain root
+(`VITE_BASE=/`). It additionally hosts the `api/rates.ts` serverless proxy on the same
+origin, so on that host the current rates are fetched server-side and the provider key
+never reaches the browser. Live at <https://vectisx.vercel.app>.
 
 ---
 

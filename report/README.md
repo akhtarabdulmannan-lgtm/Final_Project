@@ -49,8 +49,10 @@ screenshots taken in a browser.
 - The jsdom harness that produced the original "110 assertions" figure was a scratch
   tool and is not committed, so the report cites only the checks a reader can rerun:
   `npm run typecheck`, `npm run check:links`, `npm run build`.
-- Deployed at `vectisx.vercel.app`.
-- GitHub Pages is configured in `.github/workflows/deploy.yml` and the build
-  itself works (`VITE_BASE=/Final_Project/ npm run build`), but the repository's
-  Pages source still has to be switched on in Settings -> Pages. Until it is,
-  the Pages URL does not serve the app, and the report says exactly that.
+- GitHub Pages is the primary deployment, live and serving:
+  `akhtarabdulmannan-lgtm.github.io/Final_Project`. Verified: the root document
+  renders the home screen with live rates, and hash routes such as `#/charts`
+  render their own screens.
+- `vectisx.vercel.app` is the mirror. It is also the only host running the
+  `api/rates.ts` serverless proxy, so the two differ in where the current-rate
+  request is made; the browser-side fallback covers the Pages host.
