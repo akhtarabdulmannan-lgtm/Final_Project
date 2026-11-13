@@ -1,0 +1,19 @@
+# Canonical author identity for this repository.
+#
+# Git records the author name and email that were configured on the machine
+# that made each commit, so a stray local config silently attributes work to a
+# different account. This file pins every historical spelling to the account
+# that owns the project; `git log`, `git shortlog -e` and GitHub all honour it,
+# and git-filter-repo accepts it via --mailmap.
+#
+# To check:  git log --format="%an <%ae>" | sort -u
+#             git shortlog -sne --all
+#
+# Keep the first line below last-resort: it renames anyone already using the
+# canonical address.
+Abdul Mannan Ahmad <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com>
+
+Abdul Mannan Ahmad <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com> Abdul Mannan Akhtar <akhtarabdulmannan-lgtm@users.noreply.github.com>
+Abdul Mannan Ahmad <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com> akhtarabdulmannan-lgtm <akhtarabdulmannan-lgtm@users.noreply.github.com>
+Abdul Mannan Ahmad <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com> akhtarabdulmannan-lgtm <akhtarabdulmannan@gmail.com>
+Abdul Mannan Ahmad <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com> Abdul Mannan Akhtar <akhtarabdulmannan@gmail.com>
