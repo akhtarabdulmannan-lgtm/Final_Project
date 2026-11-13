@@ -9,11 +9,14 @@ transfers, and displays reference rates for information only. The site states th
 every page that could be mistaken for something more, and holds no licences because it
 carries out no regulated activity.
 
-**Live app (GitHub Pages):** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
-**Mirror (Vercel):** https://vectisx.vercel.app
+**Live app (Vercel):** https://vectisx.vercel.app
+**GitHub Pages mirror:** https://akhtarabdulmannan-lgtm.github.io/Final_Project/
 
-> The Pages URL needs the one-time Pages setting described in [Deployment](#deployment)
-> before it serves anything. The Vercel mirror builds from `main` and needs no setup.
+> **Deployment status at submission.** The Vercel URL above is live and builds from
+> `main` on every push. The GitHub Pages workflow runs and its build step succeeds, but
+> the publish step fails until Pages is switched on once in
+> **Settings → Pages → Build and deployment → Source: GitHub Actions** (see
+> [Deployment](#deployment)). Until that switch is flipped the Pages URL returns 404.
 
 ---
 
@@ -23,9 +26,10 @@ The app has four main screens, each with a distinct job:
 
 | Screen | Route | What it does |
 | --- | --- | --- |
-| **Converter** | `#/converter` | Converts an amount between 200+ currencies using the live mid-market rate, shows the inverse rate, and links to a dedicated pair page for each currency combination. |
+| **Converter** | `#/converter` | Converts an amount between 64 currencies using the live mid-market rate, shows the inverse rate, and links to a dedicated pair page for each currency combination. |
 | **Charts** | `#/charts` | Interactive area chart of the selected pair over 1D–10Y, with CSV export and share-link copying. Built on Recharts. |
 | **Live Rate Tables** | `#/rates`, `#/tables` | Sortable table of every supported currency and a cross-rate matrix for bulk comparison. |
+| **Historical Ledger** | `#/historical` | Day-by-day closing rates for a chosen window, with the same rows downloadable as Excel-friendly CSV (UTF-8 BOM, CRLF, quoted). |
 
 Supporting pages (business, API docs, help, legal, blog, auth) round out the site.
 
@@ -187,15 +191,29 @@ verification mail is followed (`mailer_autoconfirm` is off in the Supabase proje
 
 ## Deployment
 
-`.github/workflows/deploy.yml` builds on every push to `main` and publishes `dist/` to
-GitHub Pages using the official Pages actions. To enable it once per repository:
+### Vercel (live)
+
+`vercel.json` builds with `npm run build:web` and serves `dist/`. It also hosts the
+`api/rates.ts` serverless proxy on the same origin, so the converter gets a keyless,
+server-side rate fetch and the provider key never reaches the browser. This deployment is
+live at <https://vectisx.vercel.app>.
+
+### GitHub Pages
+
+`.github/workflows/deploy.yml` builds on every push to `main` and publishes `dist/` with
+the official Pages actions. `vite.config.ts` sets `base: '/Final_Project/'` for production
+builds so assets resolve under the repository subpath, and the build copies `index.html`
+to `404.html` so a hard refresh on a deep link still boots the app.
+
+**It needs one manual switch, once per repository:**
 
 1. **Settings → Pages → Build and deployment → Source: GitHub Actions**
-2. Push to `main` (or run the workflow manually from the Actions tab).
+2. Push to `main`, or run the workflow from the Actions tab.
 
-`vite.config.ts` sets `base: '/Final_Project/'` for production builds so assets resolve
-under the repository subpath, and the deploy step copies `index.html` to `404.html` so a
-hard refresh on any deep link still boots the app.
+Verified state at submission: the workflow's **build** job passes (type-check, link check
+and build all succeed), but the **deploy** job fails at *Deploy to GitHub Pages* because no
+Pages site exists until step 1 is done. So the Pages URL is **not** serving the app yet.
+The Vercel deployment above is fully live and needs no setup.
 
 ---
 
@@ -231,7 +249,7 @@ npm run build        # both of the above, then a production build
 ```
 
 `scripts/check-links.mjs` compares every `href="/…"` in the source against the route table
-in `App.tsx`; it currently verifies 74 links across 39 routes.
+in `App.tsx`; it currently verifies 54 links across 27 routes.
 
 ## Credits
 

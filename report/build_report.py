@@ -547,7 +547,7 @@ def build():
     r.stat_strip([
         ("64", "currencies converted"),
         ("28", "routes"),
-        ("110", "automated checks passing"),
+        ("54", "internal links verified"),
     ])
     r.subheading("Third-party libraries, and what each one is for")
     r.table(LIBRARIES, col_w=42 * mm, head=("Library", "What it does in this project"))
@@ -594,11 +594,14 @@ def build():
     )
     r.subheading("How the behaviour was tested")
     r.para(
-        "A harness renders the real route tree in jsdom from a Vite bundle of the current source, with fetch "
-        "stubbed at the boundary so success, failure, timeout and cached responses can each be forced. It runs "
-        "110 assertions covering routing, the API fallback chain, the 24-hour calculation against known inputs, "
-        "CSV output, keyboard navigation and form errors. The production build and the TypeScript check both "
-        "pass with no errors.",
+        "During development a local harness rendered the real route tree in jsdom from a Vite bundle of the "
+        "current source, with fetch stubbed at the boundary so success, failure, timeout and cached responses "
+        "could each be forced; it covered routing, the API fallback chain, the 24-hour calculation against known "
+        "inputs, CSV output, keyboard navigation and form errors. That harness was a scratch tool and is not "
+        "shipped in the repository. What a reader can reproduce from the repository is the set of commands below, "
+        "each of which passes as described: the TypeScript check reports no errors, the link checker resolves all "
+        "54 internal links against the declared route table, and the production build completes and emits a "
+        "404 fallback for deep links.",
         size=9.4, lead=13.6,
     )
     r.subheading("Known limitations")

@@ -6,7 +6,6 @@ submission archive.
 | File | What it is |
 | --- | --- |
 | `Ahmad_AbdulMannan_final-project.pdf` | The report: 7 pages, the four required sections and an appendix. |
-| `Ahmad_AbdulMannan_final-project.zip` | The submission archive: the project folder without `node_modules`/`dist`, plus the PDF. |
 | `build_report.py` | Report source. Draws the PDF with reportlab so the layout is reproducible. |
 | `shots/` | The four figures at 1440 px CSS width, rendered at 2x device scale. |
 | `inter-*.ttf` | Inter and Inter Tight, converted from the `woff2` files the app ships so the report matches the UI's type. |
@@ -46,7 +45,10 @@ screenshots taken in a browser.
 
 ## Facts the report relies on
 
-- 64 currencies, 28 routes, 110 automated checks passing (`.testing/run.mjs`).
+- 64 currencies, 28 routes, 54 internal links, all resolving against the route table.
+- The jsdom harness that produced the original "110 assertions" figure was a scratch
+  tool and is not committed, so the report cites only the checks a reader can rerun:
+  `npm run typecheck`, `npm run check:links`, `npm run build`.
 - Deployed at `vectisx.vercel.app`.
 - GitHub Pages is configured in `.github/workflows/deploy.yml` and the build
   itself works (`VITE_BASE=/Final_Project/ npm run build`), but the repository's
