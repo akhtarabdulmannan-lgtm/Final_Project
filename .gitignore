@@ -25,3 +25,7 @@ yarn-error.log*
 
 # Local test harness (regenerated on demand, not part of the app)
 /.testing
+
+# Report artifacts: the PDF and the submission archive are deliverables,
+# not source. Regenerate from report/build_report.py if needed.
+/report/*.zip
