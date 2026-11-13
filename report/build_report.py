@@ -627,7 +627,7 @@ def build():
     ])
     r.subheading("Version control")
     r.para(
-        "The history records the work in order: the initial commit, the rebuild onto Vite and React Router, the "
+        "The history records the work in order: the first build, the rebuild onto Vite and React Router, the "
         "API integration, loading and error states, the Pages workflow, the bug-fix round after testing, and "
         "the removal of features and claims the app could not honestly support. The README covers npm install, "
         "npm run dev, the production build and the environment variables the optional sign-in needs.",
