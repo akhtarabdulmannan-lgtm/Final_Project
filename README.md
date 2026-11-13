@@ -134,6 +134,40 @@ npm run build     # type-checks, builds to dist/, writes the 404 fallback
 npm run preview   # serve the production build locally
 ```
 
+### Why the downloaded `index.html` shows a blank page
+
+The file at the root of this repository is the **Vite source template**. The line
+
+```html
+<script type="module" src="/src/main.tsx"></script>
+```
+
+asks the browser for an uncompiled `.tsx` file at the root of the drive (`/src/main.tsx`). Browsers cannot run TypeScript, and the leading `/` points outside the folder you extracted, so nothing mounts and `#root` stays empty. That is expected: this file is meant to be served by the dev server, not opened directly.
+
+The same applies to the normal production build in `dist/`: its `index.html` points at `/assets/index-*.js`, which again resolves from the server root. Both need a server.
+
+### Opening it without a server
+
+```bash
+npm run build:standalone
+```
+
+This writes `standalone/index.html` with every script, stylesheet and font inlined and with relative paths, so it can be opened by double-clicking. Verified self-contained: one file of about 1 MB, no `import()`, no CDN references.
+
+Two caveats:
+
+- **Live rates may not load from `file://`.** The rate APIs reject cross-origin requests from a `null` origin in some browsers. The app copes: it falls back to the bundled reference snapshot and says so in the header instead of showing stale numbers as live.
+- **Local storage and the clipboard are restricted** under `file://`, so saved preferences and "copy link" behave differently.
+
+For a fully working local copy, serve the folder instead — this gives you live rates and correct storage:
+
+```bash
+npm run build
+npm run preview      # serves dist/ over http://localhost:4173
+```
+
+If you only want to look at the finished site, use the deployed URL: <https://vectisx.vercel.app>.
+
 ### Optional: sign-in screens
 
 The converter and charts need no configuration. The login/register/reset screens

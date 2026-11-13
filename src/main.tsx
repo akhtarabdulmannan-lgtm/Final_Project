@@ -17,8 +17,15 @@ import './styles/globals.css';
  * equivalent hash route before mounting. Without this, every shared
  * non-hash URL silently showed the homepage instead of its page.
  */
-const deepPath = window.location.pathname.replace(/^\/Final_Project/, '');
-if (!window.location.hash && deepPath && deepPath !== '/') {
+/**
+ * Only rewrite when a real HTTP host is serving us. Opened from disk
+ * (file://), `pathname` is the full path to the file, e.g.
+ * /Users/me/Downloads/Final_Project/index.html, so rewriting it would send the
+ * browser to file:///#/Users/me/... and the page would go blank.
+ */
+const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+const deepPath = isHttp ? window.location.pathname.replace(/^\/Final_Project/, '') : '';
+if (isHttp && !window.location.hash && deepPath && deepPath !== '/') {
   window.location.replace(`/#${deepPath}${window.location.search}`);
 }
 

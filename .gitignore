@@ -29,3 +29,9 @@ yarn-error.log*
 # Report artifacts: the PDF and the submission archive are deliverables,
 # not source. Regenerate from report/build_report.py if needed.
 /report/*.zip
+
+# Single-file build (npm run build:standalone)
+/standalone
+
+# Standalone downloadable build
+/download
