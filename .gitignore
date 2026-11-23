@@ -35,3 +35,6 @@ yarn-error.log*
 
 # Standalone downloadable build
 /download
+
+# Submission archives are deliverables, not source
+/submission/*.zip
