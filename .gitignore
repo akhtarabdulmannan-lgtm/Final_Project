@@ -36,5 +36,6 @@ yarn-error.log*
 # Standalone downloadable build
 /download
 
-# Submission archives are deliverables, not source
-/submission/*.zip
+# Submission archives ARE committed on purpose: the marker downloads them
+# straight from the repository, so they must not be ignored.
+# (Older archives superseded by a rebuild are pruned by hand.)
