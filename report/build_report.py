@@ -90,7 +90,7 @@ class Report:
     def __init__(self, path):
         self.c = pdfcanvas.Canvas(path, pagesize=A4)
         self.c.setTitle("VectisX - Final Project Report")
-        self.c.setAuthor("Abdul Mannan Akhtar")
+        self.c.setAuthor("Abdul Manan Akhtar")
         self.c.setSubject("Final Project: Web Application with React")
         self.page = 0
         self.y = PAGE_H - M
@@ -111,7 +111,7 @@ class Report:
         c.line(M, M - 6, PAGE_W - M, M - 6)
         c.setFont("Inter", 7.5)
         c.setFillColor(MUTED)
-        c.drawString(M, M - 17, "VectisX - Final Project Report - Abdul Mannan Akhtar")
+        c.drawString(M, M - 17, "VectisX - Final Project Report - Abdul Manan Akhtar")
         c.drawRightString(PAGE_W - M, M - 17, str(self.page))
 
     def space(self, amount):
@@ -348,7 +348,7 @@ class Report:
 
         self.y = PAGE_H - band_h - 20 * mm
         meta = [
-            ("Student", "Abdul Mannan Akhtar"),
+            ("Student", "Abdul Manan Akhtar"),
             ("Course", "Web Application with React - Final Project (40%)"),
             ("Deadline", "13 November 2026"),
             ("Application", "VectisX - currency converter, live rate tables, historical charts"),
