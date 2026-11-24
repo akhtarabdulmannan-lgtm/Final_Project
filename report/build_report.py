@@ -19,7 +19,7 @@ from reportlab.pdfgen import canvas as pdfcanvas
 from reportlab.lib.utils import ImageReader
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "Ahmad_AbdulMannan_final-project.pdf")
+OUT = os.path.join(HERE, "Akhtar_AbdulMannan_final-project.pdf")
 SHOTS = os.environ.get("SHOTS_DIR", os.path.join(HERE, "shots"))
 
 PAGE_W, PAGE_H = A4
@@ -90,7 +90,7 @@ class Report:
     def __init__(self, path):
         self.c = pdfcanvas.Canvas(path, pagesize=A4)
         self.c.setTitle("VectisX - Final Project Report")
-        self.c.setAuthor("Abdul Mannan Ahmad")
+        self.c.setAuthor("Abdul Mannan Akhtar")
         self.c.setSubject("Final Project: Web Application with React")
         self.page = 0
         self.y = PAGE_H - M
@@ -111,7 +111,7 @@ class Report:
         c.line(M, M - 6, PAGE_W - M, M - 6)
         c.setFont("Inter", 7.5)
         c.setFillColor(MUTED)
-        c.drawString(M, M - 17, "VectisX - Final Project Report - Abdul Mannan Ahmad")
+        c.drawString(M, M - 17, "VectisX - Final Project Report - Abdul Mannan Akhtar")
         c.drawRightString(PAGE_W - M, M - 17, str(self.page))
 
     def space(self, amount):
@@ -348,7 +348,7 @@ class Report:
 
         self.y = PAGE_H - band_h - 20 * mm
         meta = [
-            ("Student", "Abdul Mannan Ahmad"),
+            ("Student", "Abdul Mannan Akhtar"),
             ("Course", "Web Application with React - Final Project (40%)"),
             ("Deadline", "13 November 2026"),
             ("Application", "VectisX - currency converter, live rate tables, historical charts"),
@@ -621,7 +621,7 @@ def build():
     ])
     r.subheading("Submission")
     r.bullets([
-        "Archive: Ahmad_AbdulMannan_final-project.zip, containing the project folder without node_modules and "
+        "Archive: Akhtar_AbdulMannan_final-project.zip, containing the project folder without node_modules and "
         "without the build output, plus this PDF.",
         "To run it: npm install, npm run dev (Vite on port 5173). npm run build type-checks and produces dist/. "
         "The README documents the two optional Supabase variables used by the sign-in pages; without them the "

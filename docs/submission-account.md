@@ -47,7 +47,7 @@ or `arena-agent` as the author. Both make GitHub list a further contributor.
 Canonical identity:
 
 ```
-Abdul Mannan Ahmad <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com>
+Abdul Mannan Akhtar <332351145+akhtarabdulmannan-lgtm@users.noreply.github.com>
 ```
 
 The `332351145` prefix is GitHub's no-reply address for the account, so every
@@ -84,7 +84,7 @@ Honesty matters more than a clean-looking page, so:
 ## If it happens again
 
 ```bash
-git config --global user.name  "Abdul Mannan Ahmad"
+git config --global user.name  "Abdul Mannan Akhtar"
 git config --global user.email "332351145+akhtarabdulmannan-lgtm@users.noreply.github.com"
 ```
 

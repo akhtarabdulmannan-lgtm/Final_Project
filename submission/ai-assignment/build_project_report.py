@@ -14,7 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 FONTS = os.path.join(ROOT, "report")
 SRC = os.path.join(HERE, "project-report.md")
-OUT = os.path.join(HERE, "Ahmad_AbdulMannan_project-report.pdf")
+OUT = os.path.join(HERE, "Akhtar_AbdulMannan_project-report.pdf")
 
 pdfmetrics.registerFont(TTFont("Inter", os.path.join(FONTS, "inter-400.ttf")))
 pdfmetrics.registerFont(TTFont("InterMed", os.path.join(FONTS, "inter-500.ttf")))
@@ -209,7 +209,7 @@ def build():
 
     c = canvas.Canvas(OUT, pagesize=A4)
     c.setTitle("Project Report — VectisX Currency Converter & Exchange Rate Dashboard")
-    c.setAuthor("Abdul Mannan Ahmad")
+    c.setAuthor("Abdul Mannan Akhtar")
     c.setSubject("Web Application with React — Final Project")
 
     page = 1
@@ -218,7 +218,7 @@ def build():
         c.setFillColor(MUTED)
         c.setFont("Inter", 7.5)
         c.drawString(LM, PH - 13 * mm, "Web Application with React — Final Project Report")
-        c.drawRightString(PW - RM, PH - 13 * mm, "Abdul Mannan Ahmad")
+        c.drawRightString(PW - RM, PH - 13 * mm, "Abdul Mannan Akhtar")
         c.setStrokeColor(RULE)
         c.setLineWidth(0.6)
         c.line(LM, PH - 15 * mm, PW - RM, PH - 15 * mm)

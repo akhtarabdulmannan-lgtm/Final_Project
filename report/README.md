@@ -5,7 +5,7 @@ submission archive.
 
 | File | What it is |
 | --- | --- |
-| `Ahmad_AbdulMannan_final-project.pdf` | The report: 7 pages, the four required sections and an appendix. |
+| `Akhtar_AbdulMannan_final-project.pdf` | The report: 7 pages, the four required sections and an appendix. |
 | `build_report.py` | Report source. Draws the PDF with reportlab so the layout is reproducible. |
 | `shots/` | The four figures at 1440 px CSS width, rendered at 2x device scale. |
 | `inter-*.ttf` | Inter and Inter Tight, converted from the `woff2` files the app ships so the report matches the UI's type. |

@@ -1,6 +1,6 @@
 # Project Report — VectisX Currency Converter & Exchange Rate Dashboard
 
-**Student:** Abdul Mannan Ahmad
+**Student:** Abdul Mannan Akhtar
 **Course:** Web Application with React — Final Project (40%)
 **Deadline:** 13 November 2026
 **Method:** Individual work

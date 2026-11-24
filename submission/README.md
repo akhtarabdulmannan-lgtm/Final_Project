@@ -8,15 +8,15 @@ repository so it can be downloaded without any extra step.
 | # | File | For | Size |
 | --- | --- | --- | --- |
 | 1 | [`ai-assignment/chat.json`](ai-assignment/chat.json) | AI assignment — the conversation export | 20 KB |
-| 2 | [`ai-assignment/Ahmad_AbdulMannan_project-report.pdf`](ai-assignment/Ahmad_AbdulMannan_project-report.pdf) | AI assignment — the project report | 64 KB |
-| 3 | [`../report/Ahmad_AbdulMannan_final-project.pdf`](../report/Ahmad_AbdulMannan_final-project.pdf) | React final project — the coursework report | 1.6 MB |
+| 2 | [`ai-assignment/Akhtar_AbdulMannan_project-report.pdf`](ai-assignment/Akhtar_AbdulMannan_project-report.pdf) | AI assignment — the project report | 64 KB |
+| 3 | [`../report/Akhtar_AbdulMannan_final-project.pdf`](../report/Akhtar_AbdulMannan_final-project.pdf) | React final project — the coursework report | 1.6 MB |
 
 ## Bundles
 
 | Archive | Contains | Size |
 | --- | --- | --- |
-| [`Ahmad_AbdulMannan_AI-assignment.zip`](Ahmad_AbdulMannan_AI-assignment.zip) | `chat.json` + the project report (PDF and Markdown) + a README | 72 KB |
-| [`Ahmad_AbdulMannan_final-project.zip`](Ahmad_AbdulMannan_final-project.zip) | The whole project without `node_modules`, plus the coursework report PDF | 3.3 MB |
+| [`Akhtar_AbdulMannan_AI-assignment.zip`](Akhtar_AbdulMannan_AI-assignment.zip) | `chat.json` + the project report (PDF and Markdown) + a README | 72 KB |
+| [`Akhtar_AbdulMannan_final-project.zip`](Akhtar_AbdulMannan_final-project.zip) | The whole project without `node_modules`, plus the coursework report PDF | 3.3 MB |
 
 ## How to download
 
@@ -35,16 +35,16 @@ https://raw.githubusercontent.com/akhtarabdulmannan-lgtm/Final_Project/main/subm
 ```
 submission/
 ├── README.md                                  ← this file
-├── Ahmad_AbdulMannan_AI-assignment.zip        ← bundle for the AI assignment
-├── Ahmad_AbdulMannan_final-project.zip        ← bundle for the React project
+├── Akhtar_AbdulMannan_AI-assignment.zip        ← bundle for the AI assignment
+├── Akhtar_AbdulMannan_final-project.zip        ← bundle for the React project
 └── ai-assignment/
     ├── chat.json                              ← the conversation export
-    ├── Ahmad_AbdulMannan_project-report.pdf   ← the project report (8 pages)
+    ├── Akhtar_AbdulMannan_project-report.pdf   ← the project report (8 pages)
     ├── project-report.md                      ← the same report as editable text
     ├── build_project_report.py                ← renders the PDF from the Markdown
     └── README.md                              ← what is in each file, and the limits
 report/
-└── Ahmad_AbdulMannan_final-project.pdf        ← the coursework report (7 pages)
+└── Akhtar_AbdulMannan_final-project.pdf        ← the coursework report (7 pages)
 ```
 
 ## The two reports are different documents
@@ -53,7 +53,7 @@ This is worth knowing before submitting, because they are easy to mix up.
 
 | | Coursework report | AI assignment report |
 | --- | --- | --- |
-| Path | `report/Ahmad_AbdulMannan_final-project.pdf` | `submission/ai-assignment/Ahmad_AbdulMannan_project-report.pdf` |
+| Path | `report/Akhtar_AbdulMannan_final-project.pdf` | `submission/ai-assignment/Akhtar_AbdulMannan_project-report.pdf` |
 | Pages | 7 | 8 |
 | Structure | The four sections the course brief specifies | Ten sections: overview, objectives, technologies, development process, AI assistance, features, challenges, solutions, testing, results |
 | Word budget | 565 words in sections 1–4 (brief asks 400–600) | No budget specified |

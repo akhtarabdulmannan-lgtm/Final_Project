@@ -5,7 +5,7 @@ Two deliverables, as requested: `chat.json` and a project report PDF.
 | File | What it is |
 | --- | --- |
 | `chat.json` | The AI conversation export — 18 messages plus 3 reconstructed earlier turns. |
-| `Ahmad_AbdulMannan_project-report.pdf` | The academic project report, 8 pages, ten sections. |
+| `Akhtar_AbdulMannan_project-report.pdf` | The academic project report, 8 pages, ten sections. |
 | `project-report.md` | The report's text in Markdown, for reference or editing. |
 | `build_project_report.py` | Source that renders the PDF, so the layout is reproducible. |
 
@@ -83,7 +83,7 @@ Edit `project-report.md`, then re-run. The renderer reads the Markdown directly.
 
 ## Related file
 
-`../Ahmad_AbdulMannan_final-project.pdf` is the *coursework* report for the React
+`../Akhtar_AbdulMannan_final-project.pdf` is the *coursework* report for the React
 final project — a different document, with the four sections and the 400–600 word
 budget the course brief specifies. It is not a substitute for the report in this
 folder.
